@@ -10,8 +10,6 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.ApiKeyVehicle;
-import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
@@ -30,9 +28,6 @@ public class SwaggerConfig {
     @Value("${server.oauth.url}")
     private String AUTH_SERVER;
 
-    public static final String securitySchemaOAuth2 = "oauth2schema";
-    public static final String authorizationScopeGlobal = "global";
-    public static final String authorizationScopeGlobalDesc ="accessEverything";
     /**
      *
      * @return Docket
@@ -43,19 +38,16 @@ public class SwaggerConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.authentication.api"))
+                .apis(RequestHandlerSelectors.basePackage("uz.genesis.trello.controller"))
                 .build()
                 .securityContexts(Collections.singletonList(securityContext()))
-                .securitySchemes(Arrays.asList(securitySchema(), apiKey()))
+                .securitySchemes(Arrays.asList(securitySchema()))
                 .apiInfo(apiInfo());
 
 
     }
 
-    @Bean
-    public SecurityScheme apiKey() {
-        return new ApiKey(HttpHeaders.AUTHORIZATION, "apiKey", "header");
-    }
+
 
 
 
@@ -66,7 +58,7 @@ public class SwaggerConfig {
         authorizationScopeList.add(new AuthorizationScope("write", "access all"));
 
         List<GrantType> grantTypes = new ArrayList();
-        GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(AUTH_SERVER+"token");
+        GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(AUTH_SERVER+"/token");
         grantTypes.add(passwordCredentialsGrant);
 
         return new OAuth("oauth2", authorizationScopeList, grantTypes);
@@ -89,11 +81,7 @@ public class SwaggerConfig {
         return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
     }
 
-    @Bean
-    public SecurityConfiguration security() {
-        return new SecurityConfiguration
-                (CLIENT_ID,CLIENT_SECRET, "", "", "Bearer access token", ApiKeyVehicle.HEADER, HttpHeaders.AUTHORIZATION,"");
-    }
+
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("KPI API").description("23.06.2019")
