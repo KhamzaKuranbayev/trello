@@ -2,6 +2,7 @@ package uz.genesis.trello.config.server;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,6 +32,11 @@ import javax.sql.DataSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Import(ServerSecurityConfig.class)
 public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter {
+
+    @Value("${oauth2.clientId}")
+    private String CLIENT_ID;
+    @Value("${oauth2.clientSecret}")
+    private String CLIENT_SECRET;
 
     @Autowired
     @Qualifier("dataSource")
@@ -72,10 +78,12 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(dataSource);
+
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).userDetailsService(userDetailsService);
     }
+
 }
