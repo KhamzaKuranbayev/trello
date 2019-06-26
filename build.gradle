@@ -1,0 +1,71 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.6.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+
+group = 'uz.genesis'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+dependencies {
+
+	compileOnly 'org.projectlombok:lombok:1.18.8'
+	annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+	// MapStruct
+	compileOnly 'org.mapstruct:mapstruct-jdk8:1.3.0.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.3.0.Final'
+
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile('org.springframework.boot:spring-boot-starter-web') {
+		exclude module: "spring-boot-starter-tomcat"
+		exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+	}
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+
+	compile(group: 'org.springframework.boot', name: 'spring-boot-starter-security')
+	compile(group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.3.RELEASE')
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client
+	compile group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.1.5.RELEASE'
+	// https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2
+	compile (group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.6.RELEASE'){
+		exclude(module: 'jackson-mapper-asl') // We already have a more recent jackson via Spring Boot
+	}
+
+	compile(group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2')
+	compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2')
+
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-gradle-plugin
+	compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.4.3.Final'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5
+	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.9.9'
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+
+	// https://mvnrepository.com/artifact/org.projectlombok/lombok
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
+
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
