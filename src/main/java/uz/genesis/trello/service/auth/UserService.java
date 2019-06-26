@@ -2,20 +2,27 @@ package uz.genesis.trello.service.auth;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.dto.auth.PermissionDto;
-import uz.genesis.trello.dto.auth.RoleDto;
-import uz.genesis.trello.dto.auth.UserDto;
+import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.mapper.GenericMapper;
+import uz.genesis.trello.mapper.auth.UserMapper;
 import uz.genesis.trello.repository.auth.IUserRepository;
+import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.AbstractService;
 import uz.genesis.trello.utils.BaseUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.stream.Collectors;
 
 /**
@@ -23,15 +30,23 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class UserService extends AbstractService<UserDto, UserCriteria, IUserRepository> implements IUserService {
+public class UserService extends AbstractCrudService<UserDto, UserCreateDto, UserUpdateDto, UserCriteria, IUserRepository> implements IUserService {
 
     /**
      * Common logger for use in subclasses.
      */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    private UserMapper mapper;
+    private GenericMapper genericMapper;
+
+    @Autowired
+    private PasswordEncoder oauthClientPasswordEncoder;
+
     public UserService(IUserRepository repository, BaseUtils utils) {
         super(repository, utils);
+        this.mapper = Mappers.getMapper(UserMapper.class);
+        this.genericMapper = Mappers.getMapper(GenericMapper.class);
     }
 
     @Override
@@ -54,5 +69,20 @@ public class UserService extends AbstractService<UserDto, UserCriteria, IUserRep
                                 .name(p.getName()).build()).collect(Collectors.toList()))
                         .build()).collect(Collectors.toList()))
                 .build()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserCreateDto dto) {
+        dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
+
+        User user = mapper.fromCreateDto(dto);
+
+        user = repository.save(user);
+
+        if (utils.isEmpty(user.getId())) {
+            //todo cannot create exception
+        }
+
+        return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(user)), HttpStatus.CREATED);
     }
 }

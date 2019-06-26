@@ -13,11 +13,11 @@ import java.io.Serializable;
  * Created by 'javokhir' on 12/06/2019
  */
 
-public interface IGenericCrudService<T, ID extends Serializable, C extends GenericCriteria> extends IGenericService<T, ID, C> {
+public interface IGenericCrudService<T, CR extends CrudDto, UP extends CrudDto, ID extends Serializable, C extends GenericCriteria> extends IGenericService<T, ID, C> {
 
-    ResponseEntity<DataDto<GenericDto>> create(@NotNull CrudDto dto);
+    ResponseEntity<DataDto<GenericDto>> create(@NotNull CR dto);
 
-    ResponseEntity<DataDto<T>> update(@NotNull CrudDto dto);
+    ResponseEntity<DataDto<T>> update(@NotNull UP dto);
 
     ResponseEntity<DataDto<Boolean>> delete(@NotNull ID id);
 

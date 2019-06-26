@@ -1,11 +1,10 @@
 package uz.genesis.trello.controller.auth;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
+import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.UserCreateDto;
 import uz.genesis.trello.dto.auth.UserDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.auth.IUserService;
@@ -24,8 +23,11 @@ public class UserController extends ApiController<IUserService> {
     @RequestMapping(value = API_PATH + V_1 + "/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<UserDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
-
-
-
     }
+
+    @RequestMapping(value = API_PATH + V_1 + "/users", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<GenericDto>> create(@RequestBody UserCreateDto dto) {
+        return service.create(dto);
+    }
+
 }

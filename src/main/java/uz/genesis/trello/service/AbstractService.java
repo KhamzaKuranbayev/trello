@@ -27,18 +27,6 @@ public abstract class AbstractService<T, C extends GenericCriteria, R extends IA
         this.utils = utils;
     }
 
-    public ResponseEntity<DataDto<GenericDto>> create(@NotNull CrudDto dto) {
-        return null;
-    }
-
-    public ResponseEntity<DataDto<T>> update(@NotNull CrudDto dto) {
-        return null;
-    }
-
-    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long aLong) {
-        return null;
-    }
-
     public ResponseEntity<DataDto<T>> get(Long aLong) {
         return null;
     }

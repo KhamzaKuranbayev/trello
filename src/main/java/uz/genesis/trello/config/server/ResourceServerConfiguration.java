@@ -38,7 +38,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http.requestMatchers()
                 .antMatchers(SECURED_PATTERN).and().authorizeRequests()
                 .antMatchers(AUTH_PATTERN).permitAll()
-                .antMatchers(API_PATH + V_1 + "/users/register").permitAll()
+//                .antMatchers(API_PATH + V_1 + "/users/register").permitAll()
                 .antMatchers(HttpMethod.POST, SECURED_PATTERN).access(SECURED_WRITE_SCOPE)
                 .anyRequest().access(SECURED_READ_SCOPE)
                 .and().cors()
