@@ -1,9 +1,11 @@
 package uz.genesis.trello.service.auth;
 
+import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,7 @@ import uz.genesis.trello.repository.auth.IUserRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.AbstractService;
 import uz.genesis.trello.utils.BaseUtils;
+import uz.genesis.trello.utils.validators.auth.UserServiceValidator;
 
 import javax.validation.constraints.NotNull;
 import java.util.stream.Collectors;
@@ -39,14 +42,16 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
 
     private UserMapper mapper;
     private GenericMapper genericMapper;
+    private UserServiceValidator validator;
 
     @Autowired
     private PasswordEncoder oauthClientPasswordEncoder;
 
-    public UserService(IUserRepository repository, BaseUtils utils) {
+    public UserService(IUserRepository repository, BaseUtils utils, UserServiceValidator validator) {
         super(repository, utils);
         this.mapper = Mappers.getMapper(UserMapper.class);
         this.genericMapper = Mappers.getMapper(GenericMapper.class);
+        this.validator = validator;
     }
 
     @Override
@@ -73,14 +78,24 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
 
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserCreateDto dto) {
-        dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
-
         User user = mapper.fromCreateDto(dto);
 
-        user = repository.save(user);
+        validator.validateOnCreate(user);
+
+        user.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
+
+
+        try {
+            user = repository.save(user);
+        } catch (Exception ex) {
+            logger.error(ex);
+            logger.error(String.format(" dto '%s' ", dto.toString()));
+            throw new RuntimeException(ex);
+        }
 
         if (utils.isEmpty(user.getId())) {
-            //todo cannot create exception
+            logger.error(String.format("Non UserCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(String.format("Non UserCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(user)), HttpStatus.CREATED);

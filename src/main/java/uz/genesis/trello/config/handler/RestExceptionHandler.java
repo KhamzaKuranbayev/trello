@@ -2,6 +2,7 @@ package uz.genesis.trello.config.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +21,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<DataDto<?>> handleCustomException(Exception ex, WebRequest request) {
-        logger.error(ex);
+        String message = getLastCause(ex);
+        logger.error(message, ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                ex.getMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+                message).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    public final ResponseEntity<DataDto<?>> handleUserNotFoundException(UnauthorizedUserException ex, WebRequest request) {
+        logger.error(ex.getMessage(), ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                ex.getMessage()).build()), HttpStatus.UNAUTHORIZED);
+    }
+
+    private String getLastCause(Throwable throwable){
+        return throwable.getCause() == null ? (throwable.getLocalizedMessage() == null ? throwable.getMessage()
+                : throwable.getLocalizedMessage()) : getLastCause(throwable.getCause());
     }
     /*@ExceptionHandler(RefreshTokenExpiredException.class)
     public final ResponseEntity<DataDto<?>> handleUserNotFoundException(RefreshTokenExpiredException ex, WebRequest request) {

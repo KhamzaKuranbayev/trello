@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import uz.genesis.trello.config.handler.AuthenticationFailureHandler;
 import uz.genesis.trello.controller.ApiController;
 
@@ -32,10 +33,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         resources.authenticationEntryPoint(new AuthenticationFailureHandler());
     }
 
-    /*@Override
+    @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.headers().frameOptions().disable();
-       *//* http.requestMatchers()
+       /* http.headers().frameOptions().disable();
+        http.requestMatchers()
 //                .antMatchers(SECURED_PATTERN).and().authorizeRequests()
 //                .antMatchers(AUTH_PATTERN).permitAll()
 //                .antMatchers(API_PATH + V_1 + "/users/*").permitAll()
@@ -43,7 +44,24 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 //                .anyRequest().access(SECURED_READ_SCOPE)
 //                .anyRequest().authenticated()
                 .and().cors()
-                .and().exceptionHandling().authenticationEntryPoint(new AuthenticationFailureHandler());*//*
+                .and().exceptionHandling().authenticationEntryPoint(new AuthenticationFailureHandler());*/
 
-    }*/
+//        http.cors().and().authorizeRequests()
+////                .antMatchers(API_PATH + V_1 + "/users").permitAll()
+//                .antMatchers("/**/*").denyAll()
+//                .anyRequest().access(SECURED_WRITE_SCOPE)
+//                .antMatchers(HttpMethod.POST, API_PATH + "/**").access(SECURED_WRITE_SCOPE)
+//                .anyRequest().access(SECURED_READ_SCOPE);
+
+        http.
+                anonymous().disable()
+                .requestMatchers().antMatchers(API_PATH + "/**")
+                .and().authorizeRequests()
+                .antMatchers(API_PATH + "/**").access(SECURED_WRITE_SCOPE)
+                .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())
+                .and().exceptionHandling().authenticationEntryPoint(new AuthenticationFailureHandler());
+
+        http.cors().and().csrf().disable();
+
+    }
 }
