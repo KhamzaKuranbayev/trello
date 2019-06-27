@@ -33,14 +33,15 @@ public class UserServiceValidator extends BaseCrudValidator<User> {
             throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
         } else if (!isValidEmail(domain.getEmail())) {
             throw new RuntimeException(String.format(" email '%s' is not valid", domain.getEmail()));
-        } else if (utils.isEmpty(domain.getUserName()) || domain.getUserName().isEmpty()) {
+        } else if (utils.isEmpty(domain.getUserName())) {
             throw new RuntimeException("userName is required");
-        } else if (utils.isEmpty(domain.getPassword()) || domain.getPassword().isEmpty()) {
+        } else if (utils.isEmpty(domain.getPassword())) {
             throw new RuntimeException("password is required");
         }
     }
 
-    static boolean isValidEmail(String email) {
+    private boolean isValidEmail(String email) {
+        if (utils.isEmpty(email)) return false;
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
