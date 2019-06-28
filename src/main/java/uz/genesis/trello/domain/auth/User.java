@@ -23,7 +23,7 @@ public class User extends Auditable {
     @Column(name = "email", unique = true)
     protected String email;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     protected String userName;
 
     @Column(name = "passwd")
