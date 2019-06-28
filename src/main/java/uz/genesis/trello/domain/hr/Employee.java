@@ -1,7 +1,6 @@
 package uz.genesis.trello.domain.hr;
 
 import lombok.*;
-import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 
