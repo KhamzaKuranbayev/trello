@@ -31,7 +31,9 @@ public class UserServiceValidator extends BaseCrudValidator<User> {
             throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(User.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
-        } else if (!isValidEmail(domain.getEmail())) {
+        } else if (utils.isEmpty(domain.getEmail())) {
+            throw new RuntimeException("email is required");
+        }if (!isValidEmail(domain.getEmail())) {
             throw new RuntimeException(String.format(" email '%s' is not valid", domain.getEmail()));
         } else if (utils.isEmpty(domain.getUserName())) {
             throw new RuntimeException("userName is required");
@@ -41,7 +43,7 @@ public class UserServiceValidator extends BaseCrudValidator<User> {
     }
 
     private boolean isValidEmail(String email) {
-        if (utils.isEmpty(email)) return false;
+
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
     }
