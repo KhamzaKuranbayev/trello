@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -39,11 +40,14 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
     @Autowired
     protected UserSession userSession;
 
+    protected SimpleDateFormat dateTimeFormat;
+
     protected Gson gson;
     protected JpaEntityInformation<T, ?> entityInformation;
 
     @SuppressWarnings("unchecked")
     public GenericDao() {
+        this.dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         initEntityInformation();
@@ -207,4 +211,6 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
             delete(entity);
         }
     }
+
+
 }
