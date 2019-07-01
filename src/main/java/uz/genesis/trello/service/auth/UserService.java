@@ -5,14 +5,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
@@ -21,12 +19,10 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.UserMapper;
 import uz.genesis.trello.repository.auth.IUserRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.AbstractService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.UserServiceValidator;
 
 import javax.validation.constraints.NotNull;
-import java.util.stream.Collectors;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -64,16 +60,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
                     String.format("user with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new DataDto<>(UserDto.childBuilder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .userName(user.getUserName())
-                .roles(user.getRoles().stream().map(t -> RoleDto.childBuilder()
-                        .roleName(t.getRoleName())
-                        .permissions(t.getPermission().stream().map(p -> PermissionDto.childBuilder()
-                                .name(p.getName()).build()).collect(Collectors.toList()))
-                        .build()).collect(Collectors.toList()))
-                .build()), HttpStatus.OK);
+        return new ResponseEntity<>(new DataDto<>(mapper.fromUserToDto(user)), HttpStatus.OK);
     }
 
     @Override

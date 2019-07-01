@@ -48,10 +48,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         List<Permission> permissions = new ArrayList<>();
 
         for (Role role : roles) {
-            permissions.addAll(role.getPermission());
+            permissions.addAll(role.getPermissions());
         }
 
-        roles.forEach(t -> permissions.addAll(t.getPermission()));
+        roles.forEach(t -> permissions.addAll(t.getPermissions()));
 
 //        for (Permission grantedAuth : permissions) {
 //            if (grantedAuth.getName().contains(permission)) {

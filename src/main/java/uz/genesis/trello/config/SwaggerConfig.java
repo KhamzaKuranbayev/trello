@@ -85,7 +85,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("KPI API").description("23.06.2019")
-                .contact(new Contact("Baxtiyor Begmuxammadov", "www.test.com", ""))
+                .contact(new Contact("Genesis Java Team ", "www.uzcard.uz", ""))
                 .license("java Team")
                 .licenseUrl("\"https://www.apache.org/licenses/LICENSE-2.0")
                 .build();

@@ -20,12 +20,12 @@ public class UserController extends ApiController<IUserService> {
         super(service);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/users/{id}", method = RequestMethod.GET)
+    @GetMapping(value = API_PATH + V_1 + "/users/{id}")
     public ResponseEntity<DataDto<UserDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/users", method = RequestMethod.POST)
+    @PostMapping(value = API_PATH + V_1 + "/users")
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody UserCreateDto dto) {
         return service.create(dto);
     }

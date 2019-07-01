@@ -16,7 +16,6 @@ public class UserDto extends GenericDto {
 
     private String email;
     private String userName;
-    private String password;
     private List<RoleDto> roles;
 
     @Builder(builderMethodName = "childBuilder")
@@ -24,7 +23,6 @@ public class UserDto extends GenericDto {
         super(id);
         this.email = email;
         this.userName = userName;
-        this.password = password;
         this.roles = roles;
     }
 }

@@ -27,7 +27,7 @@ public class Role extends Auditable implements GrantedAuthority {
     @JoinTable(name = "auth_roles_permissions", joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
             , inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
 //    @WhereJoinTable(clause = "is_active = 1")
-    private Collection<Permission> permission;
+    private Collection<Permission> permissions;
 
     @Override
     public String getAuthority() {
