@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserUpdateDto implements CrudDto {
 
+    private Long id;
     private String email;
     private String userName;
     private String password;

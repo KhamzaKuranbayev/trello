@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.exception.CustomSqlException;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -34,7 +35,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage()).build()), HttpStatus.UNAUTHORIZED);
     }
 
-    private String getLastCause(Throwable throwable){
+    @ExceptionHandler(CustomSqlException.class)
+    public final ResponseEntity<DataDto<?>> handleSqlException(CustomSqlException ex, WebRequest request) {
+        String message = ex.getFriendlyMessage();
+        logger.error(ex.getMessage(), ex);
+//        logger.error("#requestBody: " + request.get);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getSystemMessage()).build()), HttpStatus.UNAUTHORIZED);
+    }
+
+    private String getLastCause(Throwable throwable) {
         return throwable.getCause() == null ? (throwable.getLocalizedMessage() == null ? throwable.getMessage()
                 : throwable.getLocalizedMessage()) : getLastCause(throwable.getCause());
     }

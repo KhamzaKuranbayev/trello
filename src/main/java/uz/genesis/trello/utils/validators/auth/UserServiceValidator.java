@@ -1,13 +1,11 @@
 package uz.genesis.trello.utils.validators.auth;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
-import uz.genesis.trello.service.auth.UserService;
+import uz.genesis.trello.exception.ValidationException;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 
@@ -32,13 +30,13 @@ public class UserServiceValidator extends BaseCrudValidator<User> {
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
         } else if (utils.isEmpty(domain.getEmail())) {
-            throw new RuntimeException("email is required");
+            throw new ValidationException("email is required");
         }if (!isValidEmail(domain.getEmail())) {
-            throw new RuntimeException(String.format(" email '%s' is not valid", domain.getEmail()));
+            throw new ValidationException(String.format(" email '%s' is not valid", domain.getEmail()));
         } else if (utils.isEmpty(domain.getUserName())) {
-            throw new RuntimeException("userName is required");
+            throw new ValidationException("userName is required");
         } else if (utils.isEmpty(domain.getPassword())) {
-            throw new RuntimeException("password is required");
+            throw new ValidationException("password is required");
         }
     }
 

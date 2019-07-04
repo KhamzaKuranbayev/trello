@@ -1,12 +1,16 @@
 package uz.genesis.trello.repository.auth;
 
+import org.springframework.stereotype.Repository;
 import uz.genesis.trello.criterias.auth.EmployeeCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.hr.Employee;
+import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> implements IEmployeeRepository {
     @Override
     protected void defineCriteriaOnQuerying(EmployeeCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {

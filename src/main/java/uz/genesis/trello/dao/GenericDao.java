@@ -3,6 +3,8 @@ package uz.genesis.trello.dao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -12,6 +14,7 @@ import org.springframework.util.Assert;
 import uz.genesis.trello.criterias.GenericCriteria;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.enums.Headers;
+import uz.genesis.trello.exception.CustomSqlException;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.UserSession;
 
@@ -19,6 +22,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -162,12 +169,14 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
     }
 
     @Transactional
-    public  <S extends T> S save(S entity) {
+    public <S extends T> S save(S entity) {
         initEntityInformation();
         if (entityInformation.isNew(entity)) {
+            entity.setCreatedBy(userSession.getUser().getId());
             entityManager.persist(entity);
             return entity;
         } else {
+            entity.setUpdatedBy(userSession.getUser().getId());
             return entityManager.merge(entity);
         }
     }
@@ -186,10 +195,56 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         return result;
     }
 
+    public <R> R call(T domain, String methodName, int outParamType) {
+        Session session = entityManager.unwrap(Session.class);
+
+        return (R) call(domain, methodName, session, outParamType);
+    }
+
+    public <C, R> R call(C domain, String methodName, int outParamType) {
+        Session session = entityManager.unwrap(Session.class);
+
+        return (R) call(domain, methodName, session, outParamType);
+    }
+
+    /**
+     * @param domain
+     * @param methodName
+     * @param session
+     * @param outParamType java.sql.Types
+     * @param <C>
+     * @return
+     */
+    private <C> Object call(C domain, String methodName, Session session, int outParamType) {
+        return session.doReturningWork(
+                connection -> {
+                    try (CallableStatement function = connection
+                            .prepareCall(
+                                    "{ ? = call " + methodName + " (?, ?) }")) {
+                        function.registerOutParameter(1, outParamType);
+                        function.setString(2, gson.toJson(domain));
+                        function.setLong(3, userSession.getUser().getId());
+                        function.execute();
+
+                        if (!utils.isEmpty(function.getWarnings())) {
+                            throw new RuntimeException(function.getWarnings().getMessage());
+                        }
+                        switch (outParamType) {
+                            case Types.BOOLEAN:
+                                return function.getBoolean(1);
+                        }
+                        return function.getLong(1);
+                    } catch (Exception ex) {
+                        throw new CustomSqlException(ex.getMessage(), ex.getCause());
+                    }
+                });
+    }
+
     @Transactional
     public void delete(T entity) {
 
         Assert.notNull(entity, "The entity must not be null!");
+        entity.setUpdatedBy(userSession.getUser().getId());
         entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
     }
 

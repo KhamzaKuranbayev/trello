@@ -1,11 +1,14 @@
-package uz.genesis.trello.mapper.auth;
+package uz.genesis.trello.mapper.hr;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import uz.genesis.trello.domain.hr.Employee;
-import uz.genesis.trello.dto.auth.EmployeeDto;
+import uz.genesis.trello.dto.hr.EmployeeCreateDto;
+import uz.genesis.trello.dto.hr.EmployeeDto;
 
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
+
     EmployeeDto toDto(Employee employee);
+
+    Employee fromCreateDto(EmployeeCreateDto dto);
 }
