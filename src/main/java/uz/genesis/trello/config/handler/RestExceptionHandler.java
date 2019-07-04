@@ -25,14 +25,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String message = getLastCause(ex);
         logger.error(message, ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                message).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UnauthorizedUserException.class)
     public final ResponseEntity<DataDto<?>> handleUserNotFoundException(UnauthorizedUserException ex, WebRequest request) {
         logger.error(ex.getMessage(), ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                ex.getMessage()).build()), HttpStatus.UNAUTHORIZED);
+                ex.getMessage()).systemName(ex.getLocalizedMessage()).build()), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(CustomSqlException.class)
