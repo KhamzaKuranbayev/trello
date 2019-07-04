@@ -3,13 +3,10 @@ package uz.genesis.trello.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import uz.genesis.trello.criterias.GenericCriteria;
-import uz.genesis.trello.dto.CrudDto;
-import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.repository.IAbstractRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
