@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.GenericCrudDto;
 import uz.genesis.trello.dto.auth.UserCreateDto;
-import uz.genesis.trello.dto.auth.UserUpdateDto;
-
-import java.sql.Date;
 
 /**
  * Created by 'javokhir' on 04/07/2019
@@ -21,7 +18,7 @@ import java.sql.Date;
 public class EmployeeCreateDto extends GenericCrudDto {
 
     private Long userId;
-    private Date birthDate;
+    private String birthDate;
     private String firstName;
     private String middleName;
     private String lastName;

@@ -20,7 +20,7 @@ public class EmployeeUpdateDto implements CrudDto {
 
     private Long id;
     private Long userId;
-    private Date birthDate;
+    private String birthDate;
     private String firstName;
     private String middleName;
     private String lastName;
