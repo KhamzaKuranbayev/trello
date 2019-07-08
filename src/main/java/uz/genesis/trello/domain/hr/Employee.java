@@ -1,13 +1,16 @@
 package uz.genesis.trello.domain.hr;
 
 import lombok.*;
-import org.hibernate.annotations.WhereJoinTable;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by 'javokhir' on 28/06/2019

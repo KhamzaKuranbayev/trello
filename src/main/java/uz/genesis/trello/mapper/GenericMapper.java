@@ -8,7 +8,7 @@ import uz.genesis.trello.dto.GenericDto;
  * Created by 'javokhir' on 26/06/2019
  */
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface GenericMapper {
 
     GenericDto fromDomain(Auditable domain);

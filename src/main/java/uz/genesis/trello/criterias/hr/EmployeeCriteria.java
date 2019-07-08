@@ -1,4 +1,4 @@
-package uz.genesis.trello.criterias.auth;
+package uz.genesis.trello.criterias.hr;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

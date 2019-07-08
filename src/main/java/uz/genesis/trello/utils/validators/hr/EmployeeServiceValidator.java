@@ -3,6 +3,7 @@ package uz.genesis.trello.utils.validators.hr;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.dto.hr.EmployeeCreateDto;
+import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
@@ -26,6 +27,15 @@ public class EmployeeServiceValidator extends BaseCrudValidator<Employee> {
     public void validateOnCreateWithUser(EmployeeCreateDto dto) {
         if (utils.isEmpty(dto)) {
             throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Employee.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+        }
+    }
+
+    public void validateOnUpdateWithUser(EmployeeUpdateDto dto) {
+        if (utils.isEmpty(dto)) {
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Employee.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+        }
+        else if(utils.isEmpty(dto.getUserId())){
+            throw new ValidationException(String.format(ID_REQUIRED.example, utils.toErrorParams(Employee.class)));
         }
     }
 

@@ -3,17 +3,21 @@ package uz.genesis.trello.service.hr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uz.genesis.trello.criterias.auth.EmployeeCriteria;
+import uz.genesis.trello.criterias.hr.EmployeeCriteria;
+import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 import uz.genesis.trello.dto.hr.EmployeeDto;
 import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
+import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
-import uz.genesis.trello.repository.auth.IEmployeeRepository;
+import uz.genesis.trello.mapper.hr.EmployeeMapper;
+import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.auth.IUserService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -35,12 +39,15 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
      * Common logger for use in subclasses.
      */
     protected final Log logger = LogFactory.getLog(getClass());
-    private GenericMapper genericMapper;
+    private final GenericMapper genericMapper;
     private EmployeeServiceValidator validator;
+    private final EmployeeMapper mapper;
     private IUserService userService;
 
-    public EmployeeService(IEmployeeRepository repository, BaseUtils utils, EmployeeServiceValidator validator, IUserService userService) {
+    @Autowired
+    public EmployeeService(IEmployeeRepository repository, BaseUtils utils, EmployeeServiceValidator validator, EmployeeMapper mapper, IUserService userService) {
         super(repository, utils);
+        this.mapper = mapper;
         this.genericMapper = Mappers.getMapper(GenericMapper.class);
         this.validator = validator;
         this.userService = userService;
@@ -68,4 +75,35 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
         }
 
     }
+
+    @Override
+    public ResponseEntity<DataDto<EmployeeDto>> update(@NotNull EmployeeUpdateDto dto) {
+        validator.validateOnUpdateWithUser(dto);
+
+            if(repository.call(dto, "updateEmployee", Types.BOOLEAN)){
+                return  get(dto.getUserId());
+            } else {
+                throw new RuntimeException(String.format("could not update employee with user id '%s'", dto.getUserId()));
+            }
+    }
+
+    @Override
+    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long aLong) {
+        if(repository.call(Employee.childBuilder().userId(aLong).build(), "deleteEmployee", Types.BOOLEAN)){
+            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
+        } else throw new RuntimeException((String.format("could not delete employee with user id '%s'", aLong)));
+    }
+
+    @Override
+    public ResponseEntity<DataDto<EmployeeDto>> get(Long userId) {
+        Employee employee = repository.find(EmployeeCriteria.childBuilder().selfId(userId).build());
+        if(utils.isEmpty(employee)){
+            logger.error(String.format("employee with id '%s' not found", userId));
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                    String.format("employee with id '%s' not found", userId)).build()), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(employee)), HttpStatus.OK);
+    }
+
+
 }

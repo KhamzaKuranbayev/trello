@@ -1,6 +1,6 @@
-package uz.genesis.trello.repository.auth;
+package uz.genesis.trello.repository.hr;
 
-import uz.genesis.trello.criterias.auth.EmployeeCriteria;
+import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.repository.IGenericCrudRepository;
 

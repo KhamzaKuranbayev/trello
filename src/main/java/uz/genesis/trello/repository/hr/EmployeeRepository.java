@@ -1,12 +1,10 @@
-package uz.genesis.trello.repository.auth;
+package uz.genesis.trello.repository.hr;
 
 import org.springframework.stereotype.Repository;
-import uz.genesis.trello.criterias.auth.EmployeeCriteria;
+import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.hr.Employee;
-import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 
-import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +13,7 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
     @Override
     protected void defineCriteriaOnQuerying(EmployeeCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
         if (!utils.isEmpty(criteria.getSelfId())) {
-            whereCause.add("t.id = :selfId");
+            whereCause.add("t.userId = :selfId");
             params.put("selfId", criteria.getSelfId());
         }
 

@@ -6,6 +6,7 @@ import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 import uz.genesis.trello.dto.hr.EmployeeDto;
+import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.hr.IEmployeeService;
 
@@ -28,5 +29,13 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     @PostMapping(value = API_PATH + V_1 + "/employees")
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody EmployeeCreateDto dto) {
         return service.create(dto);
+    }
+    @RequestMapping(value = API_PATH+V_1+"/employees", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    public ResponseEntity<DataDto<EmployeeDto>> update(@RequestBody EmployeeUpdateDto dto){
+        return service.update(dto);
+    }
+    @DeleteMapping(value = API_PATH + V_1 + "/employees/{id}")
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+        return service.delete(id);
     }
 }

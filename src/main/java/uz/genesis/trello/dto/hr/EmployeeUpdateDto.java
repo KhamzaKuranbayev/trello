@@ -18,7 +18,7 @@ import java.sql.Date;
 @AllArgsConstructor
 public class EmployeeUpdateDto implements CrudDto {
 
-    private Long id;
+
     private Long userId;
     private String birthDate;
     private String firstName;
