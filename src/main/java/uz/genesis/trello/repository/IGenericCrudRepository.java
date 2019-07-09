@@ -9,13 +9,15 @@ import uz.genesis.trello.domain.Auditable;
 
 public interface IGenericCrudRepository<T extends Auditable, C extends GenericCriteria> extends IGenericRepository<T, C> {
 
-    <S extends T> S save(S entity);
+    /*<S extends T> S save(S entity);
 
     void delete(T entity);
 
-    void deleteById(Long id);
+    void deleteById(Long id);*/
 
     <R> R call(T domain, String methodName, int outParamType);
 
     <C, R> R call(C domain, String methodName, int outParamType);
+
+    boolean delete(Long id, String methodName);
 }

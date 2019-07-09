@@ -14,10 +14,12 @@ import uz.genesis.trello.dto.GenericDto;
 public class PermissionDto extends GenericDto {
 
     private String name;
+    private String codeName;
 
     @Builder(builderMethodName = "childBuilder")
-    public PermissionDto(Long id, String name) {
+    public PermissionDto(Long id, String name, String codeName) {
         super(id);
         this.name = name;
+        this.codeName = codeName;
     }
 }

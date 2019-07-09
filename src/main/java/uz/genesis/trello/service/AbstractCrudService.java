@@ -28,7 +28,7 @@ public abstract class AbstractCrudService<T, CR extends CrudDto, UP extends Crud
         return null;
     }
 
-    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long aLong) {
+    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         return null;
     }
 }

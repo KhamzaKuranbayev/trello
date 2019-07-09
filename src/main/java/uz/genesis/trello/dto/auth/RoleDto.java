@@ -15,13 +15,15 @@ import java.util.List;
 public class RoleDto extends GenericDto {
 
     private String roleName;
+    private String codeName;
     private List<PermissionDto> permissions;
 
 
     @Builder(builderMethodName = "childBuilder")
-    public RoleDto(Long id, String roleName, List<PermissionDto> permissions) {
+    public RoleDto(Long id, String roleName, String codeName, List<PermissionDto> permissions) {
         super(id);
         this.roleName = roleName;
+        this.codeName = codeName;
         this.permissions = permissions;
     }
 }

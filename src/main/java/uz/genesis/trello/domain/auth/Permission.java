@@ -24,6 +24,9 @@ public class Permission  extends Auditable implements GrantedAuthority {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "code_name")
+    private String codeName;
+
     @Override
     public String getAuthority() {
         return getName();

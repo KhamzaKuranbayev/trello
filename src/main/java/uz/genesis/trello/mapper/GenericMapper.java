@@ -1,6 +1,7 @@
 package uz.genesis.trello.mapper;
 
 import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.dto.GenericDto;
 
@@ -9,6 +10,7 @@ import uz.genesis.trello.dto.GenericDto;
  */
 
 @Mapper(componentModel = "spring")
+@Component
 public interface GenericMapper {
 
     GenericDto fromDomain(Auditable domain);

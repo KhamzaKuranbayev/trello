@@ -170,7 +170,7 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
 
     @Transactional
     public <S extends T> S save(S entity) {
-        initEntityInformation();
+       /* initEntityInformation();
         if (entityInformation.isNew(entity)) {
             entity.setCreatedBy(userSession.getUser().getId());
             entityManager.persist(entity);
@@ -178,7 +178,9 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         } else {
             entity.setUpdatedBy(userSession.getUser().getId());
             return entityManager.merge(entity);
-        }
+        }*/
+
+        return null;
     }
 
     @Transactional
@@ -223,15 +225,14 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
                                     "{ ? = call " + methodName + " (?, ?) }")) {
                         function.registerOutParameter(1, outParamType);
                         function.setString(2, gson.toJson(domain));
-                        function.setLong(3, userSession.getUser().getId());
-                        function.execute();
-
-                        if (!utils.isEmpty(function.getWarnings())) {
-                            throw new RuntimeException(function.getWarnings().getMessage());
-                        }
+                        prepareFunction(function);
                         switch (outParamType) {
                             case Types.BOOLEAN:
                                 return function.getBoolean(1);
+                            case Types.VARCHAR:
+                                return function.getString(1);
+                            case Types.BIGINT:
+                                return function.getLong(1);
                         }
                         return function.getLong(1);
                     } catch (Exception ex) {
@@ -240,21 +241,47 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
                 });
     }
 
+    public boolean delete(Long id, String methodName) {
+        Session session = entityManager.unwrap(Session.class);
+        return session.doReturningWork(
+                connection -> {
+                    try (CallableStatement function = connection
+                            .prepareCall(
+                                    "{ ? = call " + methodName + " (?, ?) }")) {
+                        function.registerOutParameter(1, Types.BOOLEAN);
+                        function.setLong(2, id);
+                        prepareFunction(function);
+                        return function.getBoolean(1);
+                    } catch (Exception ex) {
+                        throw new CustomSqlException(ex.getMessage(), ex.getCause());
+                    }
+                });
+    }
+
+    private void prepareFunction(CallableStatement function) throws SQLException {
+        function.setLong(3, userSession.getUser().getId());
+        function.execute();
+
+        if (!utils.isEmpty(function.getWarnings())) {
+            throw new RuntimeException(function.getWarnings().getMessage());
+        }
+    }
+
     @Transactional
     public void delete(T entity) {
 
-        Assert.notNull(entity, "The entity must not be null!");
+        /*Assert.notNull(entity, "The entity must not be null!");
         entity.setUpdatedBy(userSession.getUser().getId());
-        entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+        entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));*/
     }
 
     @Transactional
     public void deleteById(Long id) {
-        initEntityInformation();
+        /*initEntityInformation();
         Assert.notNull(id, ID_MUST_NOT_BE_NULL);
 
         delete(findById(id).orElseThrow(() -> new EmptyResultDataAccessException(
-                String.format("No %s entity with id %s exists!", entityInformation.getJavaType(), id), 1)));
+                String.format("No %s entity with id %s exists!", entityInformation.getJavaType(), id), 1)));*/
     }
 
     @Transactional

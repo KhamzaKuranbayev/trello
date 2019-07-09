@@ -11,10 +11,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import uz.genesis.trello.utils.LocalDateTimeConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Created by 'Javokhir Mamadiyarov Uygunovich' on 10/5/18.
@@ -35,13 +37,14 @@ public abstract class Auditable implements BaseDomain, Serializable {
 
     @CreatedDate
     @CreationTimestamp
-    @Column(name = "created_at", columnDefinition = "DATE default NOW()")
-    private Date createdAt;
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP default NOW()")
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @UpdateTimestamp
-    @Column(name = "updated_at")
-    private  Date updatedAt;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted", columnDefinition = "NUMERIC default 0")
     @Type(type = "org.hibernate.type.NumericBooleanType")

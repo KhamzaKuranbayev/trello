@@ -23,6 +23,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.UserServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Types;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -69,11 +70,11 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
 
         validator.validateOnCreate(user);
 
-        user.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
+        dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
 
 
         try {
-            user = repository.save(user);
+            user.setId(repository.call(dto, "createUser", Types.BIGINT));
         } catch (Exception ex) {
             logger.error(ex);
             logger.error(String.format(" dto '%s' ", dto.toString()));
@@ -86,5 +87,22 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(user)), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<UserDto>> update(@NotNull UserUpdateDto dto) {
+
+        dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword() == null ? "12345" : dto.getPassword()));
+
+        if (repository.call(dto, "updateUser", Types.BOOLEAN)) {
+            return get(dto.getId());
+        } else {
+            throw new RuntimeException(String.format("could not update user with id '%s'", dto.getId()));
+        }
+    }
+
+    @Override
+    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
+        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteUser")), HttpStatus.OK);
     }
 }

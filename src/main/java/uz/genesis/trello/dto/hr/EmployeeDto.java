@@ -3,7 +3,8 @@ package uz.genesis.trello.dto.hr;
 import lombok.*;
 import uz.genesis.trello.dto.GenericDto;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 /**
  * Created by 'javokhir' on 04/07/2019
