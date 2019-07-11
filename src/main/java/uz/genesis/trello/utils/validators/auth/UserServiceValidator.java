@@ -2,6 +2,9 @@ package uz.genesis.trello.utils.validators.auth;
 
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.auth.UserCreateDto;
+import uz.genesis.trello.dto.auth.UserUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
@@ -16,11 +19,18 @@ import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
  */
 
 @Component
-public class UserServiceValidator extends BaseCrudValidator<User> {
+public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto, UserUpdateDto> {
 
 
     public UserServiceValidator(BaseUtils utils) {
         super(utils);
+    }
+
+    @Override
+    public void baseValidation(CrudDto domain) {
+        if (domain instanceof UserCreateDto) {
+        } else {
+        }
     }
 
     @Override
@@ -31,7 +41,8 @@ public class UserServiceValidator extends BaseCrudValidator<User> {
             throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
         } else if (utils.isEmpty(domain.getEmail())) {
             throw new ValidationException("email is required");
-        }if (!isValidEmail(domain.getEmail())) {
+        }
+        if (!isValidEmail(domain.getEmail())) {
             throw new ValidationException(String.format(" email '%s' is not valid", domain.getEmail()));
         } else if (utils.isEmpty(domain.getUserName())) {
             throw new ValidationException("userName is required");

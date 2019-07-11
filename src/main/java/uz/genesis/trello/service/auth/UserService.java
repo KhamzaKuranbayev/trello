@@ -68,13 +68,13 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserCreateDto dto) {
         User user = mapper.fromCreateDto(dto);
 
-        validator.validateOnCreate(user);
+        validator.validateDomainOnCreate(user);
 
         dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword()));
 
 
         try {
-            user.setId(repository.call(dto, "createUser", Types.BIGINT));
+            user.setId(repository.create(dto, "createUser"));
         } catch (Exception ex) {
             logger.error(ex);
             logger.error(String.format(" dto '%s' ", dto.toString()));
@@ -92,9 +92,11 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     @Override
     public ResponseEntity<DataDto<UserDto>> update(@NotNull UserUpdateDto dto) {
 
+        validator.validateOnUpdate(dto);
+
         dto.setPassword(oauthClientPasswordEncoder.encode(dto.getPassword() == null ? "12345" : dto.getPassword()));
 
-        if (repository.call(dto, "updateUser", Types.BOOLEAN)) {
+        if (repository.update(dto, "updateUser")) {
             return get(dto.getId());
         } else {
             throw new RuntimeException(String.format("could not update user with id '%s'", dto.getId()));
@@ -103,6 +105,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
 
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
+        validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteUser")), HttpStatus.OK);
     }
 }

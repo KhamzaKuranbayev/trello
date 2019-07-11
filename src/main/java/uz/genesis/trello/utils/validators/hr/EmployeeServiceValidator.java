@@ -2,6 +2,7 @@ package uz.genesis.trello.utils.validators.hr;
 
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.hr.Employee;
+import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
@@ -18,24 +19,24 @@ import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
  */
 
 @Component
-public class EmployeeServiceValidator extends BaseCrudValidator<Employee> {
+public class EmployeeServiceValidator extends BaseCrudValidator<Employee, EmployeeCreateDto, EmployeeUpdateDto> {
 
     public EmployeeServiceValidator(BaseUtils utils) {
         super(utils);
     }
 
-    public void validateOnCreateWithUser(EmployeeCreateDto dto) {
-        if (utils.isEmpty(dto)) {
+    @Override
+    public void baseValidation(CrudDto domain) {
+        if (utils.isEmpty(domain)) {
             throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Employee.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
         }
-    }
+        if (domain instanceof EmployeeCreateDto) {
 
-    public void validateOnUpdateWithUser(EmployeeUpdateDto dto) {
-        if (utils.isEmpty(dto)) {
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Employee.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
-        }
-        else if(utils.isEmpty(dto.getUserId())){
-            throw new ValidationException(String.format(ID_REQUIRED.example, utils.toErrorParams(Employee.class)));
+        } else {
+            EmployeeUpdateDto dto = (EmployeeUpdateDto) domain;
+            if (utils.isEmpty(dto.getUserId())) {
+                throw new ValidationException(String.format(ID_REQUIRED.example, utils.toErrorParams(Employee.class)));
+            }
         }
     }
 

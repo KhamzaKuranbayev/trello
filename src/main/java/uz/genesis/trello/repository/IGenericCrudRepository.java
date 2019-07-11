@@ -15,6 +15,10 @@ public interface IGenericCrudRepository<T extends Auditable, C extends GenericCr
 
     void deleteById(Long id);*/
 
+    <C> Long create(C domain, String methodName);
+
+    <C> Boolean update(C domain, String methodName);
+
     <R> R call(T domain, String methodName, int outParamType);
 
     <C, R> R call(C domain, String methodName, int outParamType);

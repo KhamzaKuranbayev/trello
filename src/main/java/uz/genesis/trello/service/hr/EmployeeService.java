@@ -56,7 +56,7 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull EmployeeCreateDto dto) {
 
-        validator.validateOnCreateWithUser(dto);
+        validator.validateOnCreate(dto);
 
         if (!utils.isEmpty(dto.getUser())) {
             ResponseEntity<DataDto<GenericDto>> userResult = userService.create(dto.getUser());
@@ -78,26 +78,27 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
 
     @Override
     public ResponseEntity<DataDto<EmployeeDto>> update(@NotNull EmployeeUpdateDto dto) {
-        validator.validateOnUpdateWithUser(dto);
+        validator.validateOnUpdate(dto);
 
-            if(repository.call(dto, "updateEmployee", Types.BOOLEAN)){
-                return  get(dto.getUserId());
-            } else {
-                throw new RuntimeException(String.format("could not update employee with user id '%s'", dto.getUserId()));
-            }
+        if (repository.update(dto, "updateEmployee")) {
+            return get(dto.getUserId());
+        } else {
+            throw new RuntimeException(String.format("could not update employee with user id '%s'", dto.getUserId()));
+        }
     }
 
     @Override
-    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long aLong) {
-        if(repository.call(Employee.childBuilder().userId(aLong).build(), "deleteEmployee", Types.BOOLEAN)){
+    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
+        validator.validateOnDelete(id);
+        if (repository.delete(id, "deleteEmployee")) {
             return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete employee with user id '%s'", aLong)));
+        } else throw new RuntimeException((String.format("could not delete employee with user id '%s'", id)));
     }
 
     @Override
     public ResponseEntity<DataDto<EmployeeDto>> get(Long userId) {
         Employee employee = repository.find(EmployeeCriteria.childBuilder().selfId(userId).build());
-        if(utils.isEmpty(employee)){
+        if (utils.isEmpty(employee)) {
             logger.error(String.format("employee with id '%s' not found", userId));
             return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                     String.format("employee with id '%s' not found", userId)).build()), HttpStatus.NOT_FOUND);

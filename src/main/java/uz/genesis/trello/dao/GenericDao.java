@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
-import org.hibernate.jdbc.ReturningWork;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
@@ -195,6 +192,16 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         }
 
         return result;
+    }
+
+    public <C> Long create(C domain, String methodName) {
+        Session session = entityManager.unwrap(Session.class);
+        return (Long) call(domain, methodName, session, Types.BIGINT);
+    }
+
+    public <C> Boolean update(C domain, String methodName) {
+        Session session = entityManager.unwrap(Session.class);
+        return (Boolean) call(domain, methodName, session, Types.BOOLEAN);
     }
 
     public <R> R call(T domain, String methodName, int outParamType) {
