@@ -22,12 +22,12 @@ public class UserController extends ApiController<IUserService> {
         super(service);
     }
 
-    @GetMapping(value = API_PATH + V_1 + "/users/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<UserDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/users")
+    @RequestMapping(value = API_PATH + V_1 + "/users", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody UserCreateDto dto) {
         return service.create(dto);
     }
@@ -37,12 +37,12 @@ public class UserController extends ApiController<IUserService> {
         return service.update(dto);
     }
 
-    @DeleteMapping(value = API_PATH + V_1 + "/users/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/users/attachRole")
-    public ResponseEntity<DataDto<UserDto>> attchRoles(@RequestBody AttachRoleDto dto){return service.attachRolesToUser(dto);}
+    @RequestMapping(value = API_PATH + V_1 + "/users/attachRole", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<UserDto>> attachRoles(@RequestBody AttachRoleDto dto){return service.attachRolesToUser(dto);}
 
 }

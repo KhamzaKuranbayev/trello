@@ -16,12 +16,12 @@ public class PermissionController extends ApiController<IPermissionService> {
     public PermissionController(IPermissionService service) {
         super(service);
     }
-    @GetMapping(value = API_PATH + V_1 + "/permissions/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/permissions/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<PermissionDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/permissions")
+    @RequestMapping(value = API_PATH + V_1 + "/permissions", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody PermissionCreateDto dto) {
         return service.create(dto);
     }
@@ -29,7 +29,7 @@ public class PermissionController extends ApiController<IPermissionService> {
     public ResponseEntity<DataDto<PermissionDto>> update(@RequestBody PermissionUpdateDto dto){
         return service.update(dto);
     }
-    @DeleteMapping(value = API_PATH + V_1 + "/permissions/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/permissions/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
     }

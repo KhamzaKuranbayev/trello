@@ -15,12 +15,13 @@ public class RoleController extends ApiController<IRoleService> {
     public RoleController(IRoleService service) {
         super(service);
     }
-    @GetMapping(value = API_PATH + V_1 + "/roles/{id}")
+
+    @RequestMapping(value = API_PATH + V_1 + "/roles/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<RoleDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/roles")
+    @RequestMapping(value = API_PATH + V_1 + "/roles", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody RoleCreateDto dto) {
         return service.create(dto);
     }
@@ -28,7 +29,7 @@ public class RoleController extends ApiController<IRoleService> {
     public ResponseEntity<DataDto<RoleDto>> update(@RequestBody RoleUpdateDto dto){
         return service.update(dto);
     }
-    @DeleteMapping(value = API_PATH + V_1 + "/roles/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/roles/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
     }

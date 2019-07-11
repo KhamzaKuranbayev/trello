@@ -12,12 +12,12 @@ public class GroupController extends ApiController<IGroupService> {
     public GroupController(IGroupService service) {
         super(service);
     }
-    @GetMapping(value = API_PATH + V_1 + "/groups/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/groups/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<GroupDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/groups")
+    @RequestMapping(value = API_PATH + V_1 + "/groups", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody GroupCreateDto dto) {
         return service.create(dto);
     }
@@ -25,7 +25,7 @@ public class GroupController extends ApiController<IGroupService> {
     public ResponseEntity<DataDto<GroupDto>> update(@RequestBody GroupUpdateDto dto){
         return service.update(dto);
     }
-    @DeleteMapping(value = API_PATH + V_1 + "/groups/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/groups/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
     }

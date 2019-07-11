@@ -21,12 +21,12 @@ public class EmployeeController extends ApiController<IEmployeeService> {
         super(service);
     }
 
-    @GetMapping(value = API_PATH + V_1 + "/employees/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/employees/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<EmployeeDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
 
-    @PostMapping(value = API_PATH + V_1 + "/employees")
+    @RequestMapping(value = API_PATH + V_1 + "/employees", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody EmployeeCreateDto dto) {
         return service.create(dto);
     }
@@ -34,7 +34,7 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     public ResponseEntity<DataDto<EmployeeDto>> update(@RequestBody EmployeeUpdateDto dto){
         return service.update(dto);
     }
-    @DeleteMapping(value = API_PATH + V_1 + "/employees/{id}")
+    @RequestMapping(value = API_PATH + V_1 + "/employees/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
     }
