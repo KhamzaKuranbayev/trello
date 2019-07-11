@@ -35,20 +35,20 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     /**
      * Common logger for use in subclasses.
      */
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
     private UserMapper mapper;
     private GenericMapper genericMapper;
     private UserServiceValidator validator;
 
-    @Autowired
-    private PasswordEncoder oauthClientPasswordEncoder;
+    private final PasswordEncoder oauthClientPasswordEncoder;
 
-    public UserService(IUserRepository repository, BaseUtils utils, UserServiceValidator validator) {
+    public UserService(IUserRepository repository, BaseUtils utils, UserServiceValidator validator, UserMapper mapper, GenericMapper genericMapper, PasswordEncoder oauthClientPasswordEncoder) {
         super(repository, utils);
-        this.mapper = Mappers.getMapper(UserMapper.class);
-        this.genericMapper = Mappers.getMapper(GenericMapper.class);
+        this.mapper = mapper;
+        this.genericMapper = genericMapper;
         this.validator = validator;
+        this.oauthClientPasswordEncoder = oauthClientPasswordEncoder;
     }
 
     @Override
