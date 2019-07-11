@@ -7,7 +7,7 @@ import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.hr.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.hr.IGroupService;
-
+@RestController
 public class GroupController extends ApiController<IGroupService> {
     public GroupController(IGroupService service) {
         super(service);

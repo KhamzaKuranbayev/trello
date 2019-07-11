@@ -35,7 +35,7 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
     }
 
     public void validateOnAttach(AttachRoleDto attachRoleDto){
-        if(utils.isEmpty(attachRoleDto.getId())){
+        if(utils.isEmpty(attachRoleDto.getUserId())){
             throw new ValidationException("id is required");
         }
         if(utils.isEmpty(attachRoleDto.getRoles())){

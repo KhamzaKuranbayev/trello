@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.GenericDto;
 
 import java.util.List;
 
@@ -14,6 +15,6 @@ public class RoleUpdateDto implements CrudDto {
     private Long id;
     private String roleName;
     private String codeName;
-    private List<PermissionDto> permissions;
+    private List<GenericDto> permissions;
 
 }

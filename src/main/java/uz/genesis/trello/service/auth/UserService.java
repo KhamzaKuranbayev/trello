@@ -114,9 +114,9 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     public ResponseEntity<DataDto<UserDto>> attachRolesToUser(@NotNull AttachRoleDto dto){
         validator.validateOnAttach(dto);
         if(repository.call(dto, "attachRole", Types.BOOLEAN)){
-            return get(dto.getId());
+            return get(dto.getUserId());
         } else {
-            throw new RuntimeException((String.format("could not attach roles to user with id '%s", dto.getId())));
+            throw new RuntimeException((String.format("could not attach roles to user with id '%s", dto.getUserId())));
         }
     }
 
