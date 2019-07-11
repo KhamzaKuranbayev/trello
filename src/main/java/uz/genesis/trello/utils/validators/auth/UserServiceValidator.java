@@ -3,6 +3,7 @@ package uz.genesis.trello.utils.validators.auth;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.auth.AttachRoleDto;
 import uz.genesis.trello.dto.auth.UserCreateDto;
 import uz.genesis.trello.dto.auth.UserUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
@@ -30,6 +31,15 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
     public void baseValidation(CrudDto domain) {
         if (domain instanceof UserCreateDto) {
         } else {
+        }
+    }
+
+    public void validateOnAttach(AttachRoleDto attachRoleDto){
+        if(utils.isEmpty(attachRoleDto.getId())){
+            throw new ValidationException("id is required");
+        }
+        if(utils.isEmpty(attachRoleDto.getRoles())){
+            throw new ValidationException("roles must not be null");
         }
     }
 

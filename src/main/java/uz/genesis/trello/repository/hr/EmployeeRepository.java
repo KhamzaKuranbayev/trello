@@ -38,4 +38,5 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
         }
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
 }

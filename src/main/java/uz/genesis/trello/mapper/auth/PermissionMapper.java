@@ -6,6 +6,7 @@ import uz.genesis.trello.domain.auth.Permission;
 import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.mapper.BaseMapper;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR, componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface PermissionMapper extends BaseMapper<Permission, PermissionDto, PermissionCreateDto, PermissionUpdateDto> {
+
 }

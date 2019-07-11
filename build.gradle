@@ -34,10 +34,7 @@ bootJar {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-
-	compile "org.mapstruct:mapstruct-jdk8:1.3.0.Final", "org.projectlombok:lombok:1.18.8"
-	compileOnly "org.mapstruct:mapstruct-processor:1.3.0.Final", "org.projectlombok:lombok:1.18.8"
-
+	
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-web') {
 		exclude module: "spring-boot-starter-tomcat"

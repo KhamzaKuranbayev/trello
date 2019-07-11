@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.domain.settings.Type;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
@@ -108,4 +109,16 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteUser")), HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<DataDto<UserDto>> attachRolesToUser(@NotNull AttachRoleDto dto){
+        validator.validateOnAttach(dto);
+        if(repository.call(dto, "attachRole", Types.BOOLEAN)){
+            return get(dto.getId());
+        } else {
+            throw new RuntimeException((String.format("could not attach roles to user with id '%s", dto.getId())));
+        }
+    }
+
+
 }

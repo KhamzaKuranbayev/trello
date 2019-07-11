@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.AttachRoleDto;
 import uz.genesis.trello.dto.auth.UserCreateDto;
 import uz.genesis.trello.dto.auth.UserDto;
 import uz.genesis.trello.dto.auth.UserUpdateDto;
@@ -40,5 +41,8 @@ public class UserController extends ApiController<IUserService> {
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
+
+    @PostMapping(value = API_PATH + V_1 + "/users/attachRole")
+    public ResponseEntity<DataDto<UserDto>> attchRoles(@RequestBody AttachRoleDto dto){return service.attachRolesToUser(dto);}
 
 }

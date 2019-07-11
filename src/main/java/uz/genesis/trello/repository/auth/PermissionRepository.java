@@ -12,7 +12,7 @@ import java.util.Map;
 public class PermissionRepository extends GenericDao<Permission, PermissionCriteria> implements IPermissionRepository {
 
     @Override
-    protected void onDefineWhereCause(PermissionCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+    protected void defineCriteriaOnQuerying(PermissionCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
         if(!utils.isEmpty(criteria.getSelfId())){
             whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());

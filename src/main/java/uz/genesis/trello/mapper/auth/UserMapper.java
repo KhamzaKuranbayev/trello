@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.dto.auth.AttachRoleDto;
 import uz.genesis.trello.dto.auth.UserCreateDto;
 import uz.genesis.trello.dto.auth.UserDto;
 import uz.genesis.trello.dto.auth.UserUpdateDto;
