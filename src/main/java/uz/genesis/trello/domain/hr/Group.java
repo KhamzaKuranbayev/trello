@@ -20,6 +20,7 @@ import javax.persistence.Table;
 @Table(name = "hr_groups")
 public class Group extends Auditable {
 
+    @Column(unique = true)
     private String name;
 
     @Column(name = "is_watcher")
