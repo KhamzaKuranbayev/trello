@@ -1,5 +1,6 @@
 package uz.genesis.trello.service.hr;
 
+import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,22 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull GroupCreateDto dto) {
-        return super.create(dto);
+
+        Group group = groupMapper.fromCreateDto(dto);
+        validator.validateDomainOnCreate(group);
+        try{
+            group.setId(repository.create(dto, "createGroup"));
+        }catch (Exception ex){
+            logger.error(ex);
+            logger.error(String.format(" dto '%s' " , dto.toString()));
+            throw new RuntimeException(ex);
+        }
+        if(utils.isEmpty(group.getId())){
+            logger.error(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
+        }
+
+        return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(group)), HttpStatus.CREATED);
     }
 
     @Override
@@ -51,5 +67,23 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
                     String.format("group with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(group)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<GroupDto>> update(@NotNull GroupUpdateDto dto) {
+
+        validator.validateOnUpdate(dto);
+        if (repository.update(dto, "updateGroup")) {
+            return get(dto.getId());
+        } else {
+            throw new RuntimeException(String.format("could not update group with id '%s'", dto.getId()));
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
+        validator.validateOnDelete(id);
+        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteGroup")), HttpStatus.OK);
     }
 }
