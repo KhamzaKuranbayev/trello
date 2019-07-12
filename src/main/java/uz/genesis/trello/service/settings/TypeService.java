@@ -12,6 +12,7 @@ import uz.genesis.trello.domain.settings.Type;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.dto.settings.SubTypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
@@ -93,5 +94,24 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteType")), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<GenericDto>> createSubType(SubTypeCreateDto dto) {
+        Type type = mapper.fromSubTypeCreaeteDto(dto);
+        validator.validateOnSubTypeCreate(dto);
+        try{
+            type.setId(repository.create(dto, "createSubType"));
+        }catch (Exception ex){
+            logger.error(ex);
+            logger.error(String.format(" dto '%s' " , dto.toString()));
+            throw new RuntimeException(ex);
+        }
+        if(utils.isEmpty(type.getId())){
+            logger.error(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
+        }
+
+        return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(type)), HttpStatus.CREATED);
     }
 }

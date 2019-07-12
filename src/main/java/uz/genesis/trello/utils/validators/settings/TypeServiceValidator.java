@@ -3,6 +3,7 @@ package uz.genesis.trello.utils.validators.settings;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.settings.Type;
 import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.settings.SubTypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
@@ -28,6 +29,14 @@ public class TypeServiceValidator extends BaseCrudValidator<Type, TypeCreateDto,
     @Override
     public void baseValidation(CrudDto domain) {
 
+    }
+
+    public void validateOnSubTypeCreate(SubTypeCreateDto subTypeCreateDto){
+        if(utils.isEmpty(subTypeCreateDto)){
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Type.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+        } else if(utils.isEmpty(subTypeCreateDto.getTypeCode())){
+            throw new RuntimeException("TypeCode  is required");
+        }
     }
 
     @Override

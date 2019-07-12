@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.dto.settings.SubTypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
@@ -31,5 +32,9 @@ public class TypeController extends ApiController<ITypeService> {
     @RequestMapping(value = API_PATH + V_1 + "/types/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
+    }
+    @RequestMapping(value = API_PATH + V_1 + "/types/subType", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<GenericDto>> createSubType(@RequestBody SubTypeCreateDto dto){
+        return service.createSubType(dto);
     }
 }

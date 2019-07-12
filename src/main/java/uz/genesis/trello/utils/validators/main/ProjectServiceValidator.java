@@ -5,7 +5,6 @@ import uz.genesis.trello.domain.main.Project;
 import uz.genesis.trello.domain.main.ProjectMember;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.main.ProjectCreateDto;
-import uz.genesis.trello.dto.main.ProjectMemberUpdateDto;
 import uz.genesis.trello.dto.main.ProjectUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
