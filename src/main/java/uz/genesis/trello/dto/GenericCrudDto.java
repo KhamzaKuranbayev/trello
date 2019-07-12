@@ -12,4 +12,6 @@ public abstract class GenericCrudDto implements CrudDto {
     public String toString() {
         return new Gson().toJson(this);
     }
+
+
 }
