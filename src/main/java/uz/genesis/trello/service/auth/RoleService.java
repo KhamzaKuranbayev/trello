@@ -79,7 +79,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
         }
     }
 
-//    public ResponseEntity<Da>
+
 
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {

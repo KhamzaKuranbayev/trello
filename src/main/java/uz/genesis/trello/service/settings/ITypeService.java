@@ -12,4 +12,5 @@ import uz.genesis.trello.service.IGenericCrudService;
 
 public interface ITypeService extends IGenericCrudService<TypeDto, TypeCreateDto, TypeUpdateDto, Long, TypeCriteria> {
 
+
 }

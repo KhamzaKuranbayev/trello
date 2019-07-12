@@ -17,17 +17,17 @@ import uz.genesis.trello.mapper.main.ProjectMemberMapper;
 import uz.genesis.trello.repository.main.IProjectMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
-import uz.genesis.trello.utils.validators.main.ProjectMemberValidator;
+import uz.genesis.trello.utils.validators.main.ProjectMemberServiceValidator;
 
 import javax.validation.constraints.NotNull;
 @Service
 public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, ProjectMemberCriteria, IProjectMemberRepository> implements IProjectMemberService{
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
-    private final ProjectMemberValidator validator;
+    private final ProjectMemberServiceValidator validator;
     private final ProjectMemberMapper mapper;
 
-    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectMemberValidator validator, ProjectMemberMapper mapper) {
+    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectMemberServiceValidator validator, ProjectMemberMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
         this.validator = validator;

@@ -19,7 +19,7 @@ import uz.genesis.trello.mapper.main.ProjectMapper;
 import uz.genesis.trello.repository.main.IProjectRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
-import uz.genesis.trello.utils.validators.main.ProjectValidator;
+import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,10 +27,10 @@ import javax.validation.constraints.NotNull;
 public class ProjectService  extends AbstractCrudService<ProjectDto, ProjectCreateDto, ProjectUpdateDto, ProjectCriteria, IProjectRepository> implements IProjectService{
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
-    private final ProjectValidator validator;
+    private final ProjectServiceValidator validator;
     private final ProjectMapper mapper;
 
-    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectValidator validator, ProjectMapper mapper) {
+    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectServiceValidator validator, ProjectMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
         this.validator = validator;

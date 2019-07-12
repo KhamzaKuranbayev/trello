@@ -1,9 +1,6 @@
 package uz.genesis.trello.criterias.settings;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import uz.genesis.trello.criterias.GenericCriteria;
 
 /**
@@ -19,4 +16,12 @@ public class TypeCriteria extends GenericCriteria {
     private String name;
     private String typeCode;
     private String value;
+
+    @Builder(builderMethodName = "childBuilder")
+    public TypeCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, String name, String typeCode, String value) {
+        super(selfId, page, perPage, sortBy, sortDirection);
+        this.name = name;
+        this.typeCode = typeCode;
+        this.value = value;
+    }
 }

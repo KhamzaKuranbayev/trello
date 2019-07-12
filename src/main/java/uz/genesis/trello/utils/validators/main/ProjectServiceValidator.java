@@ -16,8 +16,8 @@ import uz.genesis.trello.utils.validators.BaseCrudValidator;
 
 import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
 @Component
-public class ProjectValidator extends BaseCrudValidator<Project, ProjectCreateDto, ProjectUpdateDto> {
-    public ProjectValidator(BaseUtils utils) {
+public class ProjectServiceValidator extends BaseCrudValidator<Project, ProjectCreateDto, ProjectUpdateDto> {
+    public ProjectServiceValidator(BaseUtils utils) {
         super(utils);
     }
 
