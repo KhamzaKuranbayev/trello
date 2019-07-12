@@ -43,8 +43,6 @@ public class ProjectServiceValidator extends BaseCrudValidator<Project, ProjectC
             throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(ProjectMember.class)));
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(ID_REQUIRED.example);
-        } else if (utils.isEmpty(domain.getGroup())) {
-            throw new ValidationException("group is required");
         } else if (utils.isEmpty(domain.getProjectType())) {
             throw new ValidationException("type is required");
         }

@@ -41,7 +41,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getMessage(), ex);
 //        logger.error("#requestBody: " + request.get);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                message).systemName(ex.getSystemMessage()).build()), HttpStatus.UNAUTHORIZED);
+                message).systemName(ex.getSystemMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String getLastCause(Throwable throwable) {
