@@ -3,6 +3,7 @@ package uz.genesis.trello.domain.main;
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.hr.Group;
+import uz.genesis.trello.domain.settings.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,4 +27,8 @@ public class Project extends Auditable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private List<ProjectMember> members = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "project_type", nullable = false, referencedColumnName = "id")
+    private Type projectType;
 }
