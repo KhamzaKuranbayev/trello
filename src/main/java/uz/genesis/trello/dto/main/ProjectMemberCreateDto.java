@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.main;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.GenericCrudDto;
@@ -10,7 +10,7 @@ import uz.genesis.trello.dto.GenericDto;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Api(value = "Project Member create example")
+@ApiModel(value = "Project Member create")
 public class ProjectMemberCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true, example = "1")
     private long projectId;

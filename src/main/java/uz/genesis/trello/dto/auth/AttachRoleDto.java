@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.auth;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.GenericDto;
@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Api(value = "Attaching roles To User request ")
+@ApiModel(value = "Attaching roles To User request ")
 public class AttachRoleDto {
     @ApiModelProperty(required = true, example = "1")
     private Long userId;

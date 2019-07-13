@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.hr;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Api(value = "Group update request Example")
+@ApiModel(value = "Group update request")
 public class GroupUpdateDto extends GenericCrudDto {
     @ApiModelProperty(required = true, example = "1")
     private Long id;

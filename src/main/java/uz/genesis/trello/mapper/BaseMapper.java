@@ -1,5 +1,8 @@
 package uz.genesis.trello.mapper;
 
+import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.dto.CrudDto;
+
 import java.util.List;
 
 /**
@@ -10,9 +13,9 @@ import java.util.List;
  * @param <UD> - UpdateDTO
  */
 
-public interface BaseMapper<E, D, CD, UD> {
+public interface BaseMapper<E extends Auditable, D, CD extends CrudDto, UD extends CrudDto> {
     D toDto(E entity);
-    E fromDto(E entity);
+    E fromDto(D dto);
     List<D> toDto(List<E> entityList);
     List<E> fromDto(List<D> dtoList);
     E fromCreateDto(CD createDto);

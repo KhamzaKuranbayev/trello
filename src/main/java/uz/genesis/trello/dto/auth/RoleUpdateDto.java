@@ -1,5 +1,6 @@
 package uz.genesis.trello.dto.auth;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@ApiModel(value = "Role update request")
 public class RoleUpdateDto implements CrudDto {
     @ApiModelProperty(required = true, example = "15")
     private Long id;

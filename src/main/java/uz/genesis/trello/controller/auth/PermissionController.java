@@ -1,6 +1,7 @@
 package uz.genesis.trello.controller.auth;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.GenericDto;

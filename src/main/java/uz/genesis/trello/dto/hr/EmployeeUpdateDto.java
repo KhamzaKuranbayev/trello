@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.hr;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Api(value = "Employee update request example")
+@ApiModel(value = "Employee update request")
 public class EmployeeUpdateDto implements CrudDto {
 
     @ApiModelProperty(required = true, example = "1")

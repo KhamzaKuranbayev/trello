@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.hr;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import uz.genesis.trello.dto.auth.UserCreateDto;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Api(value = "Employee create request example")
+@ApiModel(value = "Employee create request")
 public class EmployeeCreateDto extends GenericCrudDto {
 
     @ApiModelProperty(required = true, example = "1")

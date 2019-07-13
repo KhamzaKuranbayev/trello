@@ -1,6 +1,5 @@
 package uz.genesis.trello.dto.auth;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -17,7 +16,7 @@ import uz.genesis.trello.dto.CrudDto;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Api(value = "User create request example")
+@ApiModel(value = "User create request")
 public class UserCreateDto implements CrudDto {
     @ApiModelProperty( example = "simple@gmail.com")
     private String email;
