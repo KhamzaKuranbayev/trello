@@ -1,10 +1,13 @@
 package uz.genesis.trello.dto.auth;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.GenericDto;
 
 import java.util.List;
 
@@ -16,11 +19,20 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Api("User update request example")
 public class UserUpdateDto implements CrudDto {
 
+    @ApiModelProperty(required = true, example = "1")
     private Long id;
+
+    @ApiModelProperty(example = "test@gmail.com")
     private String email;
+
+    @ApiModelProperty(example = "username", required = true)
     private String userName;
+
+    @ApiModelProperty(example = "password", required = true)
     private String password;
-    private List<RoleDto> roles;
+
+    private List<GenericDto> roles;
 }

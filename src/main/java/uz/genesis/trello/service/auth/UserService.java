@@ -62,7 +62,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
                     String.format("user with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new DataDto<>(mapper.fromUserToDto(user)), HttpStatus.OK);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(user)), HttpStatus.OK);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
         if(repository.call(dto, "attachRole", Types.BOOLEAN)){
             return get(dto.getUserId());
         } else {
-            throw new RuntimeException((String.format("could not attach roles to user with id '%s", dto.getUserId())));
+            throw new RuntimeException((String.format("could not attach roles to user with id '%s'", dto.getUserId())));
         }
     }
 

@@ -1,5 +1,7 @@
 package uz.genesis.trello.controller.settings;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
@@ -10,7 +12,10 @@ import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
 import uz.genesis.trello.service.settings.ITypeService;
+
+
 @RestController
+@Api(value = "Types")
 public class TypeController extends ApiController<ITypeService> {
     public TypeController(ITypeService service) {
         super(service);
@@ -33,7 +38,9 @@ public class TypeController extends ApiController<ITypeService> {
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
     }
-    @RequestMapping(value = API_PATH + V_1 + "/types/subType", method = RequestMethod.POST)
+
+    @ApiOperation(value = "Creating sub types")
+    @RequestMapping(value = API_PATH + V_1 + "/types/subTypes", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> createSubType(@RequestBody SubTypeCreateDto dto){
         return service.createSubType(dto);
     }

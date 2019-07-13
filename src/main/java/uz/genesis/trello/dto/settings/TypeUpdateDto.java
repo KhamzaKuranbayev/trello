@@ -1,5 +1,6 @@
 package uz.genesis.trello.dto.settings;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +16,14 @@ import uz.genesis.trello.dto.CrudDto;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TypeUpdateDto implements CrudDto {
-
+    @ApiModelProperty(required = true)
     private Long id;
+
+    @ApiModelProperty(required = true)
     private String name;
-    private String typeCode;
+
     private Integer ordering;
+
+    @ApiModelProperty(required = true)
+    private String value;
 }

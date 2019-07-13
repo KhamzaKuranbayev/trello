@@ -1,5 +1,6 @@
 package uz.genesis.trello.dto.auth;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.CrudDto;
 @Getter
@@ -8,7 +9,12 @@ import uz.genesis.trello.dto.CrudDto;
 @AllArgsConstructor
 @Builder
 public class PermissionUpdateDto implements CrudDto {
+    @ApiModelProperty(required = true, example = "1")
     private Long id;
+
+    @ApiModelProperty(required = true, example = "Write")
     private String name;
+
+    @ApiModelProperty(required = true, example = "WRITE")
     private String codeName;
 }
