@@ -25,6 +25,7 @@ public class Type extends Auditable {
     @Column(name = "type_code")
     private String typeCode;
 
+    @Column(unique = true)
     private String value;
 
     @Column(name = "ordering", columnDefinition = "NUMERIC default null")

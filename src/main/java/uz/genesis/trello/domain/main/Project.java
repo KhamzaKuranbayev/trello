@@ -28,6 +28,10 @@ public class Project extends Auditable {
     @JoinColumn(name = "project_id")
     private List<ProjectMember> members = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id")
+    private List<ProjectColumn> columns = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "project_type", nullable = false, referencedColumnName = "id")
     private Type projectType;
