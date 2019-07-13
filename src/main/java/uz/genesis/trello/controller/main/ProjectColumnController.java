@@ -11,8 +11,8 @@ import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.IProjectColumnService;
 
 @RestController
-public class ProjectColumnConrtoller extends ApiController<IProjectColumnService>  {
-    public ProjectColumnConrtoller(IProjectColumnService service) {
+public class ProjectColumnController extends ApiController<IProjectColumnService>  {
+    public ProjectColumnController(IProjectColumnService service) {
         super(service);
     }
 
