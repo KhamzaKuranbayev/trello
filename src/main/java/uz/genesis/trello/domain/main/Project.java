@@ -26,7 +26,7 @@ public class Project extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
-    private List<ProjectMember> members = new ArrayList<>();
+    private List <ProjectMember> members = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")

@@ -1,6 +1,7 @@
 package uz.genesis.trello.dto;
 
 import com.google.gson.Gson;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 /**
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class GenericDto implements Dto {
-
+    @ApiModelProperty(required = true, example = "1")
     private Long id;
 
     @Override
