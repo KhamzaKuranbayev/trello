@@ -28,7 +28,7 @@ public class Task extends Auditable {
     @Column(columnDefinition = "TEXT", unique = true)
     private String name;
 
-    @Column(columnDefinition = "TEXT", unique = true)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @CreationTimestamp
