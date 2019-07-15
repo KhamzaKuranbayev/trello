@@ -32,6 +32,11 @@ public class Task extends Auditable {
     private String description;
 
     @CreationTimestamp
+    @Column(name = "start_at", columnDefinition = "TIMESTAMP default now()")
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime startAt;
+
+    @CreationTimestamp
     @Column(name = "dead_line", columnDefinition = "TIMESTAMP default null")
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime deadLine;
