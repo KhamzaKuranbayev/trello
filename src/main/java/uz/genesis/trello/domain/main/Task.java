@@ -36,6 +36,9 @@ public class Task extends Auditable {
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime deadLine;
 
+    @Column(name = "ordering", columnDefinition = "NUMERIC default null")
+    private Integer ordering;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
     private List<TaskTag> tags = new ArrayList<>();
