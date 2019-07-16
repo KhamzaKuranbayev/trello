@@ -2,6 +2,7 @@ package uz.genesis.trello.domain.main;
 
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.domain.hr.Group;
 import uz.genesis.trello.domain.settings.Type;
 
@@ -20,9 +21,16 @@ public class Project extends Auditable {
 
     private String name;
 
+    @Column(name = "code_name")
+    private String codeName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager", referencedColumnName = "user_id")
+    private Employee manager;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
