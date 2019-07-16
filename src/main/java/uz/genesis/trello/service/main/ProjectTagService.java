@@ -23,9 +23,14 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectTagValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
-public class ProjectTagService extends AbstractCrudService<ProjectTagDto, ProjectTagCreateDto, ProjectTagUpdateDto, ProjectTagCriteria, IProjectTagRepository> implements IProjectTagService{
+public class ProjectTagService extends AbstractCrudService<ProjectTagDto, ProjectTagCreateDto, ProjectTagUpdateDto, ProjectTagCriteria, IProjectTagRepository> implements IProjectTagService {
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final GenericMapper genericMapper;
+    private final ProjectTagValidator validator;
+    private final ProjectTagMapper mapper;
     @Autowired
     public ProjectTagService(IProjectTagRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectTagValidator validator, ProjectTagMapper mapper) {
         super(repository, utils);
@@ -34,24 +39,13 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
         this.mapper = mapper;
     }
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    private final GenericMapper genericMapper;
-    private final ProjectTagValidator validator;
-    private final ProjectTagMapper mapper;
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectTagCreateDto dto) {
 
         ProjectTag projectTag = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectTag);
-        try{
-            projectTag.setId(repository.create(dto, "createProjectTag"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(projectTag.getId())){
+        projectTag.setId(repository.create(dto, "createProjectTag"));
+        if (utils.isEmpty(projectTag.getId())) {
             logger.error(String.format("Non ProjectTagCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non ProjectTagCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -87,5 +81,10 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
                     String.format("projectTag with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(projectTag)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<ProjectTagDto>>> getAll(ProjectTagCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

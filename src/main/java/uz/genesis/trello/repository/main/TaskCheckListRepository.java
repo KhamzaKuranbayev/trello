@@ -21,6 +21,10 @@ public class TaskCheckListRepository extends GenericDao<TaskCheckList, TaskCheck
             whereCause.add("t.text = :text");
             params.put("text", criteria.getText());
         }
+        if(!utils.isEmpty(criteria.isChecked())){
+            whereCause.add("t.checked = :checked");
+            params.put("checked", criteria.isChecked());
+        }
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }

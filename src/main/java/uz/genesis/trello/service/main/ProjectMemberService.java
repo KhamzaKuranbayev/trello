@@ -20,6 +20,8 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectMemberServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+
 @Service
 public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, ProjectMemberCriteria, IProjectMemberRepository> implements IProjectMemberService{
     protected final Log logger = LogFactory.getLog(getClass());
@@ -39,13 +41,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
         ProjectMember projectMember = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectMember);
-        try{
             projectMember.setId(repository.create(dto, "createProjectMember"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
         if(utils.isEmpty(projectMember.getId())){
             logger.error(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
@@ -83,4 +79,9 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 //        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProjectMember")), HttpStatus.OK);
 //    }
 
+
+    @Override
+    public ResponseEntity<DataDto<List<ProjectMemberDto>>> getAll(ProjectMemberCriteria criteria) {
+         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
 }

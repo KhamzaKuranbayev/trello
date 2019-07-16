@@ -13,6 +13,7 @@ import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.auth.IUserService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -47,5 +48,10 @@ public class UserController extends ApiController<IUserService> {
 
     @RequestMapping(value = API_PATH + V_1 + "/users/attachRole", method = RequestMethod.POST)
     public ResponseEntity<DataDto<UserDto>> attachRoles(@RequestBody AttachRoleDto dto){return service.attachRolesToUser(dto);}
+
+    @RequestMapping(value = API_PATH + V_1 + "/users", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<UserDto>>> getAll(@Valid UserCriteria criteria) {
+        return service.getAll(criteria);
+    }
 
 }

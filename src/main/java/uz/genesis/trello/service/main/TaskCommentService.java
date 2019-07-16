@@ -23,9 +23,14 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCommentValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
-public class TaskCommentService extends AbstractCrudService<TaskCommentDto, TaskCommentCreateDto, TaskCommentUpdateDto, TaskCommentCriteria, ITaskCommentRepository>  implements ITaskCommentService {
+public class TaskCommentService extends AbstractCrudService<TaskCommentDto, TaskCommentCreateDto, TaskCommentUpdateDto, TaskCommentCriteria, ITaskCommentRepository> implements ITaskCommentService {
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final GenericMapper genericMapper;
+    private final TaskCommentValidator validator;
+    private final TaskCommentMapper mapper;
     @Autowired
     public TaskCommentService(ITaskCommentRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCommentValidator validator, TaskCommentMapper mapper) {
         super(repository, utils);
@@ -34,24 +39,13 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
         this.mapper = mapper;
     }
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    private final GenericMapper genericMapper;
-    private final TaskCommentValidator validator;
-    private final TaskCommentMapper mapper;
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCommentCreateDto dto) {
 
         TaskComment taskComment = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(taskComment);
-        try{
-            taskComment.setId(repository.create(dto, "createTaskComment"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(taskComment.getId())){
+        taskComment.setId(repository.create(dto, "createTaskComment"));
+        if (utils.isEmpty(taskComment.getId())) {
             logger.error(String.format("Non TaskCommentCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TaskCommentCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -87,5 +81,10 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
                     String.format("taskComment with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskComment)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<TaskCommentDto>>> getAll(TaskCommentCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

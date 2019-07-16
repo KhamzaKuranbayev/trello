@@ -22,9 +22,10 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
-public class ProjectService  extends AbstractCrudService<ProjectDto, ProjectCreateDto, ProjectUpdateDto, ProjectCriteria, IProjectRepository> implements IProjectService{
+public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreateDto, ProjectUpdateDto, ProjectCriteria, IProjectRepository> implements IProjectService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
     private final ProjectServiceValidator validator;
@@ -38,20 +39,13 @@ public class ProjectService  extends AbstractCrudService<ProjectDto, ProjectCrea
     }
 
 
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectCreateDto dto) {
 
         Project project = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(project);
-        try{
-            project.setId(repository.create(dto, "createProject"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(project.getId())){
+        project.setId(repository.create(dto, "createProject"));
+        if (utils.isEmpty(project.getId())) {
             logger.error(String.format("Non ProjectCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non ProjectCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -62,7 +56,7 @@ public class ProjectService  extends AbstractCrudService<ProjectDto, ProjectCrea
     @Override
     public ResponseEntity<DataDto<ProjectDto>> get(Long id) {
         Project project = repository.find(ProjectCriteria.childBuilder().selfId(id).build());
-        if(utils.isEmpty(project)){
+        if (utils.isEmpty(project)) {
             logger.error(String.format("project with id '%s' not found", id));
             return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                     String.format("project with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
@@ -88,4 +82,8 @@ public class ProjectService  extends AbstractCrudService<ProjectDto, ProjectCrea
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProject")), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<DataDto<List<ProjectDto>>> getAll(ProjectCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
 }

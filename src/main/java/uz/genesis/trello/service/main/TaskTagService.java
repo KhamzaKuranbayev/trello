@@ -22,10 +22,15 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskTagValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 @Service
 public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreateDto, TaskTagUpdateDto, TaskTagCriteria, ITaskTagRepository> implements ITaskTagService {
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final GenericMapper genericMapper;
+    private final TaskTagValidator validator;
+    private final TaskTagMapper mapper;
     public TaskTagService(ITaskTagRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskTagValidator validator, TaskTagMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
@@ -33,25 +38,13 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
         this.mapper = mapper;
     }
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    private final GenericMapper genericMapper;
-    private final TaskTagValidator validator;
-    private final TaskTagMapper mapper;
-
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskTagCreateDto dto) {
 
         TaskTag tasktag = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(tasktag);
-        try{
-            tasktag.setId(repository.create(dto, "createProjectTaskTag"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(tasktag.getId())){
+        tasktag.setId(repository.create(dto, "createProjectTaskTag"));
+        if (utils.isEmpty(tasktag.getId())) {
             logger.error(String.format("Non TaskTagCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TaskTagCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -89,5 +82,8 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(tasktag)), HttpStatus.OK);
     }
 
-
+    @Override
+    public ResponseEntity<DataDto<List<TaskTagDto>>> getAll(TaskTagCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
 }

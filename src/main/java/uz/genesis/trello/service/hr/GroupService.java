@@ -30,6 +30,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     private final GenericMapper genericMapper;
     private final GroupServiceValidator validator;
     private final GroupMapper groupMapper;
+
     @Autowired
     public GroupService(IGroupRepository repository, BaseUtils utils, GenericMapper genericMapper, GroupServiceValidator validator, GroupMapper groupMapper) {
         super(repository, utils);
@@ -43,14 +44,8 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
         Group group = groupMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(group);
-        try{
-            group.setId(repository.create(dto, "createGroup"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(group.getId())){
+        group.setId(repository.create(dto, "createGroup"));
+        if (utils.isEmpty(group.getId())) {
             logger.error(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -61,7 +56,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     @Override
     public ResponseEntity<DataDto<GroupDto>> get(Long id) {
         Group group = repository.find(id);
-        if(utils.isEmpty(group)){
+        if (utils.isEmpty(group)) {
             logger.error(String.format("group with id '%s' not found", id));
             return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                     String.format("group with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);

@@ -23,9 +23,14 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, TaskUpdateDto, TaskCriteria, ITaskRepository> implements ITaskService {
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final GenericMapper genericMapper;
+    private final TaskValidator validator;
+    private final TaskMapper mapper;
     @Autowired
     public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskValidator validator, TaskMapper mapper) {
         super(repository, utils);
@@ -34,25 +39,13 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         this.mapper = mapper;
     }
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    private final GenericMapper genericMapper;
-    private final TaskValidator validator;
-    private final TaskMapper mapper;
-
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCreateDto dto) {
 
         Task task = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(task);
-        try{
-            task.setId(repository.create(dto, "createTask"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(task.getId())){
+        task.setId(repository.create(dto, "createTask"));
+        if (utils.isEmpty(task.getId())) {
             logger.error(String.format("Non TaskCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TaskCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -90,4 +83,8 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(task)), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<DataDto<List<TaskDto>>> getAll(TaskCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
 }

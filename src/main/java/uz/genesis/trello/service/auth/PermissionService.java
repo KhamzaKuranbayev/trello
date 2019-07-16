@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.PermissionCriteria;
 import uz.genesis.trello.domain.auth.Permission;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.auth.*;
+import uz.genesis.trello.dto.auth.PermissionCreateDto;
+import uz.genesis.trello.dto.auth.PermissionDto;
+import uz.genesis.trello.dto.auth.PermissionUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
@@ -21,6 +23,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.PermissionServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class PermissionService extends AbstractCrudService<PermissionDto, PermissionCreateDto, PermissionUpdateDto, PermissionCriteria, PermissionRepository> implements IPermissionService {
@@ -43,14 +46,8 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull PermissionCreateDto dto) {
         Permission permission = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(permission);
-        try{
-            permission.setId(repository.create(dto, "createPermission"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(permission.getId())){
+        permission.setId(repository.create(dto, "createPermission"));
+        if (utils.isEmpty(permission.getId())) {
             logger.error(String.format("Non PermissionCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non PermissionCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -85,5 +82,10 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deletePermission")), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<PermissionDto>>> getAll(PermissionCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

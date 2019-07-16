@@ -23,6 +23,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectColumnServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, ProjectColumnCreateDto, ProjectColumnUpdateDto, ProjectColumnCriteria, IProjectColumnRepository> implements IProjectColumnService {
@@ -44,14 +45,8 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectColumnCreateDto dto) {
         ProjectColumn projectColumn = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectColumn);
-        try{
-            projectColumn.setId(repository.create(dto, "createProjectColumn"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(projectColumn.getId())){
+        projectColumn.setId(repository.create(dto, "createProjectColumn"));
+        if (utils.isEmpty(projectColumn.getId())) {
             logger.error(String.format("Non ProjectColumnCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non ProjectColumnCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -86,5 +81,10 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProjectColumn")), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<ProjectColumnDto>>> getAll(ProjectColumnCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

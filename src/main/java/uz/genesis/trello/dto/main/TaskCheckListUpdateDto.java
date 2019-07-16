@@ -24,6 +24,7 @@ public class TaskCheckListUpdateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
     private String text;
 
+    @ApiModelProperty(example = "false")
     private boolean checked;
 
     private List<GenericDto> members;

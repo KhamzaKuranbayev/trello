@@ -3,11 +3,15 @@ package uz.genesis.trello.controller.main;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
+import uz.genesis.trello.criterias.main.TaskMemberCriteria;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.TaskMemberCreateDto;
 import uz.genesis.trello.dto.main.TaskMemberDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.ITaskMemberService;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class TaskMemberController extends ApiController<ITaskMemberService> {
@@ -26,5 +30,10 @@ public class TaskMemberController extends ApiController<ITaskMemberService> {
     @RequestMapping(value = API_PATH + V_1 + "/taskMembers/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/taskMembers", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<TaskMemberDto>>> getAll(@Valid TaskMemberCriteria criteria) {
+        return service.getAll(criteria);
     }
 }

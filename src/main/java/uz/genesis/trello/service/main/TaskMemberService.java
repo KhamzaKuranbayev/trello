@@ -22,6 +22,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskMemberValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMemberCreateDto, CrudDto, TaskMemberCriteria, ITaskMemberRepository> implements ITaskMemberService {
@@ -44,14 +45,8 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
 
         TaskMember taskMember = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(taskMember);
-        try{
-            taskMember.setId(repository.create(dto, "createTaskMember"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(taskMember.getId())){
+        taskMember.setId(repository.create(dto, "createTaskMember"));
+        if (utils.isEmpty(taskMember.getId())) {
             logger.error(String.format("Non TaskMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TaskMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -76,5 +71,10 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
                     String.format("taskMember with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskmember)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<TaskMemberDto>>> getAll(TaskMemberCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

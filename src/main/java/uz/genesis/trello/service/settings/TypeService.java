@@ -24,6 +24,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.settings.TypeServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by 'javokhir' on 01/07/2019
@@ -38,6 +39,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     private final GenericMapper genericMapper;
     private final TypeMapper mapper;
     private final TypeServiceValidator validator;
+
     @Autowired
     public TypeService(ITypeRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper mapper, TypeServiceValidator validator) {
         super(repository, utils);
@@ -50,14 +52,8 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TypeCreateDto dto) {
         Type type = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(type);
-        try{
-            type.setId(repository.create(dto, "createType"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(type.getId())){
+        type.setId(repository.create(dto, "createType"));
+        if (utils.isEmpty(type.getId())) {
             logger.error(String.format("Non TypeCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TypeCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -89,7 +85,6 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
 
-
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
@@ -100,18 +95,23 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     public ResponseEntity<DataDto<GenericDto>> createSubType(SubTypeCreateDto dto) {
         Type type = mapper.fromSubTypeCreaeteDto(dto);
         validator.validateOnSubTypeCreate(dto);
-        try{
+        try {
             type.setId(repository.create(dto, "createSubType"));
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
+            logger.error(String.format(" dto '%s' ", dto.toString()));
             throw new RuntimeException(ex);
         }
-        if(utils.isEmpty(type.getId())){
+        if (utils.isEmpty(type.getId())) {
             logger.error(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(type)), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<TypeDto>>> getAll(TypeCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

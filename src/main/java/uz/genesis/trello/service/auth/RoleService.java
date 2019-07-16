@@ -42,13 +42,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
         Role role = roleMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
-        try {
-            role.setId(repository.create(dto, "createRole"));
-        } catch (Exception ex) {
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' ", dto.toString()));
-            throw new RuntimeException(ex);
-        }
+        role.setId(repository.create(dto, "createRole"));
         if (utils.isEmpty(role.getId())) {
             logger.error(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));

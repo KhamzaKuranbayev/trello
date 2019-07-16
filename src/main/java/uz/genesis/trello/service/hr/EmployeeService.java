@@ -25,6 +25,7 @@ import uz.genesis.trello.utils.validators.hr.EmployeeServiceValidator;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Types;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -106,5 +107,8 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(employee)), HttpStatus.OK);
     }
 
-
+    @Override
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getAll(EmployeeCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
 }

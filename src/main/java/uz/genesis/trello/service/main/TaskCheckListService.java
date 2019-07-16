@@ -22,9 +22,14 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCheckListValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, TaskCheckListCreateDto, TaskCheckListUpdateDto, TaskCheckListCriteria, ITaskCheckListRepository> implements ITaskCheckListService {
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final GenericMapper genericMapper;
+    private final TaskCheckListValidator validator;
+    private final TaskCheckListMapper mapper;
     public TaskCheckListService(ITaskCheckListRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCheckListValidator validator, TaskCheckListMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
@@ -32,25 +37,13 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
         this.mapper = mapper;
     }
 
-    protected final Log logger = LogFactory.getLog(getClass());
-    private final GenericMapper genericMapper;
-    private final TaskCheckListValidator validator;
-    private final TaskCheckListMapper mapper;
-
-
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCheckListCreateDto dto) {
 
         TaskCheckList taskCheckList = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(taskCheckList);
-        try{
-            taskCheckList.setId(repository.create(dto, "createTaskCheckList"));
-        }catch (Exception ex){
-            logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
-            throw new RuntimeException(ex);
-        }
-        if(utils.isEmpty(taskCheckList.getId())){
+        taskCheckList.setId(repository.create(dto, "createTaskCheckList"));
+        if (utils.isEmpty(taskCheckList.getId())) {
             logger.error(String.format("Non TaskCheckListCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non TaskCheckListCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -86,5 +79,10 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
                     String.format("taskCheckList with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskCheckList)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<TaskCheckListDto>>> getAll(TaskCheckListCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }

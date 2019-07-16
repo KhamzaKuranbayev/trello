@@ -3,12 +3,14 @@ package uz.genesis.trello.controller.main;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
+import uz.genesis.trello.criterias.main.TaskTagCriteria;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.TaskTagCreateDto;
-import uz.genesis.trello.dto.main.TaskTagDto;
-import uz.genesis.trello.dto.main.TaskTagUpdateDto;
+import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.ITaskTagService;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class TaskTagController extends ApiController<ITaskTagService> {
@@ -32,5 +34,10 @@ public class TaskTagController extends ApiController<ITaskTagService> {
     @RequestMapping(value = API_PATH + V_1 + "/taskTags/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
         return service.delete(id);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/taskTags", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<TaskTagDto>>> getAll(@Valid TaskTagCriteria criteria) {
+        return service.getAll(criteria);
     }
 }
