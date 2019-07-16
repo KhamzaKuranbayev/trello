@@ -4,22 +4,21 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.GenericCrudDto;
-import uz.genesis.trello.dto.GenericDto;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "Project Update Request")
-public class ProjectUpdateDto extends GenericCrudDto {
-    @ApiModelProperty(required = true, example = "1")
-    private long id;
+@Builder
+@ApiModel(value = "Task create request")
+public class TaskCreateDto extends GenericCrudDto {
+    @ApiModelProperty(required = true)
+    private Long projectId;
+
+    @ApiModelProperty(required = true)
+    private Long columnId;
+
     @ApiModelProperty(required = true)
     private String name;
-    @ApiModelProperty(required = true)
-    private String codeName;
-    private GenericDto group;
-    @ApiModelProperty(required = true)
-    private GenericDto projectType;
+
 }

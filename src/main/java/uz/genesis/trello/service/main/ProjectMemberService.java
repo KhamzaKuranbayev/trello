@@ -65,22 +65,22 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(projectMember)), HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<DataDto<ProjectMemberDto>> update(@NotNull ProjectMemberUpdateDto dto) {
-
-        validator.validateOnUpdate(dto);
-        if (repository.update(dto, "updateProjectMember")) {
-            return get(dto.getId());
-        } else {
-            throw new RuntimeException(String.format("could not update projectMember with id '%s'", dto.getId()));
-        }
-    }
-
-
-    @Override
-    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
-        validator.validateOnDelete(id);
-        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProjectMember")), HttpStatus.OK);
-    }
+//    @Override
+//    public ResponseEntity<DataDto<ProjectMemberDto>> update(@NotNull ProjectMemberUpdateDto dto) {
+//
+//        validator.validateOnUpdate(dto);
+//        if (repository.update(dto, "updateProjectMember")) {
+//            return get(dto.getId());
+//        } else {
+//            throw new RuntimeException(String.format("could not update projectMember with id '%s'", dto.getId()));
+//        }
+//    }
+//
+//
+//    @Override
+//    public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
+//        validator.validateOnDelete(id);
+//        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProjectMember")), HttpStatus.OK);
+//    }
 
 }

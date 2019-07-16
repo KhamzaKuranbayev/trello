@@ -6,18 +6,21 @@ import lombok.*;
 import uz.genesis.trello.dto.GenericCrudDto;
 import uz.genesis.trello.dto.GenericDto;
 
+import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ApiModel(value = "Project Create request")
-public class ProjectCreateDto extends GenericCrudDto {
-    @ApiModelProperty(required = true, example = "name")
-    private String name;
+@ApiModel(value = "TaskCheckList create request")
+public class TaskCheckListCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
-    private String codeName;
-    private GenericDto group;
-    private GenericDto projectType;
+    private Long taskId;
+
+    @ApiModelProperty(required = true)
+    private String text;
+
+    private boolean checked;
+    private List<GenericDto>members;
 
 }

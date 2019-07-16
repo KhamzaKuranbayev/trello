@@ -23,13 +23,13 @@ public class ProjectMemberController extends ApiController<IProjectMemberService
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody ProjectMemberCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/projectMembers", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<ProjectMemberDto>> update(@RequestBody ProjectMemberUpdateDto dto){
-        return service.update(dto);
-    }
-    @RequestMapping(value = API_PATH + V_1 + "/projectMembers/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
-        return service.delete(id);
-    }
+//    @RequestMapping(value = API_PATH+V_1+"/projectMembers", method = {RequestMethod.PUT, RequestMethod.PATCH})
+//    public ResponseEntity<DataDto<ProjectMemberDto>> update(@RequestBody ProjectMemberUpdateDto dto){
+//        return service.update(dto);
+//    }
+//    @RequestMapping(value = API_PATH + V_1 + "/projectMembers/{id}", method = RequestMethod.DELETE)
+//    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+//        return service.delete(id);
+//    }
 
 }

@@ -11,13 +11,13 @@ import uz.genesis.trello.dto.GenericDto;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ApiModel(value = "Project Create request")
-public class ProjectCreateDto extends GenericCrudDto {
-    @ApiModelProperty(required = true, example = "name")
-    private String name;
+@ApiModel(value = "TaskMember create request")
+public class TaskMemberCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
-    private String codeName;
-    private GenericDto group;
-    private GenericDto projectType;
+    private Long taskId;
+
+    @ApiModelProperty(required = true)
+    private GenericDto employee;
+
 
 }

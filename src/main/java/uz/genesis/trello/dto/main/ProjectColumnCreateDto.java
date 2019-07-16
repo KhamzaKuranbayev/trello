@@ -1,6 +1,6 @@
 package uz.genesis.trello.dto.main;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.CrudDto;
@@ -11,7 +11,7 @@ import uz.genesis.trello.dto.GenericDto;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Api(value = "ProjectColumn Create request")
+@ApiModel(value = "ProjectColumn Create request")
 public class ProjectColumnCreateDto implements CrudDto {
     @ApiModelProperty(required = true)
     private String name;
