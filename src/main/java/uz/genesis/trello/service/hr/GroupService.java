@@ -60,7 +60,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
     @Override
     public ResponseEntity<DataDto<GroupDto>> get(Long id) {
-        Group group = repository.find(GroupCriteria.childBuilder().selfId(id).build());
+        Group group = repository.find(id);
         if(utils.isEmpty(group)){
             logger.error(String.format("group with id '%s' not found", id));
             return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(

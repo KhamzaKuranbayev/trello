@@ -14,7 +14,7 @@ public class GroupRepository extends GenericDao<Group, GroupCriteria> implements
     @Override
     protected void defineCriteriaOnQuerying(GroupCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
         if (!utils.isEmpty(criteria.getSelfId())) {
-            whereCause.add("t.userId = :selfId");
+            whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());
         }
 
@@ -23,7 +23,7 @@ public class GroupRepository extends GenericDao<Group, GroupCriteria> implements
             params.put("name", criteria.getName());
         }
         if (!utils.isEmpty(criteria.isWatcher())) {
-            whereCause.add("t.wathcer = :watcher");
+            whereCause.add("t.watcher = :watcher");
             params.put("watcher", criteria.isWatcher());
         }
 

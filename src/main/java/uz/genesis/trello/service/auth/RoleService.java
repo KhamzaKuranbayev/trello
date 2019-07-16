@@ -21,9 +21,10 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.RoleServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
-public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, RoleCriteria, RoleRepository> implements IRoleService{
+public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, RoleCriteria, RoleRepository> implements IRoleService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final RoleMapper roleMapper;
     private final GenericMapper genericMapper;
@@ -41,14 +42,14 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
         Role role = roleMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
-        try{
+        try {
             role.setId(repository.create(dto, "createRole"));
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error(ex);
-            logger.error(String.format(" dto '%s' " , dto.toString()));
+            logger.error(String.format(" dto '%s' ", dto.toString()));
             throw new RuntimeException(ex);
         }
-        if(utils.isEmpty(role.getId())){
+        if (utils.isEmpty(role.getId())) {
             logger.error(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -80,10 +81,15 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
 
-
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteRole")), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
+        List<Role> roles = repository.findAll(criteria);
+        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
     }
 }
