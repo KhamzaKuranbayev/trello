@@ -23,6 +23,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.GroupServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, GroupUpdateDto, GroupCriteria, IGroupRepository> implements IGroupService {
@@ -80,5 +81,10 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteGroup")), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<GroupDto>>> getAll(GroupCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
 }
