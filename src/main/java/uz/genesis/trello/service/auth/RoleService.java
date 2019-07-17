@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig( cacheNames = {"roles"})
 public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, RoleCriteria, RoleRepository> implements IRoleService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final RoleMapper roleMapper;
@@ -40,6 +41,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
         Role role = roleMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
@@ -53,7 +55,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
-    @Cacheable("roles")
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<RoleDto>> get(Long id) {
         Role role = repository.find(RoleCriteria.childBuilder().selfId(id).build());
 
@@ -66,6 +68,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<RoleDto>> update(@NotNull RoleUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -78,22 +81,23 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteRole")), HttpStatus.OK);
     }
 
     @Override
-    @Cacheable(value = "roles", keyGenerator = "cacheKeyGenerator")
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
     }
 
-    @Override
-    @Cacheable(value = "roles", keyGenerator = "cacheKeyGenerator")
-    public ResponseEntity<DataDto<List<RoleDto>>> getAllByCriteria(RoleCriteria criteria) {
-        List<Role> roles = repository.findAll(criteria);
-        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
-    }
+//    @Override
+//    @Cacheable
+//    public ResponseEntity<DataDto<List<RoleDto>>> getAllByCriteria(RoleCriteria criteria) {
+//        List<Role> roles = repository.findAll(criteria);
+//        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
+//    }
 }

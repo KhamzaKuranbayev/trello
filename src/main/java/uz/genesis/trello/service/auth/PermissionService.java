@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "permissions")
 public class PermissionService extends AbstractCrudService<PermissionDto, PermissionCreateDto, PermissionUpdateDto, PermissionCriteria, PermissionRepository> implements IPermissionService {
 
     protected final Log logger = LogFactory.getLog(getClass());
@@ -43,6 +47,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull PermissionCreateDto dto) {
         Permission permission = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(permission);
@@ -56,6 +61,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<PermissionDto>> get(Long id) {
         Permission permission = repository.find(PermissionCriteria.childBuilder().selfId(id).build());
 
@@ -68,6 +74,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<PermissionDto>> update(@NotNull PermissionUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -79,12 +86,14 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deletePermission")), HttpStatus.OK);
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<List<PermissionDto>>> getAll(PermissionCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }

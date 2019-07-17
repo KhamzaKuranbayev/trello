@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.List;
  * Created by 'javokhir' on 01/07/2019
  */
 @Service
+@CacheConfig(cacheNames = "types")
 public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, TypeUpdateDto, TypeCriteria, ITypeRepository> implements ITypeService {
 
     /**
@@ -49,6 +53,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TypeCreateDto dto) {
         Type type = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(type);
@@ -62,6 +67,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<TypeDto>> get(Long id) {
         Type type = repository.find(TypeCriteria.childBuilder().selfId(id).build());
 
@@ -74,6 +80,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<TypeDto>> update(@NotNull TypeUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -86,12 +93,14 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteType")), HttpStatus.OK);
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> createSubType(SubTypeCreateDto dto) {
         Type type = mapper.fromSubTypeCreaeteDto(dto);
         validator.validateOnSubTypeCreate(dto);
@@ -111,6 +120,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<List<TypeDto>>> getAll(TypeCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
