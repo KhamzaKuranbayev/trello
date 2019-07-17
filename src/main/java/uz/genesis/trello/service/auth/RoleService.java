@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
+    @Cacheable("roles")
     public ResponseEntity<DataDto<RoleDto>> get(Long id) {
         Role role = repository.find(RoleCriteria.childBuilder().selfId(id).build());
 
@@ -82,7 +84,15 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
+    @Cacheable(value = "roles", keyGenerator = "cacheKeyGenerator")
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
+        List<Role> roles = repository.findAll(criteria);
+        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
+    }
+
+    @Override
+    @Cacheable(value = "roles", keyGenerator = "cacheKeyGenerator")
+    public ResponseEntity<DataDto<List<RoleDto>>> getAllByCriteria(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
     }
