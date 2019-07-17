@@ -54,7 +54,7 @@ public class Task extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
-    private List<TaskCheckList> checkList = new ArrayList<>();
+    private List<CheckListGroup> checkListGroups = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")

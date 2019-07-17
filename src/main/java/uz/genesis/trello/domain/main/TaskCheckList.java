@@ -16,8 +16,8 @@ import java.util.List;
 @Table(name = "main_project_task_check_list")
 public class TaskCheckList extends Auditable {
 
-    @Column(name = "task_id")
-    private Long taskId;
+    @Column(name = "check_list_group_id")
+    private Long checkListGroupId;
 
     @Column(name = "text", columnDefinition = "TEXT")
     private String text;
