@@ -44,6 +44,14 @@ public class Project extends Auditable {
     @JoinColumn(name = "project_type", nullable = false, referencedColumnName = "id")
     private Type projectType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_level_type", referencedColumnName = "id")
+    private Type projectLevelType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_priority_type", referencedColumnName = "id")
+    private Type projectPriorityType;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private List<ProjectTag> tags = new ArrayList<>();
