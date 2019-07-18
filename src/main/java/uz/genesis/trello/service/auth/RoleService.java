@@ -4,15 +4,19 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.*;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.RoleCriteria;
 import uz.genesis.trello.domain.auth.Role;
-import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.auth.*;
+import uz.genesis.trello.dto.auth.RoleCreateDto;
+import uz.genesis.trello.dto.auth.RoleDto;
+import uz.genesis.trello.dto.auth.RoleUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
@@ -46,6 +50,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @CacheEvict(value = {"users", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
         Role role = roleMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
@@ -60,6 +65,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @Cacheable(key = "#root.methodName")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_READ)")
     public ResponseEntity<DataDto<RoleDto>> get(Long id) {
         Role role = repository.find(RoleCriteria.childBuilder().selfId(id).build());
 
@@ -73,6 +79,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @CacheEvict(value = {"users", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_UPDATE)")
     public ResponseEntity<DataDto<RoleDto>> update(@NotNull RoleUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -86,6 +93,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @CacheEvict(value = {"users", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteRole")), HttpStatus.OK);
@@ -93,15 +101,9 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @Cacheable(key = "#root.methodName")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_READ)")
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
-    }
-
-    @Override
-    @Cacheable(key = "#root.methodName")
-    public List<RoleDto> getUserRoles(Long userId) {
-        User user = userRepository.find(userId);
-        return roleMapper.toDto((List<Role>) user.getRoles());
     }
 }

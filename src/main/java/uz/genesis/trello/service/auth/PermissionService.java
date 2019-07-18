@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.PermissionCriteria;
 import uz.genesis.trello.domain.auth.Permission;
@@ -48,6 +49,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
     @Override
     @CacheEvict(value = {"users", "permissions", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull PermissionCreateDto dto) {
         Permission permission = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(permission);
@@ -62,6 +64,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
     @Override
     @Cacheable(key = "#root.methodName")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_READ)")
     public ResponseEntity<DataDto<PermissionDto>> get(Long id) {
         Permission permission = repository.find(PermissionCriteria.childBuilder().selfId(id).build());
 
@@ -75,6 +78,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
     @Override
     @CacheEvict(value = {"users", "permissions", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_UPDATE)")
     public ResponseEntity<DataDto<PermissionDto>> update(@NotNull PermissionUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -87,6 +91,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
     @Override
     @CacheEvict(value = {"users", "permissions", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deletePermission")), HttpStatus.OK);
@@ -94,6 +99,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
     @Override
     @Cacheable(key = "#root.methodName")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_READ)")
     public ResponseEntity<DataDto<List<PermissionDto>>> getAll(PermissionCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
