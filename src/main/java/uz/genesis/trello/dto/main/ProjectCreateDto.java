@@ -3,6 +3,7 @@ package uz.genesis.trello.dto.main;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.dto.GenericCrudDto;
 import uz.genesis.trello.dto.GenericDto;
 
@@ -20,5 +21,5 @@ public class ProjectCreateDto extends GenericCrudDto {
     private GenericDto group;
     @ApiModelProperty(required = true)
     private GenericDto projectType;
-
+    private GenericDto manager;
 }

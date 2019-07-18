@@ -2,6 +2,7 @@ package uz.genesis.trello.dto.main;
 
 import lombok.*;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.hr.EmployeeDto;
 import uz.genesis.trello.dto.hr.GroupDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 
@@ -16,12 +17,18 @@ public class ProjectDto extends GenericDto {
     private GroupDto group;
     private List<ProjectMemberDto> members;
     private TypeDto projectType;
+    private TypeDto projectLevelType;
+    private TypeDto projectPriorityType;
 
     @Builder(builderMethodName = "childBuilder")
-    public ProjectDto(Long id, String name, GroupDto group, List<ProjectMemberDto> members) {
+
+    public ProjectDto(Long id, String name, GroupDto group, List<ProjectMemberDto> members, TypeDto projectType, TypeDto projectLevelType, TypeDto projectPriorityType) {
         super(id);
         this.name = name;
         this.group = group;
         this.members = members;
+        this.projectType = projectType;
+        this.projectLevelType = projectLevelType;
+        this.projectPriorityType = projectPriorityType;
     }
 }
