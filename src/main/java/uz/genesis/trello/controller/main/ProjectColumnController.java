@@ -35,12 +35,12 @@ public class ProjectColumnController extends ApiController<IProjectColumnService
     public ResponseEntity<DataDto<List<ProjectColumnDto>>> getAll(@Valid ProjectColumnCriteria criteria) {
         return service.getAll(criteria);
     }
-//    @RequestMapping(value = API_PATH+V_1+"/projectColumns", method = {RequestMethod.PUT, RequestMethod.PATCH})
-//    public ResponseEntity<DataDto<ProjectColumnDto>> update(@RequestBody ProjectColumnUpdateDto dto){
-//        return service.update(dto);
-//    }
-//    @RequestMapping(value = API_PATH + V_1 + "/projectColumns/{id}", method = RequestMethod.DELETE)
-//    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
-//        return service.delete(id);
-//    }
+    @RequestMapping(value = API_PATH+V_1+"/projectColumns", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    public ResponseEntity<DataDto<ProjectColumnDto>> update(@RequestBody ProjectColumnUpdateDto dto){
+        return service.update(dto);
+    }
+    @RequestMapping(value = API_PATH + V_1 + "/projectColumns/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+        return service.delete(id);
+    }
 }
