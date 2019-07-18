@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.domain.main.Task;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.main.MovingTaskDto;
 import uz.genesis.trello.dto.main.TaskCreateDto;
 import uz.genesis.trello.dto.main.TaskDto;
 import uz.genesis.trello.dto.main.TaskUpdateDto;
@@ -23,6 +24,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskValidator;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Types;
 import java.util.List;
 
 @Service
@@ -64,6 +66,8 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         }
     }
 
+
+
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
@@ -81,6 +85,16 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
                     String.format("task with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(task)), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto) {
+        if(repository.call(dto, "moveTask", Types.BOOLEAN)){
+            return get(dto.getId());
+        } else {
+            throw new RuntimeException((String.format("could not move task with id '%s'", dto.getId())));
+        }
+
     }
 
     @Override

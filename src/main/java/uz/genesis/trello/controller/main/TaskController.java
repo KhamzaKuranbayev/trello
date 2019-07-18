@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.main.MovingTaskDto;
 import uz.genesis.trello.dto.main.TaskCreateDto;
 import uz.genesis.trello.dto.main.TaskDto;
 import uz.genesis.trello.dto.main.TaskUpdateDto;
@@ -43,5 +44,10 @@ public class TaskController extends ApiController<ITaskService> {
     @RequestMapping(value = API_PATH + V_1 + "/tasks", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<TaskDto>>> getAll(@Valid TaskCriteria criteria) {
         return service.getAll(criteria);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/tasks/move", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto) {
+        return service.move(dto);
     }
 }

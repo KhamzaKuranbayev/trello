@@ -7,6 +7,7 @@ import uz.genesis.trello.criterias.main.ProjectCriteria;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.ProjectCreateDto;
 import uz.genesis.trello.dto.main.ProjectDto;
+import uz.genesis.trello.dto.main.ProjectPercentageDto;
 import uz.genesis.trello.dto.main.ProjectUpdateDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.IProjectService;
@@ -39,5 +40,9 @@ public class ProjectController extends ApiController<IProjectService> {
     @RequestMapping(value = API_PATH + V_1 + "/projects", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<ProjectDto>>> getAll(@Valid ProjectCriteria criteria) {
         return service.getAll(criteria);
+    }
+    @RequestMapping(value = API_PATH + V_1 + "projects/percentage", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(@Valid ProjectCriteria criteria){
+        return service.getAllWithPercentage(criteria);
     }
 }

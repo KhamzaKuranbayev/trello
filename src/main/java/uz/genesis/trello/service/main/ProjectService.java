@@ -11,6 +11,7 @@ import uz.genesis.trello.domain.main.Project;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.ProjectCreateDto;
 import uz.genesis.trello.dto.main.ProjectDto;
+import uz.genesis.trello.dto.main.ProjectPercentageDto;
 import uz.genesis.trello.dto.main.ProjectUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
@@ -85,5 +86,10 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     @Override
     public ResponseEntity<DataDto<List<ProjectDto>>> getAll(ProjectCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(ProjectCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(repository.getAllPercentageProjects(criteria)), HttpStatus.OK);
     }
 }

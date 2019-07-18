@@ -9,6 +9,7 @@ import uz.genesis.trello.criterias.GenericCriteria;
 @AllArgsConstructor
 public class ProjectCriteria extends GenericCriteria {
     private String name;
+    private boolean percentage;
 
     @Builder(builderMethodName = "childBuilder")
     public ProjectCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, String name) {
