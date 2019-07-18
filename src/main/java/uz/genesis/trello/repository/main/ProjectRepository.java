@@ -31,7 +31,7 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
     protected Query defineQuerySelect(ProjectCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
         String queryStr;
         if (criteria.isPercentage()) {
-            queryStr = " select new uz.genesis.trello.dto.main.ProjectPercentageDto(t, percent), getcompletepercentage(t.id) as percent from  Project t " +
+            queryStr = " select new uz.genesis.trello.dto.main.ProjectPercentageDto(t, getcompletepercentage(t.id)) from  Project t " +
                     joinStringOnQuerying(criteria) +
                     " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
             return entityManager.createQuery(queryStr);

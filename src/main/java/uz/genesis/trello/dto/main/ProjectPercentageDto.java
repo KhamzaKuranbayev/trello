@@ -25,9 +25,4 @@ public class ProjectPercentageDto extends GenericDto {
         this.group = Mappers.getMapper(GroupMapper.class).toDto(domain.getGroup());
         this.percent = percent;
     }
-    public ProjectPercentageDto(Project domain) {
-        super(domain.getId());
-        this.name = domain.getName();
-        this.group = Mappers.getMapper(GroupMapper.class).toDto(domain.getGroup());
-    }
 }
