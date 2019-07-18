@@ -94,10 +94,4 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
     }
 
-//    @Override
-//    @Cacheable
-//    public ResponseEntity<DataDto<List<RoleDto>>> getAllByCriteria(RoleCriteria criteria) {
-//        List<Role> roles = repository.findAll(criteria);
-//        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
-//    }
 }

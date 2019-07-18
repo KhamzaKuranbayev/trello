@@ -7,5 +7,4 @@ import uz.genesis.trello.service.IGenericCrudService;
 
 public interface IRoleService extends IGenericCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, Long, RoleCriteria> {
 
-//    ResponseEntity<DataDto<List<RoleDto>>> getAllByCriteria(RoleCriteria criteria);
 }
