@@ -5,5 +5,6 @@ public interface Permissions {
     String USER_CREATE = "USER_CREATE";
     String USER_UPDATE = "USER_UPDATE";
     String USER_DELETE = "USER_DELETE";
+    String USER_ATTACH_ROLE = "USER_ATTACH_ROLE";
     String USER_READ = "USER_READ";
 }

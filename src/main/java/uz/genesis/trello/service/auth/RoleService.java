@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.RoleCriteria;
 import uz.genesis.trello.domain.auth.Role;
+import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
@@ -17,6 +18,7 @@ import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.RoleMapper;
 import uz.genesis.trello.repository.auth.RoleRepository;
+import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.RoleServiceValidator;
@@ -25,23 +27,25 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
-@CacheConfig( cacheNames = {"roles"})
+@CacheConfig(cacheNames = {"roles"})
 public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, RoleCriteria, RoleRepository> implements IRoleService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final RoleMapper roleMapper;
     private final GenericMapper genericMapper;
     private final RoleServiceValidator validator;
+    private final UserRepository userRepository;
 
     @Autowired
-    public RoleService(RoleRepository repository, BaseUtils utils, RoleMapper roleMapper, GenericMapper genericMapper, RoleServiceValidator validator) {
+    public RoleService(RoleRepository repository, BaseUtils utils, RoleMapper roleMapper, GenericMapper genericMapper, RoleServiceValidator validator, UserRepository userRepository) {
         super(repository, utils);
         this.roleMapper = roleMapper;
         this.genericMapper = genericMapper;
         this.validator = validator;
+        this.userRepository = userRepository;
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"users", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
         Role role = roleMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
@@ -68,7 +72,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"users", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<RoleDto>> update(@NotNull RoleUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -81,7 +85,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"users", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteRole")), HttpStatus.OK);
@@ -94,4 +98,10 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
     }
 
+    @Override
+    @Cacheable(key = "#root.methodName")
+    public List<RoleDto> getUserRoles(Long userId) {
+        User user = userRepository.find(userId);
+        return roleMapper.toDto((List<Role>) user.getRoles());
+    }
 }

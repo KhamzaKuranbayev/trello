@@ -3,11 +3,16 @@ package uz.genesis.trello.service.auth;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
+import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.AttachRoleDto;
@@ -32,6 +37,7 @@ import java.util.List;
  */
 
 @Service
+@CacheConfig(cacheNames = "users")
 public class UserService extends AbstractCrudService<UserDto, UserCreateDto, UserUpdateDto, UserCriteria, IUserRepository> implements IUserService {
 
     /**
@@ -52,6 +58,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_READ)")
     public ResponseEntity<DataDto<UserDto>> get(Long id) {
         User user = repository.find(UserCriteria.childBuilder().selfId(id).build());
 
@@ -65,6 +72,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserCreateDto dto) {
         User user = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(user);
@@ -79,6 +87,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_UPDATE)")
     public ResponseEntity<DataDto<UserDto>> update(@NotNull UserUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -93,12 +102,15 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteUser")), HttpStatus.OK);
     }
 
     @Override
+    @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_ATTACH_ROLE)")
     public ResponseEntity<DataDto<UserDto>> attachRolesToUser(@NotNull AttachRoleDto dto) {
         validator.validateOnAttach(dto);
         if (repository.call(dto, "attachRole", Types.BOOLEAN)) {
@@ -109,6 +121,32 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
+    public User findByUserName(String userName) {
+        User user = repository.find(UserCriteria.childBuilder().userName(userName).build());
+
+        if (utils.isEmpty(user)) {
+            logger.error(String.format("user with userName '%s' not found", userName));
+            throw new RuntimeException(String.format("user with userName '%s' not found", userName));
+        }
+
+        return user;
+    }
+
+    @Override
+    @Cacheable(key = "#root.methodName")
+    public List<Role> getRoles(String userName) {
+        User user = repository.find(UserCriteria.childBuilder().userName(userName).build());
+
+        if (utils.isEmpty(user)) {
+            logger.error(String.format("user with userName '%s' not found", userName));
+            throw new RuntimeException(String.format("user with userName '%s' not found", userName));
+        }
+
+        return (List<Role>) user.getRoles();
+    }
+
+    @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_READ)")
     public ResponseEntity<DataDto<List<UserDto>>> getAll(UserCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }

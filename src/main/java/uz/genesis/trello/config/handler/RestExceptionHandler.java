@@ -2,6 +2,7 @@ package uz.genesis.trello.config.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +27,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(message, ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                 message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<DataDto<?>> handleCustomException(AccessDeniedException ex, WebRequest request) {
+        String message = getLastCause(ex);
+//        logger.error(message, ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UnauthorizedUserException.class)

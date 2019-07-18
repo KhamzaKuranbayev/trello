@@ -8,6 +8,7 @@ import uz.genesis.trello.domain.auth.Permission;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.repository.auth.IUserSessionRepository;
+import uz.genesis.trello.service.auth.IUserService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,8 +22,7 @@ import java.util.List;
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
-    private IUserSessionRepository repository;
-
+    private IUserService userService;
 
 
     @Override
@@ -43,8 +43,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege(Authentication auth, /*String targetType,*/ String permission) {
-        User user = new User(); repository.findByUserName(auth.getName());
-        List<Role> roles = new ArrayList<>(user.getRoles());
+//        User user = userService.findByUserName(auth.getName());
+        List<Role> roles = userService.getRoles(auth.getName());
         List<Permission> permissions = new ArrayList<>();
 
         for (Role role : roles) {
