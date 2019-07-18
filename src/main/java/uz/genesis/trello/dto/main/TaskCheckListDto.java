@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskCheckListDto extends GenericDto {
-    private Long taskId;
+    private Long checkListGroupId;
     private boolean checked;
     private String text;
     private List<CheckListMemberDto> members;

@@ -15,7 +15,7 @@ import java.util.List;
 @ApiModel(value = "TaskCheckList create request")
 public class TaskCheckListCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
-    private Long taskId;
+    private Long checkListGroupId;
 
     @ApiModelProperty(required = true)
     private String text;
