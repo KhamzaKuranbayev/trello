@@ -47,7 +47,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"permissions", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull PermissionCreateDto dto) {
         Permission permission = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(permission);
@@ -74,7 +74,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"permissions", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<PermissionDto>> update(@NotNull PermissionUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -86,7 +86,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = {"permissions", "roles"}, allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deletePermission")), HttpStatus.OK);
