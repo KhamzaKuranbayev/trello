@@ -19,7 +19,7 @@ public class TaskCheckListUpdateDto extends GenericCrudDto {
     private Long id;
 
     @ApiModelProperty(required = true)
-    private Long taskId;
+    private Long checkListGroupId;
 
     @ApiModelProperty(required = true)
     private String text;

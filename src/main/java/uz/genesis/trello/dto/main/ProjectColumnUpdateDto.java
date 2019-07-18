@@ -27,5 +27,6 @@ public class ProjectColumnUpdateDto implements CrudDto {
     @ApiModelProperty(required = true)
     private GenericDto columnType;
 
+    @ApiModelProperty(required = true)
     private Integer ordering;
 }

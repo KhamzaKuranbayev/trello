@@ -39,8 +39,8 @@ public class ProjectColumnController extends ApiController<IProjectColumnService
     public ResponseEntity<DataDto<ProjectColumnDto>> update(@RequestBody ProjectColumnUpdateDto dto){
         return service.update(dto);
     }
-    @RequestMapping(value = API_PATH + V_1 + "/projectColumns/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
-        return service.delete(id);
-    }
+//    @RequestMapping(value = API_PATH + V_1 + "/projectColumns/{id}", method = RequestMethod.DELETE)
+//    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+//        return service.delete(id);
+//    }
 }
