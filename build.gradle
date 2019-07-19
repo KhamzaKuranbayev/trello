@@ -54,8 +54,13 @@ dependencies {
 	compile (group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.6.RELEASE'){
 		exclude(module: 'jackson-mapper-asl') // We already have a more recent jackson via Spring Boot
 	}
-
-	compile(group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2')
+	
+	compile("io.springfox:springfox-swagger2:2.9.2") {
+		exclude module: 'swagger-annotations'
+		exclude module: 'swagger-models'
+	}
+	compile("io.swagger:swagger-annotations:1.5.21")
+	compile("io.swagger:swagger-models:1.5.21")
 	compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2')
 
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-gradle-plugin
@@ -75,5 +80,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
+	compile 'org.zalando:logbook-spring-boot-starter:2.0.0-RC.1'
+	
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

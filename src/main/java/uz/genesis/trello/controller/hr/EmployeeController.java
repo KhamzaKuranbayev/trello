@@ -1,5 +1,6 @@
 package uz.genesis.trello.controller.hr;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
@@ -9,6 +10,7 @@ import uz.genesis.trello.dto.hr.EmployeeCreateDto;
 import uz.genesis.trello.dto.hr.EmployeeDto;
 import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.service.hr.IEmployeeGroupService;
 import uz.genesis.trello.service.hr.IEmployeeService;
 
 import javax.validation.Valid;
@@ -21,8 +23,12 @@ import java.util.List;
 @RestController
 public class EmployeeController extends ApiController<IEmployeeService> {
 
-    public EmployeeController(IEmployeeService service) {
+    private final IEmployeeGroupService employeeGroupService;
+
+    @Autowired
+    public EmployeeController(IEmployeeService service, IEmployeeGroupService employeeGroupService) {
         super(service);
+        this.employeeGroupService = employeeGroupService;
     }
 
     @RequestMapping(value = API_PATH + V_1 + "/employees/{id}", method = RequestMethod.GET)
@@ -46,5 +52,10 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     @RequestMapping(value = API_PATH + V_1 + "/employees", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<EmployeeDto>>> getAll(@Valid EmployeeCriteria criteria) {
         return service.getAll(criteria);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/employees/project", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getByProjects(@Valid EmployeeCriteria criteria){
+        return employeeGroupService.getEmployee(criteria);
     }
 }

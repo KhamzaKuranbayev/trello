@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.ProjectMemberCriteria;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.hr.EmployeeDto;
 import uz.genesis.trello.dto.main.ProjectMemberCreateDto;
 import uz.genesis.trello.dto.main.ProjectMemberDto;
 import uz.genesis.trello.dto.response.DataDto;
@@ -40,6 +41,11 @@ public class ProjectMemberController extends ApiController<IProjectMemberService
     @RequestMapping(value = API_PATH + V_1 + "/projectMembers", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<ProjectMemberDto>>> getAll(@Valid ProjectMemberCriteria criteria) {
         return service.getAll(criteria);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/projectMembers/employee", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployeeListByProjectId(@Valid ProjectMemberCriteria criteria) {
+        return service.getEmployeeListByProjectId(criteria);
     }
 
 }

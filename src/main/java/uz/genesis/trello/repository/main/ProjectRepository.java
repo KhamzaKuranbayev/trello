@@ -43,6 +43,9 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
         }
     }
 
+
+
+
     @Override
     public List<ProjectPercentageDto> getAllPercentageProjects(ProjectCriteria criteria) {
         return super.findAllGeneric(criteria);

@@ -12,8 +12,9 @@ public class ProjectCriteria extends GenericCriteria {
     private boolean percentage;
 
     @Builder(builderMethodName = "childBuilder")
-    public ProjectCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, String name) {
+    public ProjectCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, String name, boolean percentage) {
         super(selfId, page, perPage, sortBy, sortDirection);
         this.name = name;
+        this.percentage = percentage;
     }
 }

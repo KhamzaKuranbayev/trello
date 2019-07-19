@@ -7,8 +7,10 @@ import uz.genesis.trello.criterias.GenericCriteria;
 @Setter
 @NoArgsConstructor
 public class ProjectMemberCriteria extends GenericCriteria {
+    private Long projectId;
     @Builder(builderMethodName = "childBuilder")
     public ProjectMemberCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection) {
         super(selfId, page, perPage, sortBy, sortDirection);
+        this.projectId = projectId;
     }
 }
