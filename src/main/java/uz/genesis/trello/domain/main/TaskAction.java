@@ -15,6 +15,9 @@ import javax.persistence.*;
 @Table(name = "main_project_task_actions")
 public class TaskAction extends Auditable {
 
+    @Column(name = "project_id")
+    private Long projectId;
+
     @Column(name = "task_id")
     private Long taskId;
 
