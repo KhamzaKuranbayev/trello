@@ -20,7 +20,7 @@ public interface Permissions {
     String ROLE_READ = "ROLE_READ";
 
     /**
-     * ROLE
+     * PERMISSION
      */
     String PERMISSION_CREATE = "PERMISSION_CREATE";
     String PERMISSION_UPDATE = "PERMISSION_UPDATE";
