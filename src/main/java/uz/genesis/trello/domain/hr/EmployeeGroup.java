@@ -22,6 +22,6 @@ public class EmployeeGroup extends Auditable {
     @Column(name = "group_id")
     private Long groupId;
 
-    @Column(name = "is_leader")
+    @Column(name = "is_leader", columnDefinition = "boolean DEFAULT false")
     private boolean leader;
 }

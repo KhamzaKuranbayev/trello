@@ -9,10 +9,14 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.ProjectMemberCriteria;
 import uz.genesis.trello.domain.main.ProjectMember;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.*;
+import uz.genesis.trello.dto.hr.EmployeeDto;
+import uz.genesis.trello.dto.main.ProjectMemberCreateDto;
+import uz.genesis.trello.dto.main.ProjectMemberDto;
+import uz.genesis.trello.dto.main.ProjectMemberUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
+import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.mapper.main.ProjectMemberMapper;
 import uz.genesis.trello.repository.main.IProjectMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
@@ -21,17 +25,20 @@ import uz.genesis.trello.utils.validators.main.ProjectMemberServiceValidator;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, ProjectMemberCriteria, IProjectMemberRepository> implements IProjectMemberService{
+public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, ProjectMemberCriteria, IProjectMemberRepository> implements IProjectMemberService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
+    private final EmployeeMapper employeeMapper;
     private final ProjectMemberServiceValidator validator;
     private final ProjectMemberMapper mapper;
 
-    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectMemberServiceValidator validator, ProjectMemberMapper mapper) {
+    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, EmployeeMapper employeeMapper, ProjectMemberServiceValidator validator, ProjectMemberMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
+        this.employeeMapper = employeeMapper;
         this.validator = validator;
         this.mapper = mapper;
     }
@@ -41,8 +48,8 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
         ProjectMember projectMember = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectMember);
-            projectMember.setId(repository.create(dto, "createProjectMember"));
-        if(utils.isEmpty(projectMember.getId())){
+        projectMember.setId(repository.create(dto, "createProjectMember"));
+        if (utils.isEmpty(projectMember.getId())) {
             logger.error(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
             throw new RuntimeException(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
         }
@@ -53,7 +60,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     @Override
     public ResponseEntity<DataDto<ProjectMemberDto>> get(Long id) {
         ProjectMember projectMember = repository.find(ProjectMemberCriteria.childBuilder().selfId(id).build());
-        if(utils.isEmpty(projectMember)){
+        if (utils.isEmpty(projectMember)) {
             logger.error(String.format("projectMember with id '%s' not found", id));
             return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                     String.format("projectMember with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
@@ -82,6 +89,11 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
     @Override
     public ResponseEntity<DataDto<List<ProjectMemberDto>>> getAll(ProjectMemberCriteria criteria) {
-         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployeeListByProjectId(ProjectMemberCriteria criteria) {
+        return new ResponseEntity<>(new DataDto<>(repository.findAll(criteria).stream().map(projectMember -> employeeMapper.toDto(projectMember.getEmployee())).collect(Collectors.toList())), HttpStatus.OK);
     }
 }
