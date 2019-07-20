@@ -3,9 +3,7 @@ package uz.genesis.trello.domain.main;
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -24,4 +22,12 @@ public class TaskSpentTime extends Auditable {
 
     @Column(name = "time_in_minute")
     private Integer timeMinute;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "start_time_entry", nullable = false, referencedColumnName = "id")
+    private TaskTimeEntry startTimeEntry;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "stop_time_entry", nullable = false, referencedColumnName = "id")
+    private TaskTimeEntry stopTimeEntry;
 }
