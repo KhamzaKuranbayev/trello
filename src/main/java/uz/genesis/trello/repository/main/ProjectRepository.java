@@ -15,6 +15,7 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
 
     @Override
     protected void defineCriteriaOnQuerying(ProjectCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+
         if (!utils.isEmpty(criteria.getSelfId())) {
             whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());
@@ -22,6 +23,11 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
         if (!utils.isEmpty(criteria.getName())) {
             whereCause.add("t.name = :name");
             params.put("name", criteria.getName());
+        }
+
+        if (!isAdmin()) {
+            whereCause.add("pm.employee.id = :userId");
+            params.put("userId", userSession.getUser().getId());
         }
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
@@ -43,8 +49,17 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
         }
     }
 
+    @Override
+    protected StringBuilder joinStringOnQuerying(ProjectCriteria criteria) {
+        StringBuilder joinBuilder = new StringBuilder();
 
 
+        if (!isAdmin()) {
+            joinBuilder.append(" inner join ProjectMember pm on t.id = pm.projectId and pm.deleted is false ");
+        }
+
+        return joinBuilder;
+    }
 
     @Override
     public List<ProjectPercentageDto> getAllPercentageProjects(ProjectCriteria criteria) {

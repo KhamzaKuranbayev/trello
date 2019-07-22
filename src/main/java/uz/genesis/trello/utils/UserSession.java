@@ -41,6 +41,10 @@ public class UserSession {
         return user;
     }
 
+    public String getUserName() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     //get request headers
     public Map<Headers, String> getHeadersInfo() {
 

@@ -49,6 +49,8 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
     protected Gson gson;
     protected JpaEntityInformation<T, ?> entityInformation;
 
+    private Boolean isAdmin;
+
     @SuppressWarnings("unchecked")
     public GenericDao() {
         this.dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -274,6 +276,39 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         }
     }
 
+
+    protected boolean isAdmin() {
+        return hasRole("ADMIN", userSession.getUserName());
+    }
+
+
+    protected boolean hasRole(String role) {
+        return hasRole(role, userSession.getUserName());
+    }
+
+    protected boolean hasRole(String role, String userName) {
+        Session session = entityManager.unwrap(Session.class);
+        return session.doReturningWork(
+                connection -> {
+                    try (CallableStatement function = connection
+                            .prepareCall(
+                                    "{ ? = call hasrole (?, ?) }")) {
+                        function.registerOutParameter(1, Types.BOOLEAN);
+                        function.setString(2, role);
+                        function.setString(3, userName);
+                        function.execute();
+
+                        if (!utils.isEmpty(function.getWarnings())) {
+                            throw new RuntimeException(function.getWarnings().getMessage());
+                        }
+
+                        return function.getBoolean(1);
+                    } catch (Exception ex) {
+                        throw new CustomSqlException(ex.getMessage(), ex.getCause());
+                    }
+                });
+    }
+
     @Transactional
     public void delete(T entity) {
 
@@ -300,6 +335,4 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
             delete(entity);
         }
     }
-
-
 }
