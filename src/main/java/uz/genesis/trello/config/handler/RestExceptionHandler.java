@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.exception.CustomSqlException;
+import uz.genesis.trello.exception.ValidationException;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -50,6 +51,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 //        logger.error("#requestBody: " + request.get);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                 message).systemName(ex.getSystemMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public final ResponseEntity<DataDto<?>> handleValidationException(ValidationException ex, WebRequest request) {
+        String message = getLastCause(ex);
+        logger.error(message, ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.FORBIDDEN);
     }
 
     private String getLastCause(Throwable throwable) {
