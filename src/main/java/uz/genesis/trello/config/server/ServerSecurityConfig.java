@@ -15,15 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import uz.genesis.trello.config.encryption.Encoders;
-
-import java.util.Arrays;
-
-import static uz.genesis.trello.controller.ApiController.API_PATH;
-import static uz.genesis.trello.controller.ApiController.V_1;
+import uz.genesis.trello.config.handler.AuthenticationFailureHandler;
+import uz.genesis.trello.config.handler.CustomAuthenticationSuccessHandler;
 
 /**
  * Created by 'Javokhir Mamadiyarov Uygunovich' on 10/5/18.
@@ -36,9 +31,16 @@ import static uz.genesis.trello.controller.ApiController.V_1;
 @Import(Encoders.class)
 public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHITELIST = {
+
+            // -- swagger ui
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private PasswordEncoder userPasswordEncoder;
 
@@ -46,6 +48,11 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 
     @Override
@@ -64,15 +71,6 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/webjars/**");
     }
 
-    private static final String[] AUTH_WHITELIST = {
-
-            // -- swagger ui
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            "/v2/api-docs",
-            "/webjars/**"
-    };
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.headers().frameOptions().disable().addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "ALLOW-FROM 172.18.58.26"));
@@ -81,8 +79,8 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().and().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-//                .antMatchers(API_PATH + V_1 + "/users").permitAll()
-                .antMatchers("/**/*").denyAll();
+                .antMatchers("/**/*").denyAll()
+        .and().exceptionHandling().defaultAuthenticationEntryPointFor(new AuthenticationFailureHandler(), new AntPathRequestMatcher("/oauth/token"));
         http.cors().and().csrf().disable();
     }
 

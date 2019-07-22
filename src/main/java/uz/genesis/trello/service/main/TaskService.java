@@ -9,15 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.domain.main.Task;
+import uz.genesis.trello.domain.main.TaskTimeEntry;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.MovingTaskDto;
-import uz.genesis.trello.dto.main.TaskCreateDto;
-import uz.genesis.trello.dto.main.TaskDto;
-import uz.genesis.trello.dto.main.TaskUpdateDto;
+import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMapper;
+import uz.genesis.trello.mapper.main.TaskTimeEntryMapper;
 import uz.genesis.trello.repository.main.ITaskRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -31,12 +30,15 @@ import java.util.List;
 public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, TaskUpdateDto, TaskCriteria, ITaskRepository> implements ITaskService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
+    private final TaskTimeEntryMapper taskTimeEntryMapper;
     private final TaskValidator validator;
     private final TaskMapper mapper;
+
     @Autowired
-    public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskValidator validator, TaskMapper mapper) {
+    public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
+        this.taskTimeEntryMapper = taskTimeEntryMapper;
         this.validator = validator;
         this.mapper = mapper;
     }
@@ -100,5 +102,16 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     @Override
     public ResponseEntity<DataDto<List<TaskDto>>> getAll(TaskCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<GenericDto>> createTaskTimeEntry(TaskTimeEntryCreateDto taskTimeEntryCreateDto) {
+        TaskTimeEntry taskTimeEntry = taskTimeEntryMapper.fromCreateDto(taskTimeEntryCreateDto);
+        taskTimeEntry.setId(repository.call(taskTimeEntryCreateDto, "createTaskTimeEntry", Types.BIGINT));
+        if (utils.isEmpty(taskTimeEntry.getId())) {
+            logger.error(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
+            throw new RuntimeException(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
+        }
+        return  new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskTimeEntry)), HttpStatus.CREATED);
     }
 }

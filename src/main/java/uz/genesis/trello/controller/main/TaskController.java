@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.MovingTaskDto;
-import uz.genesis.trello.dto.main.TaskCreateDto;
-import uz.genesis.trello.dto.main.TaskDto;
-import uz.genesis.trello.dto.main.TaskUpdateDto;
+import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.ITaskService;
 
@@ -50,4 +47,10 @@ public class TaskController extends ApiController<ITaskService> {
     public ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto) {
         return service.move(dto);
     }
+
+    @RequestMapping(value = API_PATH + V_1 + "/tasks/timeSheet", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<GenericDto>> createTaskTimeEntry(TaskTimeEntryCreateDto dto) {
+        return service.createTaskTimeEntry(dto);
+    }
+
 }
