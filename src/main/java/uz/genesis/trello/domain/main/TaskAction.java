@@ -18,6 +18,9 @@ public class TaskAction extends Auditable {
     @Column(name = "project_id")
     private Long projectId;
 
+    @Column(name = "project_column_id")
+    private Long projectColumnId;
+
     @Column(name = "task_id")
     private Long taskId;
 
