@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uz.genesis.trello.criterias.main.TaskCheckListCriteria;
+import uz.genesis.trello.criterias.main.TaskCommentCriteria;
 import uz.genesis.trello.criterias.main.TaskCriteria;
+import uz.genesis.trello.criterias.main.TaskTagCriteria;
 import uz.genesis.trello.domain.main.Task;
 import uz.genesis.trello.domain.main.TaskTimeEntry;
 import uz.genesis.trello.dto.GenericDto;
@@ -30,14 +33,20 @@ import java.util.List;
 public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, TaskUpdateDto, TaskCriteria, ITaskRepository> implements ITaskService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
+    private final ITaskCommentService taskCommentService;
+    private final ITaskCheckListService taskCheckListService;
+    private final ITaskTagService taskTagService;
     private final TaskTimeEntryMapper taskTimeEntryMapper;
     private final TaskValidator validator;
     private final TaskMapper mapper;
 
     @Autowired
-    public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
+    public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCommentService taskCommentService, ITaskCheckListService taskCheckListService, ITaskTagService taskTagService, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
         super(repository, utils);
         this.genericMapper = genericMapper;
+        this.taskCommentService = taskCommentService;
+        this.taskCheckListService = taskCheckListService;
+        this.taskTagService = taskTagService;
         this.taskTimeEntryMapper = taskTimeEntryMapper;
         this.validator = validator;
         this.mapper = mapper;
@@ -69,7 +78,6 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
 
-
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
@@ -91,7 +99,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
 
     @Override
     public ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto) {
-        if(repository.call(dto, "moveTask", Types.BOOLEAN)){
+        if (repository.call(dto, "moveTask", Types.BOOLEAN)) {
             return get(dto.getId());
         } else {
             throw new RuntimeException((String.format("could not move task with id '%s'", dto.getId())));
@@ -112,6 +120,19 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
             logger.error(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
             throw new RuntimeException(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
         }
-        return  new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskTimeEntry)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskTimeEntry)), HttpStatus.CREATED);
+    }
+
+    @Override
+    public List<TaskProjectDetailDto> getProjectDetailTask(TaskCriteria criteria) {
+
+
+        List<TaskProjectDetailDto> tasks = mapper.toTaskProjectDetailDto(repository.findAll(criteria));
+        tasks.forEach(dto -> {
+            dto.setTagList(taskTagService.getAllTaskTagList(TaskTagCriteria.childBuilder().taskId(dto.getId()).build()));
+            dto.setCommentCount(taskCommentService.getCommentCount(TaskCommentCriteria.childBuilder().taskId(dto.getId()).build()));
+            dto.setCheckListCount(taskCheckListService.getCheckListCount(TaskCheckListCriteria.childBuilder().taskId(dto.getId()).build()));
+        });
+        return tasks;
     }
 }

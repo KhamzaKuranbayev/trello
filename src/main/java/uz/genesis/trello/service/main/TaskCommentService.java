@@ -87,4 +87,9 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     public ResponseEntity<DataDto<List<TaskCommentDto>>> getAll(TaskCommentCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
+
+    @Override
+    public Long getCommentCount(TaskCommentCriteria criteria) {
+        return repository.getTotalCount(criteria);
+    }
 }

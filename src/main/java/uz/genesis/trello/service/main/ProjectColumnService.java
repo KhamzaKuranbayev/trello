@@ -4,13 +4,17 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.ProjectColumnCriteria;
+import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.domain.main.ProjectColumn;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.ProjectColumnCreateDto;
+import uz.genesis.trello.dto.main.ProjectColumnDetailDto;
 import uz.genesis.trello.dto.main.ProjectColumnDto;
 import uz.genesis.trello.dto.main.ProjectColumnUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
@@ -26,18 +30,21 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"projectColumns"})
 public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, ProjectColumnCreateDto, ProjectColumnUpdateDto, ProjectColumnCriteria, IProjectColumnRepository> implements IProjectColumnService {
     protected final Log logger = LogFactory.getLog(getClass());
 
     private final ProjectColumnMapper mapper;
     private final GenericMapper genericMapper;
+    private final ITaskService taskService;
     private final ProjectColumnServiceValidator validator;
 
     @Autowired
-    public ProjectColumnService(IProjectColumnRepository repository, BaseUtils utils, ProjectColumnMapper mapper, GenericMapper genericMapper, ProjectColumnServiceValidator validator) {
+    public ProjectColumnService(IProjectColumnRepository repository, BaseUtils utils, ProjectColumnMapper mapper, GenericMapper genericMapper, ITaskService taskService, ProjectColumnServiceValidator validator) {
         super(repository, utils);
         this.mapper = mapper;
         this.genericMapper = genericMapper;
+        this.taskService = taskService;
         this.validator = validator;
     }
 
@@ -84,7 +91,16 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public ResponseEntity<DataDto<List<ProjectColumnDto>>> getAll(ProjectColumnCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+
+    @Override
+    public List<ProjectColumnDetailDto> getAllColumns(ProjectColumnCriteria criteria) {
+        List<ProjectColumnDetailDto> dtoList = mapper.toDetailDto(repository.findAll(criteria));
+        dtoList.forEach(dto -> dto.setTasks(taskService.getProjectDetailTask(TaskCriteria.childBuilder().projectId(criteria.getProjectId()).columnId(dto.getId()).build())));
+        return dtoList;
     }
 }

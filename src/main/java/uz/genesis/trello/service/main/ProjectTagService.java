@@ -87,4 +87,9 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     public ResponseEntity<DataDto<List<ProjectTagDto>>> getAll(ProjectTagCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
     }
+
+    @Override
+    public List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria){
+        return mapper.toDto(repository.findAll(criteria));
+    }
 }

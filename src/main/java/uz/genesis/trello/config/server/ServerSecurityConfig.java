@@ -79,8 +79,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().and().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/**/*").denyAll()
-        .and().exceptionHandling().defaultAuthenticationEntryPointFor(new AuthenticationFailureHandler(), new AntPathRequestMatcher("/oauth/token"));
+                .antMatchers("/**/*").denyAll();
         http.cors().and().csrf().disable();
     }
 

@@ -3,40 +3,64 @@ package uz.genesis.trello.service.main;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uz.genesis.trello.criterias.hr.EmployeeCriteria;
+import uz.genesis.trello.criterias.main.ProjectColumnCriteria;
 import uz.genesis.trello.criterias.main.ProjectCriteria;
+import uz.genesis.trello.criterias.main.ProjectMemberCriteria;
+import uz.genesis.trello.criterias.main.ProjectTagCriteria;
 import uz.genesis.trello.domain.main.Project;
+import uz.genesis.trello.domain.main.ProjectDetailDto;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.ProjectCreateDto;
-import uz.genesis.trello.dto.main.ProjectDto;
-import uz.genesis.trello.dto.main.ProjectPercentageDto;
-import uz.genesis.trello.dto.main.ProjectUpdateDto;
+import uz.genesis.trello.dto.hr.EmployeeGroupDto;
+import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.GenericMapper;
+import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.mapper.main.ProjectMapper;
+import uz.genesis.trello.mapper.settings.TypeMapper;
 import uz.genesis.trello.repository.main.IProjectRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.hr.IEmployeeGroupService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
+import java.sql.Types;
 import java.util.List;
 
 @Service
 public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreateDto, ProjectUpdateDto, ProjectCriteria, IProjectRepository> implements IProjectService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
+    private final TypeMapper typeMapper;
+    private final IProjectTagService projectTagService;
+    private final EmployeeMapper employeeMapper;
     private final ProjectServiceValidator validator;
+    private final IProjectMemberService projectMemberService;
     private final ProjectMapper mapper;
+    private final IProjectColumnService projectColumnService;
+    private final ITaskService taskService;
+    private final IEmployeeGroupService employeeGroupService;
 
-    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectServiceValidator validator, ProjectMapper mapper) {
+    @Autowired
+    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper typeMapper, ProjectTagService projectTagService, EmployeeMapper employeeMapper, ProjectServiceValidator validator, IProjectMemberService projectMemberService, ProjectMapper mapper, IProjectColumnService projectColumnService, ITaskService taskService, IEmployeeGroupService employeeGroupService) {
         super(repository, utils);
         this.genericMapper = genericMapper;
+        this.typeMapper = typeMapper;
+        this.projectTagService = projectTagService;
+        this.employeeMapper = employeeMapper;
         this.validator = validator;
+        this.projectMemberService = projectMemberService;
         this.mapper = mapper;
+        this.projectColumnService = projectColumnService;
+        this.taskService = taskService;
+        this.employeeGroupService = employeeGroupService;
     }
 
 
@@ -86,6 +110,34 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     @Override
     public ResponseEntity<DataDto<List<ProjectDto>>> getAll(ProjectCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<ProjectDetailDto>> getProjectDetail(Long id) {
+        if(repository.call(GenericDto.builder().id(id).build(), "hasaccesstoproject", Types.BOOLEAN)){
+            Project project = repository.find(id);
+            List<EmployeeGroupDto> employeeGroupDtoList = employeeGroupService.getAllEmployeeGroup(EmployeeCriteria.childBuilder().groupId(project.getGroup().getId()).build());
+            List<ProjectTagDto> projectTagDtoList = projectTagService.getAllTag(ProjectTagCriteria.childBuilder().projectId(id).build());
+            List<ProjectColumnDetailDto> projectColumnDtoList = projectColumnService.getAllColumns(ProjectColumnCriteria.childBuilder().projectId(id).build());
+            List<ProjectMemberDto> projectMemberDtoList = projectMemberService.getAllProjectMembers(ProjectMemberCriteria.childBuilder().projectId(id).build());
+
+            ProjectDetailDto detailDto = ProjectDetailDto.childBuilder()
+                    .id(project.getId())
+                    .name(project.getName())
+                    .codeName(project.getCodeName())
+                    .projectType(typeMapper.toDto(project.getProjectType()))
+                    .projectLevelType(typeMapper.toDto(project.getProjectLevelType()))
+                    .projectPriorityType(typeMapper.toDto(project.getProjectPriorityType()))
+                    .manager(employeeMapper.toDto(project.getManager()))
+                    .employeeGroups(employeeGroupDtoList)
+                    .columns(projectColumnDtoList)
+                    .tags(projectTagDtoList)
+                    .members(projectMemberDtoList)
+                    .build();
+            return new ResponseEntity<>(new DataDto<>(detailDto), HttpStatus.OK);
+        }
+        throw new ValidationException("You are not member of this project");
+
     }
 
     @Override

@@ -6,5 +6,8 @@ import uz.genesis.trello.dto.main.ProjectTagDto;
 import uz.genesis.trello.dto.main.ProjectTagUpdateDto;
 import uz.genesis.trello.service.IGenericCrudService;
 
+import java.util.List;
+
 public interface IProjectTagService extends IGenericCrudService<ProjectTagDto, ProjectTagCreateDto, ProjectTagUpdateDto, Long, ProjectTagCriteria> {
+    List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria);
 }

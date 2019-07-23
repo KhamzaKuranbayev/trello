@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskCheckListCriteria;
 import uz.genesis.trello.domain.main.TaskCheckList;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.main.CheckListCountDto;
 import uz.genesis.trello.dto.main.TaskCheckListCreateDto;
 import uz.genesis.trello.dto.main.TaskCheckListDto;
 import uz.genesis.trello.dto.main.TaskCheckListUpdateDto;
@@ -84,5 +85,14 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     @Override
     public ResponseEntity<DataDto<List<TaskCheckListDto>>> getAll(TaskCheckListCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+    }
+
+    @Override
+    public CheckListCountDto getCheckListCount(TaskCheckListCriteria criteria){
+        criteria.setProjectDetail(true);
+        Long totalCount = repository.getTotalCount(criteria);
+        criteria.setChecked(true);
+        Long checkedCount = repository.getTotalCount(criteria);
+        return CheckListCountDto.builder().totalCount(totalCount).checkedCount(checkedCount).build();
     }
 }

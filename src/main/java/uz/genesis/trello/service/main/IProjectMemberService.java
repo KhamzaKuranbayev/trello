@@ -12,5 +12,7 @@ import uz.genesis.trello.service.IGenericCrudService;
 import java.util.List;
 
 public interface IProjectMemberService extends IGenericCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, Long, ProjectMemberCriteria> {
+    List<ProjectMemberDto> getAllProjectMembers(ProjectMemberCriteria criteria);
+
     ResponseEntity<DataDto<List<EmployeeDto>>> getEmployeeListByProjectId(ProjectMemberCriteria criteria);
 }

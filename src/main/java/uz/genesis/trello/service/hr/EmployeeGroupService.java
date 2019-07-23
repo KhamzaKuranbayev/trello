@@ -8,8 +8,10 @@ import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.hr.EmployeeDto;
+import uz.genesis.trello.dto.hr.EmployeeGroupDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.hr.EmployeeMapper;
+import uz.genesis.trello.mapper.main.EmployeeGroupMapper;
 import uz.genesis.trello.repository.hr.IEmployeeGroupRepository;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
@@ -19,21 +21,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EmployeeGroupService  extends AbstractCrudService<GenericDto, CrudDto, CrudDto, EmployeeCriteria, IEmployeeGroupRepository>  implements IEmployeeGroupService{
+public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDto, CrudDto, EmployeeCriteria, IEmployeeGroupRepository> implements IEmployeeGroupService {
     private final IEmployeeRepository employeeRepository;
-    private final EmployeeMapper mapper;
+    private final EmployeeMapper employeeMapper;
+    private final EmployeeGroupMapper mapper;
 
     @Autowired
-    public EmployeeGroupService(IEmployeeGroupRepository repository, BaseUtils utils, IEmployeeRepository employeeRepository, EmployeeMapper mapper) {
+    public EmployeeGroupService(IEmployeeGroupRepository repository, BaseUtils utils, IEmployeeRepository employeeRepository, EmployeeMapper employeeMapper, EmployeeGroupMapper mapper) {
         super(repository, utils);
         this.employeeRepository = employeeRepository;
+        this.employeeMapper = employeeMapper;
         this.mapper = mapper;
     }
 
     @Override
     public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployee(EmployeeCriteria criteria) {
         List<EmployeeDto> employeeDtoList = new ArrayList<>();
-        repository.findAll(criteria).forEach(employeeGroup -> employeeDtoList.add(mapper.toDto(employeeRepository.find(employeeGroup.getEmployeeId()))));
+        repository.findAll(criteria).forEach(employeeGroup -> employeeDtoList.add(employeeMapper.toDto(employeeRepository.find(employeeGroup.getEmployeeId()))));
         return new ResponseEntity<>(new DataDto<>(employeeDtoList), HttpStatus.OK);
+    }
+
+    @Override
+    public List<EmployeeGroupDto> getAllEmployeeGroup(EmployeeCriteria criteria) {
+        return mapper.toDto(repository.findAll(criteria));
     }
 }

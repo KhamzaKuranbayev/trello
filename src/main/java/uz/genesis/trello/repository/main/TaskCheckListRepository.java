@@ -13,19 +13,33 @@ public class TaskCheckListRepository extends GenericDao<TaskCheckList, TaskCheck
 
     @Override
     protected void defineCriteriaOnQuerying(TaskCheckListCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
-        if (!utils.isEmpty(criteria.getTaskId())) {
-            whereCause.add("t.taskId = :taskId");
-            params.put("taskId", criteria.getTaskId());
+        if (!utils.isEmpty(criteria.getCheckListGroupId())) {
+            whereCause.add("t.checkListGroupId = :checkListGroupId");
+            params.put("checkListGroupId", criteria.getCheckListGroupId());
         }
         if (!utils.isEmpty(criteria.getText())) {
             whereCause.add("t.text = :text");
             params.put("text", criteria.getText());
         }
-        if(!utils.isEmpty(criteria.isChecked())){
+        if(!utils.isEmpty(criteria.getChecked())){
             whereCause.add("t.checked = :checked");
-            params.put("checked", criteria.isChecked());
+            params.put("checked", criteria.getChecked());
+        }
+        if(!utils.isEmpty(criteria.getTaskId())){
+            whereCause.add("c.taskId = :taskId");
+            params.put("taskId", criteria.getTaskId());
         }
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+
+    @Override
+    protected StringBuilder joinStringOnQuerying(TaskCheckListCriteria criteria) {
+        StringBuilder joinBuilder = new StringBuilder();
+        if(!utils.isEmpty(criteria.getProjectDetail())&& criteria.getProjectDetail()){
+            joinBuilder.append(" join CheckListGroup c on t.checkListGroupId = c.id ");
+        }
+        return joinBuilder;
     }
 }

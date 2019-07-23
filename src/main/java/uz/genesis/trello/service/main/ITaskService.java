@@ -7,7 +7,12 @@ import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.IGenericCrudService;
 
+import java.util.List;
+
 public interface ITaskService extends IGenericCrudService<TaskDto, TaskCreateDto, TaskUpdateDto, Long, TaskCriteria> {
     ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto);
+
     ResponseEntity<DataDto<GenericDto>> createTaskTimeEntry(TaskTimeEntryCreateDto taskTimeEntryCreateDto);
+
+    List<TaskProjectDetailDto> getProjectDetailTask(TaskCriteria criteria);
 }

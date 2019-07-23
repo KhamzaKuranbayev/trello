@@ -93,6 +93,12 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     }
 
     @Override
+    public List<ProjectMemberDto> getAllProjectMembers(ProjectMemberCriteria criteria){
+        return mapper.toDto(repository.findAll(criteria));
+    }
+
+
+    @Override
     public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployeeListByProjectId(ProjectMemberCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(repository.findAll(criteria).stream().map(projectMember -> employeeMapper.toDto(projectMember.getEmployee())).collect(Collectors.toList())), HttpStatus.OK);
     }

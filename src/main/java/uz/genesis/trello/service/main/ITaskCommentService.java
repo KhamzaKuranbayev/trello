@@ -7,4 +7,5 @@ import uz.genesis.trello.dto.main.TaskCommentUpdateDto;
 import uz.genesis.trello.service.IGenericCrudService;
 
 public interface ITaskCommentService extends IGenericCrudService<TaskCommentDto, TaskCommentCreateDto, TaskCommentUpdateDto, Long, TaskCommentCriteria> {
+    Long getCommentCount(TaskCommentCriteria criteria);
 }
