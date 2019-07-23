@@ -100,7 +100,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.projectId")
     public List<ProjectColumnDetailDto> getAllColumns(ProjectColumnCriteria criteria) {
         return mapper.toDetailDto(repository.findAll(criteria));
     }

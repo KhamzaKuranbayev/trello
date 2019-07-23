@@ -64,7 +64,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #id")
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_READ)")
     public ResponseEntity<DataDto<RoleDto>> get(Long id) {
         Role role = repository.find(RoleCriteria.childBuilder().selfId(id).build());

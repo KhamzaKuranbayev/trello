@@ -96,7 +96,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.projectId")
     public List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria){
         return mapper.toDto(repository.findAll(criteria));
     }

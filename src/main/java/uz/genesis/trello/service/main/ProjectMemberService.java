@@ -97,7 +97,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.projectId")
     public List<ProjectMemberDto> getAllProjectMembers(ProjectMemberCriteria criteria){
         return mapper.toDto(repository.findAll(criteria));
     }

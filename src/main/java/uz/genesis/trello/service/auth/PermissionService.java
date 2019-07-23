@@ -63,7 +63,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #id")
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_READ)")
     public ResponseEntity<DataDto<PermissionDto>> get(Long id) {
         Permission permission = repository.find(PermissionCriteria.childBuilder().selfId(id).build());

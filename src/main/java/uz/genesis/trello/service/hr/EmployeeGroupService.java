@@ -45,7 +45,7 @@ public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDt
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.groupId")
     public List<EmployeeGroupDto> getAllEmployeeGroup(EmployeeCriteria criteria) {
         return mapper.toDto(repository.findAll(criteria));
     }
