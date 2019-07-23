@@ -67,7 +67,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #id")
     public ResponseEntity<DataDto<TypeDto>> get(Long id) {
         Type type = repository.find(TypeCriteria.childBuilder().selfId(id).build());
 

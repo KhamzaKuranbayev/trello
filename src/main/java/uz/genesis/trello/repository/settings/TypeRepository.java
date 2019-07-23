@@ -17,6 +17,10 @@ public class TypeRepository extends GenericDao<Type, TypeCriteria> implements IT
 
     @Override
     protected void defineCriteriaOnQuerying(TypeCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        if(!utils.isEmpty(criteria.getSelfId())){
+            whereCause.add("t.id = :selfId");
+            params.put("selfId", criteria.getSelfId());
+        }
 
         if (utils.isEmpty(criteria.getTypeCode())) {
             whereCause.add("t.typeCode is null");
