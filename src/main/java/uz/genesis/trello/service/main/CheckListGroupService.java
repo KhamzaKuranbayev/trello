@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -79,6 +80,7 @@ public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto
     }
 
     @Override
+    @CacheEvict(value = {"checkLists"}, allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteCheckListGroup")), HttpStatus.OK);

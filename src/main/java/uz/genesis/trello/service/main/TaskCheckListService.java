@@ -3,6 +3,9 @@ package uz.genesis.trello.service.main;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"checkLists"})
 public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, TaskCheckListCreateDto, TaskCheckListUpdateDto, TaskCheckListCriteria, ITaskCheckListRepository> implements ITaskCheckListService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
@@ -39,6 +43,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCheckListCreateDto dto) {
 
         TaskCheckList taskCheckList = mapper.fromCreateDto(dto);
@@ -53,6 +58,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<TaskCheckListDto>> update(@NotNull TaskCheckListUpdateDto dto) {
         validator.validateOnUpdate(dto);
 
@@ -64,6 +70,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         if (repository.delete(id, "deleteTaskCheckList")) {
@@ -88,6 +95,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     }
 
     @Override
+    @Cacheable(key = "#root.methodName + #criteria.taskId")
     public CheckListCountDto getCheckListCount(TaskCheckListCriteria criteria){
         criteria.setProjectDetail(true);
         Long totalCount = repository.getTotalCount(criteria);

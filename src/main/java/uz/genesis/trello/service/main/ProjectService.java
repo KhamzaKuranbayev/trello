@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
-import uz.genesis.trello.criterias.main.ProjectColumnCriteria;
-import uz.genesis.trello.criterias.main.ProjectCriteria;
-import uz.genesis.trello.criterias.main.ProjectMemberCriteria;
-import uz.genesis.trello.criterias.main.ProjectTagCriteria;
+import uz.genesis.trello.criterias.main.*;
 import uz.genesis.trello.domain.main.Project;
 import uz.genesis.trello.domain.main.ProjectDetailDto;
 import uz.genesis.trello.dto.GenericDto;
@@ -32,6 +29,7 @@ import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -116,9 +114,17 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     public ResponseEntity<DataDto<ProjectDetailDto>> getProjectDetail(Long id) {
         if(repository.call(GenericDto.builder().id(id).build(), "hasaccesstoproject", Types.BOOLEAN)){
             Project project = repository.find(id);
-            List<EmployeeGroupDto> employeeGroupDtoList = employeeGroupService.getAllEmployeeGroup(EmployeeCriteria.childBuilder().groupId(project.getGroup().getId()).build());
+            List<EmployeeGroupDto> employeeGroupDtoList = new ArrayList<>();
+            if (utils.isEmpty(project)) {
+                logger.error(String.format("project with id '%s' not found", id));
+                return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                        String.format("project with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            }
+            if(!utils.isEmpty(project.getGroup())){
+                employeeGroupDtoList = employeeGroupService.getAllEmployeeGroup(EmployeeCriteria.childBuilder().groupId(project.getGroup().getId()).build());
+            }
             List<ProjectTagDto> projectTagDtoList = projectTagService.getAllTag(ProjectTagCriteria.childBuilder().projectId(id).build());
-            List<ProjectColumnDetailDto> projectColumnDtoList = projectColumnService.getAllColumns(ProjectColumnCriteria.childBuilder().projectId(id).build());
+            List<ProjectColumnDetailDto> projectColumnDtoList = attachTaskToProjectColumn(projectColumnService.getAllColumns(ProjectColumnCriteria.childBuilder().projectId(id).build()));
             List<ProjectMemberDto> projectMemberDtoList = projectMemberService.getAllProjectMembers(ProjectMemberCriteria.childBuilder().projectId(id).build());
 
             ProjectDetailDto detailDto = ProjectDetailDto.childBuilder()
@@ -143,5 +149,10 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     @Override
     public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(ProjectCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(repository.getAllPercentageProjects(criteria)), HttpStatus.OK);
+    }
+
+    private List<ProjectColumnDetailDto> attachTaskToProjectColumn(List<ProjectColumnDetailDto> dtoList){
+        dtoList.forEach(dto -> dto.setTasks(taskService.getProjectDetailTask(TaskCriteria.childBuilder().projectId(dto.getProjectId()).columnId(dto.getId()).build())));
+        return dtoList;
     }
 }

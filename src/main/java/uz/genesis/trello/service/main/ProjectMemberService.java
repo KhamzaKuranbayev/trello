@@ -3,6 +3,9 @@ package uz.genesis.trello.service.main;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@CacheConfig(cacheNames = {"projectMembers"})
 public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, ProjectMemberCreateDto, ProjectMemberUpdateDto, ProjectMemberCriteria, IProjectMemberRepository> implements IProjectMemberService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
@@ -44,8 +48,8 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectMemberCreateDto dto) {
-
         ProjectMember projectMember = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectMember);
         projectMember.setId(repository.create(dto, "createProjectMember"));
@@ -93,6 +97,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public List<ProjectMemberDto> getAllProjectMembers(ProjectMemberCriteria criteria){
         return mapper.toDto(repository.findAll(criteria));
     }

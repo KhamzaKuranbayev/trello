@@ -53,7 +53,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(allEntries = true, cacheNames = {"types", "projectColumns"})
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TypeCreateDto dto) {
         Type type = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(type);
@@ -80,7 +80,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
-    @CacheEvict(value = {"types"}, allEntries = true)
+    @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
     public ResponseEntity<DataDto<TypeDto>> update(@NotNull TypeUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -93,14 +93,14 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
 
     @Override
-    @CacheEvict(value = {"types"}, allEntries = true)
+    @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteType")), HttpStatus.OK);
     }
 
     @Override
-    @CacheEvict(value = {"types"}, allEntries = true)
+    @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> createSubType(SubTypeCreateDto dto) {
         Type type = mapper.fromSubTypeCreaeteDto(dto);
         validator.validateOnSubTypeCreate(dto);

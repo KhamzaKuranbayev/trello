@@ -1,6 +1,8 @@
 package uz.genesis.trello.service.hr;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"employeeGroups"})
 public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDto, CrudDto, EmployeeCriteria, IEmployeeGroupRepository> implements IEmployeeGroupService {
     private final IEmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
@@ -42,6 +45,7 @@ public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDt
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public List<EmployeeGroupDto> getAllEmployeeGroup(EmployeeCriteria criteria) {
         return mapper.toDto(repository.findAll(criteria));
     }

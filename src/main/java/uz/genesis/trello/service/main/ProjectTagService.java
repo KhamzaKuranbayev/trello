@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "projectTags")
 public class ProjectTagService extends AbstractCrudService<ProjectTagDto, ProjectTagCreateDto, ProjectTagUpdateDto, ProjectTagCriteria, IProjectTagRepository> implements IProjectTagService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
@@ -40,6 +44,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectTagCreateDto dto) {
 
         ProjectTag projectTag = mapper.fromCreateDto(dto);
@@ -54,6 +59,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<ProjectTagDto>> update(@NotNull ProjectTagUpdateDto dto) {
         validator.validateOnUpdate(dto);
 
@@ -65,6 +71,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         if (repository.delete(id, "deleteProjectTag")) {
@@ -89,6 +96,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
+    @Cacheable(key = "#root.methodName")
     public List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria){
         return mapper.toDto(repository.findAll(criteria));
     }

@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,7 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     }
 
     @Override
+    @CacheEvict(value = {"projectMembers"}, allEntries = true)
     public ResponseEntity<DataDto<EmployeeDto>> update(@NotNull EmployeeUpdateDto dto) {
         validator.validateOnUpdate(dto);
 

@@ -3,7 +3,10 @@ package uz.genesis.trello.service.hr;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"groups"})
 public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, GroupUpdateDto, GroupCriteria, IGroupRepository> implements IGroupService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
@@ -66,6 +70,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     }
 
     @Override
+    @CacheEvict(value = {"employeeGroups"}, allEntries = true)
     public ResponseEntity<DataDto<GroupDto>> update(@NotNull GroupUpdateDto dto) {
 
         validator.validateOnUpdate(dto);

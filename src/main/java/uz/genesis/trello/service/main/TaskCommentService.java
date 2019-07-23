@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"comments"})
 public class TaskCommentService extends AbstractCrudService<TaskCommentDto, TaskCommentCreateDto, TaskCommentUpdateDto, TaskCommentCriteria, ITaskCommentRepository> implements ITaskCommentService {
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
@@ -40,6 +44,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCommentCreateDto dto) {
 
         TaskComment taskComment = mapper.fromCreateDto(dto);
@@ -65,6 +70,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         if (repository.delete(id, "deleteTaskComment")) {
@@ -89,6 +95,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     }
 
     @Override
+    @Cacheable(key = "#root.methodName + #criteria.taskId")
     public Long getCommentCount(TaskCommentCriteria criteria) {
         return repository.getTotalCount(criteria);
     }

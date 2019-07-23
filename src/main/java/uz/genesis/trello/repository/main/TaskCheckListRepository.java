@@ -17,6 +17,10 @@ public class TaskCheckListRepository extends GenericDao<TaskCheckList, TaskCheck
             whereCause.add("t.checkListGroupId = :checkListGroupId");
             params.put("checkListGroupId", criteria.getCheckListGroupId());
         }
+        if(!utils.isEmpty(criteria.getSelfId())){
+            whereCause.add("t.id = :selfId");
+            params.put("selfId", criteria.getSelfId());
+        }
         if (!utils.isEmpty(criteria.getText())) {
             whereCause.add("t.text = :text");
             params.put("text", criteria.getText());
