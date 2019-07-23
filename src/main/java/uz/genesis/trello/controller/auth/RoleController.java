@@ -1,11 +1,11 @@
 package uz.genesis.trello.controller.auth;
 
-import com.google.gson.Gson;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.auth.RoleCriteria;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.AttachPermissionDto;
 import uz.genesis.trello.dto.auth.RoleCreateDto;
 import uz.genesis.trello.dto.auth.RoleDto;
 import uz.genesis.trello.dto.auth.RoleUpdateDto;
@@ -13,7 +13,6 @@ import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.auth.IRoleService;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -45,5 +44,10 @@ public class RoleController extends ApiController<IRoleService> {
     @RequestMapping(value = API_PATH + V_1 + "/roles", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(@Valid RoleCriteria criteria) {
         return service.getAll(criteria);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/roles/attach", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<RoleDto>> attachPermissions(@RequestBody AttachPermissionDto dto) {
+        return service.attachPermissionsToRole(dto);
     }
 }

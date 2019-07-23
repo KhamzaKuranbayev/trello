@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.RoleCriteria;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.AttachPermissionDto;
 import uz.genesis.trello.dto.auth.RoleCreateDto;
 import uz.genesis.trello.dto.auth.RoleDto;
 import uz.genesis.trello.dto.auth.RoleUpdateDto;
@@ -28,6 +29,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.RoleServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Types;
 import java.util.List;
 
 @Service
@@ -105,5 +107,16 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
         return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
+    }
+
+    @Override
+    @CacheEvict(value = {"users", "roles"}, allEntries = true)
+    public ResponseEntity<DataDto<RoleDto>> attachPermissionsToRole(AttachPermissionDto dto) {
+        validator.validateOnAttach(dto);
+        if (repository.call(dto, "attachpermissiontorole", Types.BOOLEAN)) {
+            return get(dto.getId());
+        } else {
+            throw new RuntimeException((String.format("could not attach permissions to role with id '%s'", dto.getId())));
+        }
     }
 }
