@@ -41,13 +41,14 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     private final EmployeeMapper employeeMapper;
     private final ProjectServiceValidator validator;
     private final IProjectMemberService projectMemberService;
+    private final ITaskActionService taskActionService;
     private final ProjectMapper mapper;
     private final IProjectColumnService projectColumnService;
     private final ITaskService taskService;
     private final IEmployeeGroupService employeeGroupService;
 
     @Autowired
-    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper typeMapper, ProjectTagService projectTagService, EmployeeMapper employeeMapper, ProjectServiceValidator validator, IProjectMemberService projectMemberService, ProjectMapper mapper, IProjectColumnService projectColumnService, ITaskService taskService, IEmployeeGroupService employeeGroupService) {
+    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper typeMapper, ProjectTagService projectTagService, EmployeeMapper employeeMapper, ProjectServiceValidator validator, IProjectMemberService projectMemberService, ITaskActionService taskActionService, ProjectMapper mapper, IProjectColumnService projectColumnService, ITaskService taskService, IEmployeeGroupService employeeGroupService) {
         super(repository, utils);
         this.genericMapper = genericMapper;
         this.typeMapper = typeMapper;
@@ -55,6 +56,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         this.employeeMapper = employeeMapper;
         this.validator = validator;
         this.projectMemberService = projectMemberService;
+        this.taskActionService = taskActionService;
         this.mapper = mapper;
         this.projectColumnService = projectColumnService;
         this.taskService = taskService;
@@ -126,6 +128,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
             List<ProjectTagDto> projectTagDtoList = projectTagService.getAllTag(ProjectTagCriteria.childBuilder().projectId(id).build());
             List<ProjectColumnDetailDto> projectColumnDtoList = attachTaskToProjectColumn(projectColumnService.getAllColumns(ProjectColumnCriteria.childBuilder().projectId(id).build()));
             List<ProjectMemberDto> projectMemberDtoList = projectMemberService.getAllProjectMembers(ProjectMemberCriteria.childBuilder().projectId(id).build());
+            List<TaskActionDto> taskActionDtoList = taskActionService.getAllTaskAction(TaskActionCriteria.childBuilder().projectId(id).sortBy("id").sortDirection("desc").perPage(20).page(0).build());
 
             ProjectDetailDto detailDto = ProjectDetailDto.childBuilder()
                     .id(project.getId())
@@ -139,6 +142,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
                     .columns(projectColumnDtoList)
                     .tags(projectTagDtoList)
                     .members(projectMemberDtoList)
+                    .actions(taskActionDtoList)
                     .build();
             return new ResponseEntity<>(new DataDto<>(detailDto), HttpStatus.OK);
         }

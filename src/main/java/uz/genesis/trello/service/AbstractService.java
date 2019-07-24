@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class AbstractService<T, C extends GenericCriteria, R extends IGenericRepository> {
 
-    protected final R repository;
+    protected final R  repository;
     protected final BaseUtils utils;
 
     @Autowired
