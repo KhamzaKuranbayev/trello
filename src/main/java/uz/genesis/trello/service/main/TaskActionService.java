@@ -26,7 +26,8 @@ public class TaskActionService extends AbstractService<TaskActionDto, TaskAction
 
     @Override
     public ResponseEntity<DataDto<List<TaskActionDto>>> getAll(TaskActionCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override

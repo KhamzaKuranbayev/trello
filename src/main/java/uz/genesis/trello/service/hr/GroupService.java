@@ -90,6 +90,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
     @Override
     public ResponseEntity<DataDto<List<GroupDto>>> getAll(GroupCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 }

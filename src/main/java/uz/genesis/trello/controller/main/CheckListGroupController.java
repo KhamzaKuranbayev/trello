@@ -19,6 +19,7 @@ public class CheckListGroupController extends ApiController<ICheckListGroupServi
     public CheckListGroupController(ICheckListGroupService service) {
         super(service);
     }
+
     public ResponseEntity<DataDto<CheckListGroupDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }
@@ -27,14 +28,17 @@ public class CheckListGroupController extends ApiController<ICheckListGroupServi
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody CheckListGroupCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/checkListGroups", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<CheckListGroupDto>> update(@RequestBody CheckListGroupUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/checkListGroups", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<CheckListGroupDto>> update(@RequestBody CheckListGroupUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/checkListGroups/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/checkListGroups", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<CheckListGroupDto>>> getAll(@Valid CheckListGroupCriteria criteria) {
         return service.getAll(criteria);

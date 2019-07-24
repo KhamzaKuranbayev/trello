@@ -19,6 +19,7 @@ public class ProjectTagController extends ApiController<IProjectTagService> {
     public ProjectTagController(IProjectTagService service) {
         super(service);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/projectTags/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<ProjectTagDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
@@ -28,14 +29,17 @@ public class ProjectTagController extends ApiController<IProjectTagService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody ProjectTagCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/projectTags", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<ProjectTagDto>> update(@RequestBody ProjectTagUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/projectTags", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<ProjectTagDto>> update(@RequestBody ProjectTagUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/projectTags/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/projectTags", method = RequestMethod.GET)
     public ResponseEntity<DataDto<List<ProjectTagDto>>> getAll(@Valid ProjectTagCriteria criteria) {
         return service.getAll(criteria);

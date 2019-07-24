@@ -31,7 +31,7 @@ public class PermissionController extends ApiController<IPermissionService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody PermissionCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/permissions", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH+V_1+"/permissions", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<PermissionDto>> update(@RequestBody PermissionUpdateDto dto){
         return service.update(dto);
     }

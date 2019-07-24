@@ -31,7 +31,7 @@ public class RoleController extends ApiController<IRoleService> {
         return service.create(dto);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/roles", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH + V_1 + "/roles", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<RoleDto>> update(@RequestBody RoleUpdateDto dto) {
         return service.update(dto);
     }

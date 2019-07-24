@@ -91,7 +91,8 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
 
     @Override
     public ResponseEntity<DataDto<List<TaskTagDto>>> getAll(TaskTagCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override

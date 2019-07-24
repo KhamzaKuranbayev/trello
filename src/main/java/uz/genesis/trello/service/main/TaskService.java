@@ -109,7 +109,8 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
 
     @Override
     public ResponseEntity<DataDto<List<TaskDto>>> getAll(TaskCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override

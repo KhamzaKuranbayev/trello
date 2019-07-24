@@ -28,7 +28,7 @@ public class TaskController extends ApiController<ITaskService> {
         return service.create(dto);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/tasks", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH + V_1 + "/tasks", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<TaskDto>> update(@RequestBody TaskUpdateDto dto) {
         return service.update(dto);
     }

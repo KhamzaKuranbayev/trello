@@ -28,7 +28,7 @@ public class TaskCommentController extends ApiController<ITaskCommentService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody TaskCommentCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/taskComments", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH+V_1+"/taskComments", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<TaskCommentDto>> update(@RequestBody TaskCommentUpdateDto dto){
         return service.update(dto);
     }
