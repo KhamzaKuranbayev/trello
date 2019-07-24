@@ -57,6 +57,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 anonymous().disable()
                 .requestMatchers().antMatchers(API_PATH + "/**")
                 .and().authorizeRequests()
+                .antMatchers(API_PATH + V_1 + "/uploads/**").permitAll()
                 .antMatchers(API_PATH + "/**").access(SECURED_WRITE_SCOPE)
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())
                 .and().exceptionHandling().authenticationEntryPoint(new AuthenticationFailureHandler());
