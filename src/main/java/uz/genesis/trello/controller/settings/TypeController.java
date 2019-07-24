@@ -34,18 +34,20 @@ public class TypeController extends ApiController<ITypeService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody TypeCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/types", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<TypeDto>> update(@RequestBody TypeUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/types", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<TypeDto>> update(@RequestBody TypeUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/types/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
 
     @ApiOperation(value = "Creating sub types")
     @RequestMapping(value = API_PATH + V_1 + "/types/subTypes", method = RequestMethod.POST)
-    public ResponseEntity<DataDto<GenericDto>> createSubType(@RequestBody SubTypeCreateDto dto){
+    public ResponseEntity<DataDto<GenericDto>> createSubType(@RequestBody SubTypeCreateDto dto) {
         return service.createSubType(dto);
     }
 

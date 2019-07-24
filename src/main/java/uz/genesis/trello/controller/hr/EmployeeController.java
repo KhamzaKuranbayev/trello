@@ -40,12 +40,14 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody EmployeeCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/employees", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<EmployeeDto>> update(@RequestBody EmployeeUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/employees", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<EmployeeDto>> update(@RequestBody EmployeeUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/employees/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
 
@@ -55,7 +57,7 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     }
 
     @RequestMapping(value = API_PATH + V_1 + "/employees/project", method = RequestMethod.GET)
-    public ResponseEntity<DataDto<List<EmployeeDto>>> getByProjects(@Valid EmployeeCriteria criteria){
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getByProjects(@Valid EmployeeCriteria criteria) {
         return employeeGroupService.getEmployee(criteria);
     }
 }

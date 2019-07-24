@@ -36,7 +36,7 @@ public class UserController extends ApiController<IUserService> {
         return service.create(dto);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/users", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH + V_1 + "/users", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<UserDto>> update(@RequestBody UserUpdateDto dto) {
         return service.update(dto);
     }

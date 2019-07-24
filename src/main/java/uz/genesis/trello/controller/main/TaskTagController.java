@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.TaskTagCriteria;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.*;
+import uz.genesis.trello.dto.main.TaskTagCreateDto;
+import uz.genesis.trello.dto.main.TaskTagDto;
+import uz.genesis.trello.dto.main.TaskTagUpdateDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.ITaskTagService;
 
@@ -27,12 +29,14 @@ public class TaskTagController extends ApiController<ITaskTagService> {
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody TaskTagCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/taskTags", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<TaskTagDto>> update(@RequestBody TaskTagUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/taskTags", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<TaskTagDto>> update(@RequestBody TaskTagUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/taskTags/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
 

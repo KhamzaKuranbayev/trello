@@ -19,6 +19,7 @@ public class TaskCheckListController extends ApiController<ITaskCheckListService
     public TaskCheckListController(ITaskCheckListService service) {
         super(service);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/taskCheckLists/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<TaskCheckListDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
@@ -28,12 +29,14 @@ public class TaskCheckListController extends ApiController<ITaskCheckListService
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody TaskCheckListCreateDto dto) {
         return service.create(dto);
     }
-    @RequestMapping(value = API_PATH+V_1+"/taskCheckLists", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public ResponseEntity<DataDto<TaskCheckListDto>> update(@RequestBody TaskCheckListUpdateDto dto){
+
+    @RequestMapping(value = API_PATH + V_1 + "/taskCheckLists", method = RequestMethod.PUT)
+    public ResponseEntity<DataDto<TaskCheckListDto>> update(@RequestBody TaskCheckListUpdateDto dto) {
         return service.update(dto);
     }
+
     @RequestMapping(value = API_PATH + V_1 + "/taskCheckLists/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id")Long id){
+    public ResponseEntity<DataDto<Boolean>> delete(@PathVariable(value = "id") Long id) {
         return service.delete(id);
     }
 

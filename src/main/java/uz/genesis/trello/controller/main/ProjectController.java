@@ -37,7 +37,7 @@ public class ProjectController extends ApiController<IProjectService> {
         return service.create(dto);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/projects", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = API_PATH + V_1 + "/projects", method = RequestMethod.PUT)
     public ResponseEntity<DataDto<ProjectDto>> update(@RequestBody ProjectUpdateDto dto) {
         return service.update(dto);
     }
