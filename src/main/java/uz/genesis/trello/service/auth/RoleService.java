@@ -106,7 +106,8 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_READ)")
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
-        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles)), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles), total), HttpStatus.OK);
     }
 
     @Override
