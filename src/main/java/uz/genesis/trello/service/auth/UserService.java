@@ -148,6 +148,7 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     @Override
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_READ)")
     public ResponseEntity<DataDto<List<UserDto>>> getAll(UserCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 }

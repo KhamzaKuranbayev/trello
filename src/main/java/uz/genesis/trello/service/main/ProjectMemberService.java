@@ -93,7 +93,8 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
     @Override
     public ResponseEntity<DataDto<List<ProjectMemberDto>>> getAll(ProjectMemberCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override

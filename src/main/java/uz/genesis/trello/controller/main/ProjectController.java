@@ -52,7 +52,7 @@ public class ProjectController extends ApiController<IProjectService> {
         return service.getAll(criteria);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "projects/percentage", method = RequestMethod.POST)
+    @RequestMapping(value = API_PATH + V_1 + "/projects/percentage", method = RequestMethod.POST)
     public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(@Valid ProjectCriteria criteria) {
         return service.getAllWithPercentage(criteria);
     }

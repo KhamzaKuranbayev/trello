@@ -75,6 +75,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
 
     @Override
     public ResponseEntity<DataDto<List<TaskMemberDto>>> getAll(TaskMemberCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 }

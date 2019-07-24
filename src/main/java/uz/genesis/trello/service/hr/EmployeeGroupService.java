@@ -41,7 +41,8 @@ public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDt
     public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployee(EmployeeCriteria criteria) {
         List<EmployeeDto> employeeDtoList = new ArrayList<>();
         repository.findAll(criteria).forEach(employeeGroup -> employeeDtoList.add(employeeMapper.toDto(employeeRepository.find(employeeGroup.getEmployeeId()))));
-        return new ResponseEntity<>(new DataDto<>(employeeDtoList), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(employeeDtoList, total), HttpStatus.OK);
     }
 
     @Override

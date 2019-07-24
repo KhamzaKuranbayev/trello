@@ -109,7 +109,8 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
 
     @Override
     public ResponseEntity<DataDto<List<ProjectDto>>> getAll(ProjectCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria))), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override
@@ -152,7 +153,8 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
 
     @Override
     public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(ProjectCriteria criteria) {
-        return new ResponseEntity<>(new DataDto<>(repository.getAllPercentageProjects(criteria)), HttpStatus.OK);
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(repository.getAllPercentageProjects(criteria), total), HttpStatus.OK);
     }
 
     private List<ProjectColumnDetailDto> attachTaskToProjectColumn(List<ProjectColumnDetailDto> dtoList){
