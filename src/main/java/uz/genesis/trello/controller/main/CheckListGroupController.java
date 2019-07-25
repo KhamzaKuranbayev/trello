@@ -20,6 +20,7 @@ public class CheckListGroupController extends ApiController<ICheckListGroupServi
         super(service);
     }
 
+    @RequestMapping(value = API_PATH + V_1 + "/checkListGroups/{id}", method = RequestMethod.GET)
     public ResponseEntity<DataDto<CheckListGroupDto>> get(@PathVariable(value = "id") Long id) {
         return service.get(id);
     }

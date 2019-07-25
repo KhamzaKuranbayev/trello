@@ -6,10 +6,7 @@ import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.ProjectCriteria;
 import uz.genesis.trello.domain.main.ProjectDetailDto;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.main.ProjectCreateDto;
-import uz.genesis.trello.dto.main.ProjectDto;
-import uz.genesis.trello.dto.main.ProjectPercentageDto;
-import uz.genesis.trello.dto.main.ProjectUpdateDto;
+import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.main.IProjectService;
 
@@ -55,5 +52,10 @@ public class ProjectController extends ApiController<IProjectService> {
     @RequestMapping(value = API_PATH + V_1 + "/projects/percentage", method = RequestMethod.POST)
     public ResponseEntity<DataDto<List<ProjectPercentageDto>>> getAllWithPercentage(@Valid ProjectCriteria criteria) {
         return service.getAllWithPercentage(criteria);
+    }
+
+    @RequestMapping(value = API_PATH + V_1 + "/projects/background", method = RequestMethod.POST)
+    public ResponseEntity<DataDto<Boolean>> changeProjectBackground(@RequestBody ProjectBackgroundChangeDto dto) {
+        return service.changeProjectBackground(dto);
     }
 }

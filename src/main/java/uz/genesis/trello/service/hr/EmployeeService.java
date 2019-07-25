@@ -114,4 +114,10 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getAllWithPhoto(EmployeeCriteria criteria) {
+        Long total = repository.getTotalCount(criteria);
+        return new ResponseEntity<>(new DataDto<>(repository.getEmployeesWithPhoto(criteria), total), HttpStatus.OK);
+    }
 }

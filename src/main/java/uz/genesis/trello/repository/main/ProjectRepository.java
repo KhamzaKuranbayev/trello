@@ -16,13 +16,14 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
     @Override
     protected void defineCriteriaOnQuerying(ProjectCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
 
-        if (!utils.isEmpty(criteria.getSelfId())) {
-            whereCause.add("t.id = :selfId");
-            params.put("selfId", criteria.getSelfId());
-        }
         if (!utils.isEmpty(criteria.getName())) {
             whereCause.add("t.name = :name");
             params.put("name", criteria.getName());
+        }
+
+        if (!utils.isEmpty(criteria.getSelfId())) {
+            whereCause.add("t.id = :selfId");
+            params.put("selfId", criteria.getSelfId());
         }
 
         if (!isAdmin()) {
