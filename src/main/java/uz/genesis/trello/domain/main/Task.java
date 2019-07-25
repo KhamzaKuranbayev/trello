@@ -63,12 +63,12 @@ public class Task extends Auditable {
     private List<TaskComment> comments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_level_type", referencedColumnName = "id")
-    private Type projectLevelType;
+    @JoinColumn(name = "task_level_type", referencedColumnName = "id")
+    private Type taskLevelType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_priority_type", referencedColumnName = "id")
-    private Type projectPriorityType;
+    @JoinColumn(name = "task_priority_type", referencedColumnName = "id")
+    private Type taskPriorityType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
