@@ -20,4 +20,8 @@ public class TypeDto extends GenericDto {
     private String typeCode;
     private String value;
     private Integer ordering;
+
+    public TypeDto(String value) {
+        this.value = value;
+    }
 }

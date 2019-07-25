@@ -10,4 +10,6 @@ import uz.genesis.trello.mapper.BaseMapper;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CheckListGroupMapper extends BaseMapper<CheckListGroup, CheckListGroupDto, CheckListGroupCreateDto, CheckListGroupUpdateDto> {
+
+
 }

@@ -18,7 +18,7 @@ public class FileHandout extends Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_type", referencedColumnName = "id")
-    private Type sourceType; // file-handout-types child {fht-user-passport-type, fht-user-ielts-type so on}
+    private Type sourceType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_type_parent", referencedColumnName = "id")
