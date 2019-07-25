@@ -15,6 +15,7 @@ import java.util.List;
 public class ProjectDto extends GenericDto {
     private String name;
     private GroupDto group;
+    private String background;
     private List<ProjectMemberDto> members;
     private TypeDto projectType;
     private TypeDto projectLevelType;

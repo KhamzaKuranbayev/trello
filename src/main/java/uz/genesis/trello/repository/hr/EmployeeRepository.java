@@ -4,7 +4,9 @@ import org.springframework.stereotype.Repository;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.hr.Employee;
+import uz.genesis.trello.dto.hr.EmployeeDto;
 
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
@@ -39,4 +41,24 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 
+    @Override
+    protected Query defineQuerySelect(EmployeeCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
+        String queryStr;
+        if (!utils.isEmpty(criteria.getWithPhoto()) && criteria.getWithPhoto()) {
+            queryStr = " select" + (onDefineCount ? " count(t) " : " new uz.genesis.trello.dto.hr.EmployeeDto(t, getemployeephotourl(t.userId))") + " from  Employee t " +
+                    joinStringOnQuerying(criteria) +
+                    " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
+            return entityManager.createQuery(queryStr);
+        } else {
+            queryStr = " select " + (onDefineCount ? " count(t) " : " t ") + " from  Employee t " +
+                    joinStringOnQuerying(criteria) +
+                    " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
+            return onDefineCount ? entityManager.createQuery(queryStr, Long.class) : entityManager.createQuery(queryStr);
+        }
+    }
+
+    @Override
+    public List<EmployeeDto> getEmployeesWithPhoto(EmployeeCriteria criteria) {
+        return findAllGeneric(criteria);
+    }
 }

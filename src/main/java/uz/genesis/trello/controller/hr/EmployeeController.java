@@ -60,4 +60,9 @@ public class EmployeeController extends ApiController<IEmployeeService> {
     public ResponseEntity<DataDto<List<EmployeeDto>>> getByProjects(@Valid EmployeeCriteria criteria) {
         return employeeGroupService.getEmployee(criteria);
     }
+
+    @RequestMapping(value = API_PATH + V_1 + "/employees/photo", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<List<EmployeeDto>>> getWithPhotos(@Valid EmployeeCriteria criteria) {
+        return service.getAllWithPhoto(criteria);
+    }
 }

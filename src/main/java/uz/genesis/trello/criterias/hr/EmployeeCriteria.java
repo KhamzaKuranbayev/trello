@@ -15,6 +15,7 @@ public class EmployeeCriteria extends GenericCriteria {
     private String lastName;
     private Long groupId;
     private Long projectId;
+    private Boolean withPhoto;
     private Boolean projectRelated;
     private String middleName;
     private String branchId;
@@ -23,10 +24,11 @@ public class EmployeeCriteria extends GenericCriteria {
 
 
     @Builder(builderMethodName = "childBuilder")
-    public EmployeeCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, Date birthDate, String firstName, String lastName, String middleName, String branchId, String name, Long projectId, Boolean projectRelated, Long groupId) {
+    public EmployeeCriteria(Long selfId, Integer page, Integer perPage, String sortBy, String sortDirection, Date birthDate, String firstName, String lastName, String middleName, String branchId, String name, Long projectId, Boolean projectRelated, Long groupId, Boolean withPhoto) {
         super(selfId, page, perPage, sortBy, sortDirection);
         this.birthDate = birthDate;
         this.projectRelated = projectRelated;
+        this.withPhoto = withPhoto;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;

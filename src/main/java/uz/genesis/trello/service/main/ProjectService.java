@@ -157,6 +157,15 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         return new ResponseEntity<>(new DataDto<>(repository.getAllPercentageProjects(criteria), total), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<DataDto<Boolean>> changeProjectBackground(ProjectBackgroundChangeDto dto){
+        boolean success = false;
+        if(repository.call(dto, "changeprojectbackround", Types.BOOLEAN)){
+            success = true;
+        }
+        return new ResponseEntity<>(new DataDto<>(success), HttpStatus.OK);
+    }
+
     private List<ProjectColumnDetailDto> attachTaskToProjectColumn(List<ProjectColumnDetailDto> dtoList){
         dtoList.forEach(dto -> dto.setTasks(taskService.getProjectDetailTask(TaskCriteria.childBuilder().projectId(dto.getProjectId()).columnId(dto.getId()).build())));
         return dtoList;
