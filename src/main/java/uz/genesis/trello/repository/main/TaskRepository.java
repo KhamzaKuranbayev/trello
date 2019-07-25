@@ -12,6 +12,10 @@ import java.util.Map;
 public class TaskRepository extends GenericDao<Task, TaskCriteria> implements ITaskRepository {
     @Override
     protected void defineCriteriaOnQuerying(TaskCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        if (!utils.isEmpty(criteria.getSelfId())) {
+            whereCause.add("t.id = :selfId");
+            params.put("selfId", criteria.getSelfId());
+        }
         if (!utils.isEmpty(criteria.getColumnId())) {
             whereCause.add("t.columnId = :columnId");
             params.put("columnId", criteria.getColumnId());
