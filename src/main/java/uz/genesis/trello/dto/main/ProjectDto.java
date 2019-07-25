@@ -18,18 +18,14 @@ public class ProjectDto extends GenericDto {
     private String background;
     private List<ProjectMemberDto> members;
     private TypeDto projectType;
-    private TypeDto projectLevelType;
-    private TypeDto projectPriorityType;
 
     @Builder(builderMethodName = "childBuilder")
 
-    public ProjectDto(Long id, String name, GroupDto group, List<ProjectMemberDto> members, TypeDto projectType, TypeDto projectLevelType, TypeDto projectPriorityType) {
+    public ProjectDto(Long id, String name, GroupDto group, List<ProjectMemberDto> members, TypeDto projectType) {
         super(id);
         this.name = name;
         this.group = group;
         this.members = members;
         this.projectType = projectType;
-        this.projectLevelType = projectLevelType;
-        this.projectPriorityType = projectPriorityType;
     }
 }

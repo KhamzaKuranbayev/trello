@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.settings.TypeDto;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,5 +19,7 @@ public class TaskDto extends GenericDto {
   private String deadLine;
   private Integer ordering;
   private String startAt;
+  private TypeDto taskLevelType;
+  private TypeDto taskPriorityType;
 
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import uz.genesis.trello.dto.GenericCrudDto;
+import uz.genesis.trello.dto.GenericDto;
 
 @Getter
 @Setter
@@ -33,6 +34,12 @@ public class TaskUpdateDto extends GenericCrudDto {
     private String taskAt;
 
     private String description;
+
+    private GenericDto taskPriorityType;
+
+    private GenericDto taskLevelType;
+
+
 
 
 }

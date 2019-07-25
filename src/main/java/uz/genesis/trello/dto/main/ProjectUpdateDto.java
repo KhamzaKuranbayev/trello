@@ -22,6 +22,4 @@ public class ProjectUpdateDto extends GenericCrudDto {
     private GenericDto group;
     @ApiModelProperty(required = true)
     private GenericDto projectType;
-    private GenericDto projectLevelType;
-    private GenericDto projectPriorityType;
 }
