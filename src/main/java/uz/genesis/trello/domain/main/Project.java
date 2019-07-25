@@ -2,6 +2,7 @@ package uz.genesis.trello.domain.main;
 
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.domain.hr.Group;
 import uz.genesis.trello.domain.settings.Type;
@@ -47,14 +48,6 @@ public class Project extends Auditable {
     @JoinColumn(name = "project_type", nullable = false, referencedColumnName = "id")
     private Type projectType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_level_type", referencedColumnName = "id")
-    private Type projectLevelType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_priority_type", referencedColumnName = "id")
-    private Type projectPriorityType;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private List<ProjectTag> tags = new ArrayList<>();
@@ -62,4 +55,8 @@ public class Project extends Auditable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private List<Task> tasks = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "project_id")
+    private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
 }

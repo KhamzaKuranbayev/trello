@@ -2,9 +2,14 @@ package uz.genesis.trello.domain.auth;
 
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.achievement.UserCoin;
+import uz.genesis.trello.domain.achievement.UserExpenseCoin;
+import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by 'javokhir' on 10/06/2019
@@ -34,4 +39,12 @@ public class User extends Auditable {
             , inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
 //    @WhereJoinTable(clause = "is_active = 1")
     protected Collection<Role> roles;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private List<UserExpenseCoin> expenseCoins = new ArrayList<>(); //do not add to dto
 }
