@@ -32,6 +32,9 @@ public class Project extends Auditable {
     @JoinColumn(name = "manager", referencedColumnName = "user_id")
     private Employee manager;
 
+    @Column(name = "background")
+    private String background;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private List<ProjectMember> members = new ArrayList<>();
