@@ -28,5 +28,6 @@ public class Group extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "group_id")
+    @Builder.Default
     private List<EmployeeGroup> employeeGroups = new ArrayList<>();
 }

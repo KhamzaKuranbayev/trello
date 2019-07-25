@@ -42,9 +42,11 @@ public class User extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
+    @Builder.Default
     private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
+    @Builder.Default
     private List<UserExpenseCoin> expenseCoins = new ArrayList<>(); //do not add to dto
 }

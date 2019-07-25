@@ -38,10 +38,12 @@ public class Project extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
+    @Builder.Default
     private List<ProjectMember> members = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
+    @Builder.Default
     private List<ProjectColumn> columns = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -50,13 +52,16 @@ public class Project extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
+    @Builder.Default
     private List<ProjectTag> tags = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
+    @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
+    @Builder.Default
     private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
 }

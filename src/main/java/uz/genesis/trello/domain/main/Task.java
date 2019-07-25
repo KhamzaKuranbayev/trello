@@ -48,18 +48,22 @@ public class Task extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
+    @Builder.Default
     private List<TaskTag> tags = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
+    @Builder.Default
     private List<TaskMember> members = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
+    @Builder.Default
     private List<CheckListGroup> checkListGroups = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
+    @Builder.Default
     private List<TaskComment> comments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,5 +76,6 @@ public class Task extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "task_id")
+    @Builder.Default
     private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
 }
