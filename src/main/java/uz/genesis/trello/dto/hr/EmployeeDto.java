@@ -2,8 +2,11 @@ package uz.genesis.trello.dto.hr;
 
 import lombok.*;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.auth.RoleDto;
+import uz.genesis.trello.dto.auth.UserDto;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -14,7 +17,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeDto extends GenericDto {
+public class EmployeeDto extends UserDto {
 
     private Long userId;
     private Date birthDate;
@@ -23,9 +26,9 @@ public class EmployeeDto extends GenericDto {
     private String lastName;
     private Long branchId;
 
-    @Builder(builderMethodName = "childBuilder")
-    public EmployeeDto(Long id, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId) {
-        super(id);
+    @Builder(builderMethodName = "employeeBuilder")
+    public EmployeeDto(String email, String userName, List<RoleDto> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId) {
+        super(email, userName, roles);
         this.userId = userId;
         this.birthDate = birthDate;
         this.firstName = firstName;

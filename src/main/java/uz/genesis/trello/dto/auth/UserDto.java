@@ -19,7 +19,7 @@ public class UserDto extends GenericDto {
     private List<RoleDto> roles;
 
     @Builder(builderMethodName = "childBuilder")
-    public UserDto(Long id, String email, String userName, String password, List<RoleDto> roles) {
+    public UserDto(Long id, String email, String userName, List<RoleDto> roles) {
         super(id);
         this.email = email;
         this.userName = userName;
