@@ -1,6 +1,9 @@
 package uz.genesis.trello.domain.hr;
 
 import lombok.*;
+import uz.genesis.trello.domain.achievement.UserCoin;
+import uz.genesis.trello.domain.achievement.UserExpenseCoin;
+import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 
@@ -50,7 +53,7 @@ public class Employee extends User {
 
     @Builder(builderMethodName = "childBuilder")
     public Employee(String email, String userName, String password, Collection<Role> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId) {
-        super(email, userName, password, roles);
+        super(email, userName, password, roles, null, null);
         this.userId = userId;
         this.birthDate = birthDate;
         this.firstName = firstName;

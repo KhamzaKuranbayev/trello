@@ -3,6 +3,8 @@ package uz.genesis.trello.domain.main;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.achievement.UserIncomeCoin;
+import uz.genesis.trello.domain.settings.Type;
 import uz.genesis.trello.utils.LocalDateTimeConverter;
 
 import javax.persistence.*;
@@ -60,4 +62,15 @@ public class Task extends Auditable {
     @JoinColumn(name = "task_id")
     private List<TaskComment> comments = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_level_type", referencedColumnName = "id")
+    private Type projectLevelType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_priority_type", referencedColumnName = "id")
+    private Type projectPriorityType;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "task_id")
+    private List<UserIncomeCoin> incomeCoins = new ArrayList<>(); //do not add to dto
 }
