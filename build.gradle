@@ -68,6 +68,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5
 	compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.9.9'
 
+	// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
+	compile group: 'org.liquibase', name: 'liquibase-core', version: '3.7.0'
+
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 

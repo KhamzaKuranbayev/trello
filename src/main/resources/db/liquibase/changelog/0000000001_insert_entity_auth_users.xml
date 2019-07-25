@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.7.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Insert AUTH_USERS -->
+    <changeSet id="0000000001-1" author="trello_admin">
+        <sql>
+            INSERT INTO public.auth_users(id, created_at, created_by, is_deleted, email, passwd, username)
+            VALUES (1, now(), 1, 0, 'admin@admin.com', '$2a$04$TW/Y9FiXQubccMVm8He8t.oi1Fw4yt.ANc4v3BvS9OaodN2x5RHg6', 'superAdmin');
+
+            INSERT INTO public.auth_users(id, created_at, created_by, is_deleted, email, passwd, username)
+            VALUES (2, now(), 1, 0, 'frodonumb1@gmail.com', '$2a$04$TW/Y9FiXQubccMVm8He8t.oi1Fw4yt.ANc4v3BvS9OaodN2x5RHg6', 'frodonumb');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.7.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Insert SETTINGS_TYPES -->
+    <changeSet id="0000000006-1" author="trello_admin">
+        <sql>
+            <!-- PROJECT_TYPE -->
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, value)
+            VALUES (1, now(), 1, 0, 'Project Type', 0, 'PROJECT_TYPE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (2, now(), 1, 0, 'Kanban', 0, 'PROJECT_TYPE', 'CANBAN');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (3, now(), 1, 0, 'Trello', 0, 'PROJECT_TYPE', 'TRELLO');
+
+            <!-- PROJECT_COLUMN_TYPE -->
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, value)
+            VALUES (4, now(), 1, 0, 'Project Column Type', 0, 'PROJECT_COLUMN_TYPE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (5, now(), 1, 0, 'Default', 0, 'PROJECT_COLUMN_TYPE', 'DEFAULT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (6, now(), 1, 0, 'Archieve', 0, 'PROJECT_COLUMN_TYPE', 'ARCHIEVE');
+
+            <!-- TASK_ACTION_TYPE -->
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, value)
+            VALUES (7, now(), 1, 0, 'Task Action Type', 0, 'TASK_ACTION_TYPE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (8, now(), 1, 0, 'Created', 0, 'TASK_ACTION_TYPE', 'CREATED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (9, now(), 1, 0, 'Deleted', 0, 'TASK_ACTION_TYPE', 'DELETED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (10, now(), 1, 0, 'Added', 0, 'TASK_ACTION_TYPE', 'ADDED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (11, now(), 1, 0, 'Moved', 0, 'TASK_ACTION_TYPE', 'MOVED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (12, now(), 1, 0, 'Removed', 0, 'TASK_ACTION_TYPE', 'REMOVED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (13, now(), 1, 0, 'On', 0, 'TASK_ACTION_TYPE', 'ON');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (14, now(), 1, 0, 'Joined', 0, 'TASK_ACTION_TYPE', 'JOINED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (15, now(), 1, 0, 'Left', 0, 'TASK_ACTION_TYPE', 'LEFT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (16, now(), 1, 0, 'Completed', 0, 'TASK_ACTION_TYPE', 'COMPLETED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (17, now(), 1, 0, 'Incompleted', 0, 'TASK_ACTION_TYPE', 'INCOMPLETED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (18, now(), 1, 0, 'Marked', 0, 'TASK_ACTION_TYPE', 'MARKED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (19, now(), 1, 0, 'Converted', 0, 'TASK_ACTION_TYPE', 'CONVERTED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (20, now(), 1, 0, 'Copied', 0, 'TASK_ACTION_TYPE', 'COPIED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (21, now(), 1, 0, 'Archieved', 0, 'TASK_ACTION_TYPE', 'ARCHIEVED');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (22, now(), 1, 0, 'Sent', 0, 'TASK_ACTION_TYPE', 'SENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (23, now(), 1, 0, 'Changed', 0, 'TASK_ACTION_TYPE', 'CHANGED');
+
+            <!-- TASK_CATEGORY_TYPE -->
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, value)
+            VALUES (24, now(), 1, 0, 'Task Category Type', 0, 'TASK_CATEGORY_TYPE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (25, now(), 1, 0, 'Project', 0, 'TASK_CATEGORY_TYPE', 'PROJECT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (26, now(), 1, 0, 'Project Column', 0, 'TASK_CATEGORY_TYPE', 'PROJECT_COLUMN');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (27, now(), 1, 0, 'Task', 0, 'TASK_CATEGORY_TYPE', 'TASK');
+
+            <!-- TASK_ACTIVITY_TYPE -->
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, value)
+            VALUES (28, now(), 1, 0, 'Task Activity Type', 0, 'TASK_ACTIVITY_TYPE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (29, now(), 1, 0, 'Create Project', 0, 'TASK_ACTIVITY_TYPE', 'CREATE_PROJECT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (30, now(), 1, 0, 'Delete Project', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_PROJECT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (31, now(), 1, 0, 'Invite Member', 0, 'TASK_ACTIVITY_TYPE', 'INVITE_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (32, now(), 1, 0, 'Remove Member', 0, 'TASK_ACTIVITY_TYPE', 'REMOVE_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (33, now(), 1, 0, 'Add Project Column', 0, 'TASK_ACTIVITY_TYPE', 'ADD_PROJECT_COLUMN');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (34, now(), 1, 0, 'Update Project Column', 0, 'TASK_ACTIVITY_TYPE', 'UPDATE_PROJECT_COLUMN');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (35, now(), 1, 0, 'Create Task', 0, 'TASK_ACTIVITY_TYPE', 'CREATE_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (36, now(), 1, 0, 'Delete Task', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (37, now(), 1, 0, 'Update Task', 0, 'TASK_ACTIVITY_TYPE', 'UPDATE_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (38, now(), 1, 0, 'Copy Task', 0, 'TASK_ACTIVITY_TYPE', 'COPY_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (39, now(), 1, 0, 'Move Task', 0, 'TASK_ACTIVITY_TYPE', 'MOVE_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (40, now(), 1, 0, 'Archieve Task', 0, 'TASK_ACTIVITY_TYPE', 'ARCHIEVE_TASK');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (41, now(), 1, 0, 'Change Project', 0, 'TASK_ACTIVITY_TYPE', 'CHANGE_PROJECT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (42, now(), 1, 0, 'Join Task Member', 0, 'TASK_ACTIVITY_TYPE', 'JOIN_TASK_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (43, now(), 1, 0, 'Add Task Member', 0, 'TASK_ACTIVITY_TYPE', 'ADD_TASK_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (44, now(), 1, 0, 'Left Task Member', 0, 'TASK_ACTIVITY_TYPE', 'LEFT_TASK_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (45, now(), 1, 0, 'Remove Task Member', 0, 'TASK_ACTIVITY_TYPE', 'REMOVE_TASK_MEMBER');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (46, now(), 1, 0, 'Create Checklist Group', 0, 'TASK_ACTIVITY_TYPE', 'CREATE_CHECKLIST_GROUP');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (47, now(), 1, 0, 'Update Checklist Group', 0, 'TASK_ACTIVITY_TYPE', 'UPDATE_CHECKLIST_GROUP');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (48, now(), 1, 0, 'Delete Checklist Group', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_CHECKLIST_GROUP');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (49, now(), 1, 0, 'Create Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'CREATE_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (50, now(), 1, 0, 'Update Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'UPDATE_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (51, now(), 1, 0, 'Delete Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (52, now(), 1, 0, 'Complete Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'COMPLETE_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (53, now(), 1, 0, 'Mark Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'MARK_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (54, now(), 1, 0, 'Add Comment', 0, 'TASK_ACTIVITY_TYPE', 'ADD_COMMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (55, now(), 1, 0, 'Change Comment', 0, 'TASK_ACTIVITY_TYPE', 'CHANGE_COMMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (56, now(), 1, 0, 'Delete Comment', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_COMMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (57, now(), 1, 0, 'Add Attachment', 0, 'TASK_ACTIVITY_TYPE', 'ADD_ATTACHMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (58, now(), 1, 0, 'Delete Attachment', 0, 'TASK_ACTIVITY_TYPE', 'DELETE_ATTACHMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (59, now(), 1, 0, 'Add Attachment Comment', 0, 'TASK_ACTIVITY_TYPE', 'ADD_ATTACHMENT_COMMENT');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (60, now(), 1, 0, 'Add Due Date', 0, 'TASK_ACTIVITY_TYPE', 'ADD_DUE_DATE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (61, now(), 1, 0, 'Check Due Date', 0, 'TASK_ACTIVITY_TYPE', 'CHECK_DUE_DATE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (62, now(), 1, 0, 'Uncheck Due Date', 0, 'TASK_ACTIVITY_TYPE', 'UNCHECK_DUE_DATE');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (63, now(), 1, 0, 'Convert Checklist Item', 0, 'TASK_ACTIVITY_TYPE', 'CONVERT_CHECKLIST_ITEM');
+
+            INSERT INTO public.settings_types(id, created_at, created_by, is_deleted, name, ordering, type_code, value)
+            VALUES (64, now(), 1, 0, 'Back Archieved Task', 0, 'TASK_ACTIVITY_TYPE', 'BACK_ARCHIEVED_TASK');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

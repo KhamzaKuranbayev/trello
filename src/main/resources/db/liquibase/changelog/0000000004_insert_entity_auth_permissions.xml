@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.7.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Insert AUTH_PERMISSIONS -->
+    <changeSet id="0000000004-1" author="trello_admin">
+        <sql>
+            <!-- USER -->
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (1, now(), 1, 0, 'UserCreate', 'USER_CREATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (2, now(), 1, 0, 'UserUpdate', 'USER_UPDATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (3, now(), 1, 0, 'UserDelete', 'USER_DELETE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (4, now(), 1, 0, 'UserRead', 'USER_READ');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (5, now(), 1, 0, 'UserAttachRole', 'USER_ATTACH_ROLE');
+
+            <!-- ROLE -->
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (6, now(), 1, 0, 'RoleCreate', 'ROLE_CREATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (7, now(), 1, 0, 'RoleUpdate', 'ROLE_UPDATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (8, now(), 1, 0, 'RoleDelete', 'ROLE_DELETE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (9, now(), 1, 0, 'RoleRead', 'ROLE_READ');
+
+            <!-- PERMISSION -->
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (10, now(), 1, 0, 'PermissionCreate', 'PERMISSION_CREATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (11, now(), 1, 0, 'PermissionUpdate', 'PERMISSION_UPDATE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (12, now(), 1, 0, 'PermissionDelete', 'PERMISSION_DELETE');
+
+            INSERT INTO public.auth_permissions(id, created_at, created_by, is_deleted, name, code_name)
+            VALUES (13, now(), 1, 0, 'PermissionRead', 'PERMISSION_READ');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
