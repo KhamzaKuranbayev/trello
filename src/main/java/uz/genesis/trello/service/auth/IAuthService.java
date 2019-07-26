@@ -1,4 +1,6 @@
 package uz.genesis.trello.service.auth;
 
-public interface IAuthService {
+import uz.genesis.trello.service.IAbstractService;
+
+public interface IAuthService extends IAbstractService {
 }

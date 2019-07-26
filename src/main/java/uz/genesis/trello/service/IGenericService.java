@@ -3,6 +3,7 @@ package uz.genesis.trello.service;
 import org.springframework.http.ResponseEntity;
 import uz.genesis.trello.criterias.GenericCriteria;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.service.auth.IAuthService;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 
 
-public interface IGenericService<T, ID extends Serializable, C extends GenericCriteria> {
+public interface IGenericService<T, ID extends Serializable, C extends GenericCriteria> extends IAuthService {
 
     ResponseEntity<DataDto<T>> get(ID id);
 
