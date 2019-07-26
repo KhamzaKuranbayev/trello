@@ -27,7 +27,7 @@ public class UserLastLogin extends Auditable {
 
     @Column(name = "login_at", columnDefinition = "TIMESTAMP default NOW()")
     @Convert(converter = LocalDateTimeConverter.class)
-    private LocalDateTime longAt;
+    private LocalDateTime loginAt;
 
     @Column(name = "ip_address")
     private String ipAddress;

@@ -3,6 +3,9 @@ package uz.genesis.trello.utils;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.Auditable;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -17,6 +20,7 @@ public class BaseUtils {
     public boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
+
     public boolean isEmpty(Object l) {
         return l == null;
     }
@@ -60,6 +64,32 @@ public class BaseUtils {
         return new String(chars);
     }
 
+    public static String defineMacAddress() {
+        InetAddress ip;
+        StringBuilder sb = new StringBuilder();
+        try {
+
+            ip = InetAddress.getLocalHost();
+            System.out.println("Current IP address : " + ip.getHostAddress());
+
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            byte[] mac = network.getHardwareAddress();
+
+            System.out.print("Current MAC address : ");
+
+
+            for (int i = 0; i < mac.length; i++) {
+                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            }
+            System.out.println(sb.toString());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return sb.toString();
+    }
 
 
 }
