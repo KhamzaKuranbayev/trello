@@ -1,6 +1,7 @@
 package uz.genesis.trello.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import uz.genesis.trello.service.IAbstractService;
 import uz.genesis.trello.service.IGenericService;
 
@@ -8,6 +9,7 @@ import uz.genesis.trello.service.IGenericService;
  * Created by 'javokhir' on 07/06/2019
  */
 
+@CrossOrigin(origins = {"http://localhost:4200", "http://trello.uz"})
 public abstract class ApiController<T extends IAbstractService> {
 
     public static final String API_PATH = "/api";
