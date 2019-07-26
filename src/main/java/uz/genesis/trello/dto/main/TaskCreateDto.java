@@ -22,8 +22,5 @@ public class TaskCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
     private String name;
 
-    private GenericDto taskPriorityType;
-
-    private GenericDto taskLevelType;
 
 }
