@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uz.genesis.trello.property.FileStorageProperties;
+import uz.genesis.trello.property.ServerProperties;
 
 import javax.sql.DataSource;
 
@@ -16,7 +17,8 @@ import javax.sql.DataSource;
 @EnableScheduling
 @EnableCaching
 @EnableConfigurationProperties({
-        FileStorageProperties.class
+        FileStorageProperties.class,
+        ServerProperties.class
 })
 public class TrelloApplication extends SpringBootServletInitializer {
 
