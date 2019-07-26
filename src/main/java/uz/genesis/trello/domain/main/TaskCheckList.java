@@ -27,5 +27,6 @@ public class TaskCheckList extends Auditable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "check_list_id")
+    @Builder.Default
     private List<CheckListMember> members = new ArrayList<>();
 }
