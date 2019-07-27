@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class UserLastLogin extends Auditable {
 
     @Column(name = "user_id")
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "session_token")
     private String sessionToken;

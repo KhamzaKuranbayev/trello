@@ -5,6 +5,7 @@ import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.auth.User;
 
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
@@ -32,4 +33,27 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
+    @Override
+    protected Query defineQuerySelect(UserCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
+        String queryStr;
+        if (criteria.isOnlyId()) {
+            queryStr = " select" + (onDefineCount ? " count(t) " : " t.id " ) + " from  User t " +
+                    joinStringOnQuerying(criteria) +
+                    " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
+            return entityManager.createQuery(queryStr);
+        } else {
+            queryStr = " select " + (onDefineCount ? " count(t) " : " t ") + " from  User t " +
+                    joinStringOnQuerying(criteria) +
+                    " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
+            return onDefineCount ? entityManager.createQuery(queryStr, Long.class) : entityManager.createQuery(queryStr);
+        }
+    }
+
+//    @Override
+//    public Long getId(UserCriteria criteria) {
+//        return super.(criteria);
+//    }
+
+
 }

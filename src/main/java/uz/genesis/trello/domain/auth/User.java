@@ -2,7 +2,6 @@ package uz.genesis.trello.domain.auth;
 
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
-import uz.genesis.trello.domain.achievement.UserCoin;
 import uz.genesis.trello.domain.achievement.UserExpenseCoin;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.enums.UserType;
