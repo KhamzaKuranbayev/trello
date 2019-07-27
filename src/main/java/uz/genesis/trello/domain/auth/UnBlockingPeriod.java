@@ -12,8 +12,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "auth_blocking_period")
-public class BlockingPeriod extends Auditable {
+@Table(name = "auth_unblocking_period")
+public class UnBlockingPeriod extends Auditable {
 
     private int period;
 }
