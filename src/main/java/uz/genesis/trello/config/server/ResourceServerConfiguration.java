@@ -1,7 +1,6 @@
 package uz.genesis.trello.config.server;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -10,8 +9,7 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 import uz.genesis.trello.config.handler.AuthenticationFailureHandler;
 import uz.genesis.trello.controller.ApiController;
 
-import static uz.genesis.trello.controller.ApiController.API_PATH;
-import static uz.genesis.trello.controller.ApiController.V_1;
+import static uz.genesis.trello.controller.ApiController.*;
 
 /**
  * Created by 'Javokhir Mamadiyarov Uygunovich' on 10/5/18.
@@ -53,12 +51,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 //                .antMatchers(HttpMethod.POST, API_PATH + "/**").access(SECURED_WRITE_SCOPE)
 //                .anyRequest().access(SECURED_READ_SCOPE);
 
-        http.
-                anonymous().disable()
-                .requestMatchers().antMatchers(API_PATH + "/**")
-                .and().authorizeRequests()
-                .antMatchers(API_PATH + V_1 + "/uploads/**").permitAll()
+        http
+                .authorizeRequests()
+                .antMatchers(API_PATH + V_1 + "/uploads/**", LOGIN_URL).permitAll()
                 .antMatchers(API_PATH + "/**").access(SECURED_WRITE_SCOPE)
+                .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())
                 .and().exceptionHandling().authenticationEntryPoint(new AuthenticationFailureHandler());
 

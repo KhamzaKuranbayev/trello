@@ -15,6 +15,7 @@ import javax.persistence.Table;
 @Builder
 @Table(name = "auth_unblocking_period")
 public class UnBlockingPeriod extends Auditable {
+
     @Column(columnDefinition = "integer DEFAULT 10")
     private int period;
 }

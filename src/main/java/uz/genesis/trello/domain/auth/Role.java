@@ -3,6 +3,7 @@ package uz.genesis.trello.domain.auth;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.organization.Organization;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -25,6 +26,9 @@ public class Role extends Auditable implements GrantedAuthority {
 
     @Column(name = "code_name")
     private String codeName;
+
+    @Column(name = "organization_id")
+    private Long organizationId;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(name = "auth_roles_permissions", joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}

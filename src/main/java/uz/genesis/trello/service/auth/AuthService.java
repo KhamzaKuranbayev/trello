@@ -16,9 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
+import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.AuthTryCreateDto;
 import uz.genesis.trello.dto.auth.AuthUserDto;
@@ -34,6 +38,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -42,7 +47,8 @@ public class AuthService implements IAuthService {
 
     public static String OAUTH_AUTH_URL = "/oauth/token";
     private static String SERVER_URL;
-
+    private final TokenStore tokenStore;
+    private final PasswordEncoder userPasswordEncoder;
     private final BaseUtils utils;
     private final IUserRepository userRepository;
     private final IAuthTryService authTryService;
@@ -56,10 +62,12 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IUserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, IUserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
+        this.tokenStore = tokenStore;
+        this.userPasswordEncoder = userPasswordEncoder;
         this.userRepository = userRepository;
         this.authTryService = authTryService;
         this.userLastLoginService = userLastLoginService;
@@ -71,10 +79,9 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<DataDto<SessionDto>> login(AuthUserDto user, HttpServletRequest request) {
         try {
-
+            clearExistingTokens(user);
             HttpClient httpclient = HttpClientBuilder.create().build();
             HttpPost httppost = new HttpPost(OAUTH_AUTH_URL);
-
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("grant_type", GrantType.PASSWORD.getValue()));
             nameValuePairs.add(new BasicNameValuePair("username", user.getUserName()));
@@ -84,7 +91,6 @@ public class AuthService implements IAuthService {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             httppost.addHeader(HttpHeaders.AUTHORIZATION, getAuthorization());
             httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
             HttpResponse response = httpclient.execute(httppost);
             return getAuthDtoDataDto(user, response, true, request);
 
@@ -109,7 +115,6 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<DataDto<SessionDto>> refreshToken(AuthUserDto user, HttpServletRequest request) {
         try {
-
             HttpClient httpclient = HttpClientBuilder.create().build();
             HttpPost httppost = new HttpPost(OAUTH_AUTH_URL);
 
@@ -119,7 +124,7 @@ public class AuthService implements IAuthService {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             httppost.addHeader(HttpHeaders.AUTHORIZATION, getAuthorization());
-//            httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
             HttpResponse response = httpclient.execute(httppost);
 
             return getAuthDtoDataDto(user, response, false, request);
@@ -145,7 +150,7 @@ public class AuthService implements IAuthService {
                     .scope(json_auth.get("scope").asText()).build();
             return new ResponseEntity<>(new DataDto<>(authDto), HttpStatus.OK);
         } else {
-            String error_description = json_auth.has("error_description")?json_auth.get("error_description").asText():null;
+            String error_description = json_auth.has("error_description") ? json_auth.get("error_description").asText() : null;
             if (error_description == null || error_description.isEmpty()) {
                 error_description = "Username or password is wrong custom message";
             } else if (error_description.contains("NoResultException")) {
@@ -189,5 +194,23 @@ public class AuthService implements IAuthService {
         }
         AuthTryCreateDto createDto = AuthTryCreateDto.builder().ipAddress(utils.getClientIpAddress(request)).userName(userDto.getUserName()).resultType(GenericDto.builder().id(id).build()).build();
         authTryService.create(createDto);
+    }
+
+    private boolean checkUserAuthentication(AuthUserDto userDto) {
+        User user = userRepository.find(UserCriteria.childBuilder().userName(userDto.getUserName()).build());
+        if (!utils.isEmpty(user)) {
+            return userPasswordEncoder.matches(userDto.getPassword(), user.getPassword());
+        }
+        return false;
+    }
+
+    private void clearExistingTokens(AuthUserDto userDto) {
+        if (checkUserAuthentication(userDto)) {
+            Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(clientId, userDto.getUserName());
+            if (!utils.isEmpty(tokens) && tokens.size() > 0) {
+                OAuth2AccessToken token = (OAuth2AccessToken) tokens.toArray()[0];
+                tokenStore.removeAccessToken(token);
+            }
+        }
     }
 }

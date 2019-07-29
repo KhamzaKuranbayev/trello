@@ -15,9 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import uz.genesis.trello.config.encryption.Encoders;
-import uz.genesis.trello.config.handler.AuthenticationFailureHandler;
 import uz.genesis.trello.config.handler.CustomAuthenticationSuccessHandler;
 
 /**
@@ -75,7 +73,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 //        http.headers().frameOptions().disable().addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "ALLOW-FROM 172.18.58.26"));
 //        http.headers().frameOptions().sameOrigin().httpStrictTransportSecurity().disable();
-        // http.headers().frameOptions().sameOrigin().contentSecurityPolicy("frame-ancestors 'self'");
+//         http.headers().frameOptions().sameOrigin().contentSecurityPolicy("frame-ancestors 'self'");
 
         http.cors().and().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()

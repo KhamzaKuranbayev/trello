@@ -2,6 +2,7 @@ package uz.genesis.trello.domain.hr;
 
 import lombok.*;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.organization.Organization;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class Group extends Auditable {
 
     @Column(name = "is_watcher")
     private boolean watcher;
+
+    @Column(name = "organization_id")
+    private Long organizationId;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "group_id")

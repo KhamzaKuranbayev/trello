@@ -5,6 +5,7 @@ import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.hr.Employee;
 import uz.genesis.trello.domain.hr.Group;
+import uz.genesis.trello.domain.organization.Organization;
 import uz.genesis.trello.domain.settings.Type;
 
 import javax.persistence.*;
@@ -24,6 +25,9 @@ public class Project extends Auditable {
 
     @Column(name = "code_name")
     private String codeName;
+
+    @Column(name = "organization_id")
+    private Long organizationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id")

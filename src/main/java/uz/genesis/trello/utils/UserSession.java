@@ -1,9 +1,11 @@
 package uz.genesis.trello.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.dto.auth.CustomUserDetails;
 import uz.genesis.trello.enums.Headers;
 import uz.genesis.trello.repository.auth.IUserSessionRepository;
 
@@ -33,11 +35,23 @@ public class UserSession {
     }
 
     private void init() {
+
         user = repository.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public User getUser() {
-        init();
+//        init();
+//        return user;
+        User user = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            if (authentication.getPrincipal() instanceof User) {
+                user = (User) authentication.getPrincipal();
+            }
+            if (authentication.getPrincipal() instanceof CustomUserDetails) {
+                user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
+            }
+        }
         return user;
     }
 

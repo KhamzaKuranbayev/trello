@@ -11,8 +11,13 @@ public class TrelloSQLDialect extends org.hibernate.dialect.PostgreSQLDialect {
         super();
         registerFunction("getcompletepercentage"
                 , new StandardSQLFunction("getcompletepercentage", new IntegerType()));
+
         registerFunction("getemployeephotourl"
                 , new StandardSQLFunction("getemployeephotourl", new TextType()));
+
         registerFunction("unblockuser", new StandardSQLFunction("unblockuser", new BooleanType()));
+
+        registerFunction("hasrole"
+                , new StandardSQLFunction("hasrole", new BooleanType()));
     }
 }

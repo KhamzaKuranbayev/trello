@@ -35,10 +35,17 @@ public class ProjectRepository extends GenericDao<Project, ProjectCriteria> impl
     }
 
     @Override
+    protected void onDefineWhereCause(ProjectCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        //todo replace 1 from case where 't.organization_id = 1'
+        queryBuilder.append(" case when hasrole('ADMIN', '").append(userSession.getUserName()).append("') is true then true else t.organization_id = 1 end ");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    @Override
     protected Query defineQuerySelect(ProjectCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
         String queryStr;
         if (criteria.isPercentage()) {
-            queryStr = " select" + (onDefineCount ? " count(t) " : " new uz.genesis.trello.dto.main.ProjectPercentageDto(t, getcompletepercentage(t.id))" ) + " from  Project t " +
+            queryStr = " select" + (onDefineCount ? " count(t) " : " new uz.genesis.trello.dto.main.ProjectPercentageDto(t, getcompletepercentage(t.id))") + " from  Project t " +
                     joinStringOnQuerying(criteria) +
                     " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
             return entityManager.createQuery(queryStr);

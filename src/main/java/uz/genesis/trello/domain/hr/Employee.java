@@ -1,17 +1,11 @@
 package uz.genesis.trello.domain.hr;
 
 import lombok.*;
-import uz.genesis.trello.domain.achievement.UserCoin;
-import uz.genesis.trello.domain.achievement.UserExpenseCoin;
-import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.domain.organization.Organization;
 import uz.genesis.trello.enums.UserType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,21 +24,16 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Employee extends User {
 
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
-
     @Column(name = "birth_date")
     protected Date birthDate;
-
     @Column(name = "first_name")
     protected String firstName;
-
     @Column(name = "middle_name")
     protected String middleName;
-
     @Column(name = "last_name")
     protected String lastName;
-
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private Long userId;
     @Column(name = "branch_id")
     private Long branchId;
 
@@ -53,8 +42,8 @@ public class Employee extends User {
     private List<EmployeeGroup> employeeGroups = new ArrayList<>();
 
     @Builder(builderMethodName = "childBuilder")
-    public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId) {
-        super(email, userName, password, state, roles, null, null);
+    public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId, Long organizationId) {
+        super(email, userName, password, state, roles,  organizationId, null, null);
         this.userId = userId;
         this.birthDate = birthDate;
         this.firstName = firstName;

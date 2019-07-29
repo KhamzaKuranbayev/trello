@@ -19,6 +19,7 @@ import uz.genesis.trello.mapper.auth.UserLastLoginMapper;
 import uz.genesis.trello.repository.auth.IUserLastLoginRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
+import uz.genesis.trello.utils.UserSession;
 import uz.genesis.trello.utils.validators.auth.UserLastLoginValidator;
 
 import javax.validation.constraints.NotNull;
@@ -29,12 +30,14 @@ public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, 
     private final UserLastLoginMapper mapper;
     protected final Log logger = LogFactory.getLog(getClass());
     private final UserLastLoginValidator validator;
+    private final UserSession userSession;
     private final GenericMapper genericMapper;
 
-    public UserLastLoginService(IUserLastLoginRepository repository, BaseUtils utils, UserLastLoginMapper mapper, UserLastLoginValidator validator, GenericMapper genericMapper) {
+    public UserLastLoginService(IUserLastLoginRepository repository, BaseUtils utils, UserLastLoginMapper mapper, UserLastLoginValidator validator, UserSession userSession, GenericMapper genericMapper) {
         super(repository, utils);
         this.mapper = mapper;
         this.validator = validator;
+        this.userSession = userSession;
         this.genericMapper = genericMapper;
     }
 

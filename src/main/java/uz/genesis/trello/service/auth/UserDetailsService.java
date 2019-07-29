@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.dto.auth.CustomUserDetails;
 import uz.genesis.trello.repository.auth.IUserRepository;
 
 /**
@@ -36,7 +37,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = findUser(userName);
         if (user != null) {
-            return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), user.getRoles());
+            return new CustomUserDetails(user);
         } else {
             throw new RuntimeException(String.format("user with user name '%s' not found", userName));
         }

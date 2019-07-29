@@ -20,6 +20,9 @@ public class CoinSettings extends Auditable {
     @JoinColumn(name = "settings_type", nullable = false, referencedColumnName = "id")
     private Type settingsType;
 
+    @Column(name = "organization_id")
+    private Long organizationId;
+
     @Column(name = "coins")
     private Long coins;
 }

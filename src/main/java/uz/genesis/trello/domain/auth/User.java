@@ -4,6 +4,7 @@ import lombok.*;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.achievement.UserExpenseCoin;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
+import uz.genesis.trello.domain.organization.Organization;
 import uz.genesis.trello.enums.UserType;
 
 import javax.persistence.*;
@@ -43,6 +44,10 @@ public class User extends Auditable {
             , inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
 //    @WhereJoinTable(clause = "is_active = 1")
     protected Collection<Role> roles;
+
+    @Column(name = "organization_id")
+    private Long organizationId;
+
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")

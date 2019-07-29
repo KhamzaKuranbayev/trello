@@ -24,4 +24,9 @@ public class AuthController extends ApiController<IAuthService> {
     public ResponseEntity<DataDto<SessionDto>> login(@RequestBody AuthUserDto dto, HttpServletRequest request) {
         return service.login(dto, request);
     }
+
+    @RequestMapping(value = LOGOUT_URL, method = RequestMethod.GET)
+    public ResponseEntity<DataDto<Boolean>> logout(HttpServletRequest request) {
+        return service.logout(request);
+    }
 }

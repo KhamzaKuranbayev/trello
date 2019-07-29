@@ -33,22 +33,16 @@ import java.util.*;
 public abstract class GenericDao<T extends Auditable, C extends GenericCriteria> {
 
     private static final String ID_MUST_NOT_BE_NULL = "The given id must not be null!";
-
-    private Class<T> persistentClass;
-
     @Autowired
     protected EntityManager entityManager;
     @Autowired
     protected BaseUtils utils;
-
     @Autowired
     protected UserSession userSession;
-
     protected SimpleDateFormat dateTimeFormat;
-
     protected Gson gson;
     protected JpaEntityInformation<T, ?> entityInformation;
-
+    private Class<T> persistentClass;
     private Boolean isAdmin;
 
     @SuppressWarnings("unchecked")
@@ -57,6 +51,16 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
         this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         initEntityInformation();
+    }
+
+    protected static void addLanguageWhereCause(Map<String, Object> params, Map<Headers, String> headers, List<String> whereCause, String alias) {
+        if (headers.containsKey(Headers.LANGUAGE)) {
+            whereCause.add(alias + ".language.code =:" + Headers.LANGUAGE.key);
+            params.put(Headers.LANGUAGE.key, headers.get(Headers.LANGUAGE));
+        } else {
+            whereCause.add(alias + ".language.code =:" + Headers.LANGUAGE.key);
+            params.put(Headers.LANGUAGE.key, Headers.LANGUAGE.defValue);
+        }
     }
 
     private void initEntityInformation() {
@@ -146,16 +150,6 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
             sorting.append(" order by ").append("t.").append(criteria.getSortBy()).append(" ").append(ascDesc);
         }
         return sorting;
-    }
-
-    protected static void addLanguageWhereCause(Map<String, Object> params, Map<Headers, String> headers, List<String> whereCause, String alias) {
-        if (headers.containsKey(Headers.LANGUAGE)) {
-            whereCause.add(alias + ".language.code =:" + Headers.LANGUAGE.key);
-            params.put(Headers.LANGUAGE.key, headers.get(Headers.LANGUAGE));
-        } else {
-            whereCause.add(alias + ".language.code =:" + Headers.LANGUAGE.key);
-            params.put(Headers.LANGUAGE.key, Headers.LANGUAGE.defValue);
-        }
     }
 
     protected <G> List<G> getResults(C criteria, Query query) {
@@ -268,7 +262,7 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
     }
 
     private void prepareFunction(CallableStatement function) throws SQLException {
-        function.setLong(3, userSession.getUser().getId());
+        function.setLong(3, userSession.getUser() == null ? -1 : userSession.getUser().getId());
         function.execute();
 
         if (!utils.isEmpty(function.getWarnings())) {
