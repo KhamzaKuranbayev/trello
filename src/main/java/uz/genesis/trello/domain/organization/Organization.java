@@ -32,33 +32,33 @@ public class Organization extends Auditable {
     private int memberLimit;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<User> users = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<Group> groups = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<Project> projects = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
 
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "coin_settings_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<CoinSettings> coinSettingsList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_background_id")
+    @JoinColumn(name = "organization_id")
     @Builder.Default
     private List<Background> backgrounds = new ArrayList<>();
 }
