@@ -33,9 +33,10 @@ import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.property.ServerProperties;
-import uz.genesis.trello.repository.auth.IUserRepository;
+import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.utils.BaseUtils;
+import uz.genesis.trello.utils.pkcs.PKCSChecker;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +54,9 @@ public class AuthService implements IAuthService {
     private final IOrganizationSettingsService organizationSettingsService;
     private final TokenStore tokenStore;
     private final PasswordEncoder userPasswordEncoder;
+    private final PKCSChecker pkcsChecker;
     private final BaseUtils utils;
-    private final IUserRepository userRepository;
+    private final UserRepository userRepository;
     private final IAuthTryService authTryService;
     private final IUserLastLoginService userLastLoginService;
 
@@ -66,13 +68,14 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, IUserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
         this.organizationSettingsService = organizationSettingsService;
         this.tokenStore = tokenStore;
         this.userPasswordEncoder = userPasswordEncoder;
+        this.pkcsChecker = pkcsChecker;
         this.userRepository = userRepository;
         this.authTryService = authTryService;
         this.userLastLoginService = userLastLoginService;
@@ -202,11 +205,13 @@ public class AuthService implements IAuthService {
     }
 
     private boolean checkUserAuthentication(AuthUserDto userDto) {
-
         User user = userRepository.find(UserCriteria.childBuilder().userName(userDto.getUserName()).forAuthenticate(true).build());
         if (!utils.isEmpty(user)) {
-            OrganizationSettingsDto organizationSettings = organizationSettingsService.getOrganizationSettings(OrganizationSettingsCriteria.childBuilder().organizationId(user.getOrganizationId()).build());
-            checkUserLimit(organizationSettings);
+            if (!userRepository.isAdmin()) {
+                OrganizationSettingsDto organizationSettings = organizationSettingsService.getOrganizationSettings(OrganizationSettingsCriteria.childBuilder().organizationId(user.getOrganizationId()).build());
+                checkUserLimit(organizationSettings);
+            }
+
             return userPasswordEncoder.matches(userDto.getPassword(), user.getPassword());
         }
         return false;
@@ -225,14 +230,19 @@ public class AuthService implements IAuthService {
     private void checkUserLimit(OrganizationSettingsDto dto) {
         if (utils.isEmpty(dto))
             throw new RuntimeException("Organization settings not found");
+        String encodedData = dto.getParams().get("certificate").asText();
+        String decodedData = pkcsChecker.decrypt(encodedData);
 
-        if (utils.isEmpty(dto.getParams().get("count").asInt()))
-            throw new RuntimeException("Count was not entered!!");
+        if (utils.isEmpty(decodedData))
+            throw new RuntimeException("Your certificate is invalid please call instructors!");
 
-        int userLimit = dto.getParams().get("count").asInt();
-        int currentUserCount = organizationSettingsService.getCurrentUserCount(dto.getOrganizationId());
+        JsonNode decodedParams = utils.fromStringToNode(decodedData);
 
-        if (currentUserCount > userLimit)
+        if (utils.isEmpty(decodedParams) || !decodedParams.has("organizationId") || !decodedParams.has("token_limit"))
+            throw new RuntimeException("Your certificate is invalid please call instructors!");
+
+        if (decodedParams.get("organizationId").asLong() != dto.getOrganizationId()
+                || decodedParams.get("token_limit").asInt() <= organizationSettingsService.getCurrentUserCount(dto.getOrganizationId())+1)
             throw new RuntimeException("You can not add users. Please buy new certificate");
 
 

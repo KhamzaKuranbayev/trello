@@ -1,13 +1,16 @@
 package uz.genesis.trello.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.Auditable;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -34,6 +37,8 @@ public class BaseUtils {
             "HTTP_FORWARDED",
             "HTTP_VIA",
             "REMOTE_ADDR"};
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static String toHex(byte[] data) {
         char[] chars = new char[data.length * 2];
@@ -42,6 +47,33 @@ public class BaseUtils {
             chars[i * 2 + 1] = HEX_DIGITS[data[i] & 0xf];
         }
         return new String(chars);
+    }
+
+    public static String defineMacAddress() {
+        InetAddress ip;
+        StringBuilder sb = new StringBuilder();
+        try {
+
+            ip = InetAddress.getLocalHost();
+            System.out.println("Current IP address : " + ip.getHostAddress());
+
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+
+            byte[] mac = network.getHardwareAddress();
+
+            System.out.print("Current MAC address : ");
+
+
+            for (int i = 0; i < mac.length; i++) {
+                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            }
+            System.out.println(sb.toString());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return sb.toString();
     }
 
     public String getClientIpAddress(HttpServletRequest request) {
@@ -94,33 +126,6 @@ public class BaseUtils {
         return Base64.getEncoder().encodeToString(data.getBytes());
     }
 
-    public static String defineMacAddress() {
-        InetAddress ip;
-        StringBuilder sb = new StringBuilder();
-        try {
-
-            ip = InetAddress.getLocalHost();
-            System.out.println("Current IP address : " + ip.getHostAddress());
-
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-
-            byte[] mac = network.getHardwareAddress();
-
-            System.out.print("Current MAC address : ");
-
-
-            for (int i = 0; i < mac.length; i++) {
-                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-            }
-            System.out.println(sb.toString());
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return sb.toString();
-    }
-
     public String generateParamText(List<FunctionParam> params) {
         StringBuilder builder = new StringBuilder();
         builder.append(" ( ");
@@ -133,6 +138,14 @@ public class BaseUtils {
         }
         builder.append(" ) ");
         return builder.toString();
+    }
+
+    public JsonNode fromStringToNode(String data) {
+        try {
+            return objectMapper.readTree(data);
+        } catch (IOException e) {
+            throw new RuntimeException("could not parse string data");
+        }
     }
 
 

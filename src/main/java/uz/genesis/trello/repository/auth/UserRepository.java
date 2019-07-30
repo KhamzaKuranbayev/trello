@@ -41,6 +41,11 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
     }
 
     @Override
+    public boolean isAdmin() {
+        return super.isAdmin();
+    }
+
+    @Override
     protected Query defineQuerySelect(UserCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
         String queryStr;
         if (criteria.isOnlyId()) {
