@@ -1,6 +1,7 @@
 package uz.genesis.trello.utils;
 
 import org.springframework.stereotype.Component;
+import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.Auditable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * Created by 'javokhir' on 10/06/2019
@@ -117,6 +119,20 @@ public class BaseUtils {
         }
 
         return sb.toString();
+    }
+
+    public String generateParamText(List<FunctionParam> params) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(" ( ");
+        for (int i = 0; i < params.size(); i++) {
+            if (i == 0) {
+                builder.append(" ? ");
+            } else {
+                builder.append(" ,? ");
+            }
+        }
+        builder.append(" ) ");
+        return builder.toString();
     }
 
 

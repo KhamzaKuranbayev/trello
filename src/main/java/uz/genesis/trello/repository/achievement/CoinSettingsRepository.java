@@ -13,15 +13,21 @@ public class CoinSettingsRepository extends GenericDao<CoinSettings, CoinSetting
 
     @Override
     protected void defineCriteriaOnQuerying(CoinSettingsCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
-        if(!utils.isEmpty(criteria.getSelfId())){
+        if (!utils.isEmpty(criteria.getSelfId())) {
             whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());
         }
-        if(!utils.isEmpty(criteria.getCoins())){
+        if (!utils.isEmpty(criteria.getCoins())) {
             whereCause.add("t.coins = :coins");
             params.put("coins", criteria.getCoins());
         }
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    @Override
+    protected void onDefineWhereCause(CoinSettingsCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "t");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 }

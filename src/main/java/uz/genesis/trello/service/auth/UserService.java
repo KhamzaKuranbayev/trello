@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
+import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
@@ -30,6 +31,7 @@ import uz.genesis.trello.utils.validators.auth.UserServiceValidator;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,6 +62,12 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     @Override
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_READ)")
     public ResponseEntity<DataDto<UserDto>> get(Long id) {
+
+        /*List<FunctionParam> params = new ArrayList<>();
+        params.add(new FunctionParam(1L, Types.BIGINT));
+
+        Integer count = repository.call(params, "getsessioncountbyorganization", Types.INTEGER);*/
+
         User user = repository.find(UserCriteria.childBuilder().selfId(id).build());
 
         if (utils.isEmpty(user)) {

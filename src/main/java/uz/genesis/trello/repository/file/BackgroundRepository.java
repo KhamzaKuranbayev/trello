@@ -23,4 +23,10 @@ public class BackgroundRepository extends GenericDao<Background, BackgroundCrite
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
+    @Override
+    protected void onDefineWhereCause(BackgroundCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "t");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
 }

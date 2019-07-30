@@ -5,6 +5,7 @@ import uz.genesis.trello.criterias.auth.AuthTryCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.auth.AuthTry;
 
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
@@ -28,4 +29,8 @@ public class AuthTryRepository extends GenericDao<AuthTry, AuthTryCriteria> impl
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 
+    @Override
+    protected Query defineQuerySelect(AuthTryCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
+        return super.defineQuerySelect(criteria, queryBuilder, onDefineCount);
+    }
 }

@@ -15,7 +15,8 @@ public class TrelloSQLDialect extends org.hibernate.dialect.PostgreSQLDialect {
         registerFunction("getemployeephotourl"
                 , new StandardSQLFunction("getemployeephotourl", new TextType()));
 
-        registerFunction("unblockuser", new StandardSQLFunction("unblockuser", new BooleanType()));
+        registerFunction("unblockuser"
+                , new StandardSQLFunction("unblockuser", new BooleanType()));
 
         registerFunction("getuniqeauthid", new StandardSQLFunction("getuniqeauthid", new TextType()));
 

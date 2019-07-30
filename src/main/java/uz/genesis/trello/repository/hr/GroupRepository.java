@@ -29,4 +29,10 @@ public class GroupRepository extends GenericDao<Group, GroupCriteria> implements
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
+    @Override
+    protected void onDefineWhereCause(GroupCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "t");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
 }
