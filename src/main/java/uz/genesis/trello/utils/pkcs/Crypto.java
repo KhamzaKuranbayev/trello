@@ -84,6 +84,6 @@ public class Crypto {
     }
 
     public static String decodeBase(String paramOne, String encodedText) {
-        return decrypt(encodedText, MD5.getMd5(paramOne) + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes()));
+        return decrypt(encodedText, MD5.getMd5(paramOne) + "MUMtMUItMEQtNUEtQ0MtODA="/*Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes())*/);
     }
 }
