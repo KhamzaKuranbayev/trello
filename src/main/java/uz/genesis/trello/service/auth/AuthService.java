@@ -242,7 +242,7 @@ public class AuthService implements IAuthService {
             throw new RuntimeException("Your certificate is invalid please call instructors!");
 
         if (decodedParams.get("organizationId").asLong() != dto.getOrganizationId()
-                || decodedParams.get("token_limit").asInt() <= organizationSettingsService.getCurrentUserCount(dto.getOrganizationId())+1)
+                || decodedParams.get("token_limit").asInt() <= organizationSettingsService.getCurrentUserCount(dto.getOrganizationId()))
             throw new RuntimeException("You can not add users. Please buy new certificate");
 
 
