@@ -24,6 +24,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private IUserService userService;
 
+    private static final String DEF_USER_AUTH_PRIVILEGE = "DEF_SERVER_USER_ERVFG_NSTAC";
 
     @Override
     public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
@@ -61,5 +62,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 //        return false;
 
         return permissions.stream().anyMatch(t -> t.getName().equals(permission));
+    }
+
+    public String hasUserAuth() {
+        return DEF_USER_AUTH_PRIVILEGE;
     }
 }

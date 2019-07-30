@@ -11,5 +11,4 @@ import uz.genesis.trello.repository.IGenericRepository;
 
 public interface IUserRepository extends IGenericCrudRepository<User, UserCriteria> {
 
-//    Long getId(UserCriteria criteria);
 }

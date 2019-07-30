@@ -21,6 +21,8 @@ import java.util.List;
 
 public interface IUserService extends IGenericCrudService<UserDto, UserCreateDto, UserUpdateDto, Long, UserCriteria> {
     ResponseEntity<DataDto<UserDto>> attachRolesToUser(@NotNull AttachRoleDto dto);
+
     User findByUserName(String userName);
+
     List<Role> getRoles(String userName);
 }
