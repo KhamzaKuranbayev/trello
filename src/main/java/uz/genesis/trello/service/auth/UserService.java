@@ -63,11 +63,6 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_READ)")
     public ResponseEntity<DataDto<UserDto>> get(Long id) {
 
-        /*List<FunctionParam> params = new ArrayList<>();
-        params.add(new FunctionParam(1L, Types.BIGINT));
-
-        Integer count = repository.call(params, "getsessioncountbyorganization", Types.INTEGER);*/
-
         User user = repository.find(UserCriteria.childBuilder().selfId(id).build());
 
         if (utils.isEmpty(user)) {

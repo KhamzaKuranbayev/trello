@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserCriteria;
+import uz.genesis.trello.criterias.settings.OrganizationSettingsCriteria;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.auth.AuthTryCreateDto;
@@ -30,8 +31,10 @@ import uz.genesis.trello.dto.auth.SessionDto;
 import uz.genesis.trello.dto.auth.UserLastLoginCreateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.property.ServerProperties;
 import uz.genesis.trello.repository.auth.IUserRepository;
+import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.utils.BaseUtils;
 
 import javax.annotation.Resource;
@@ -47,6 +50,7 @@ public class AuthService implements IAuthService {
 
     public static String OAUTH_AUTH_URL = "/oauth/token";
     private static String SERVER_URL;
+    private final IOrganizationSettingsService organizationSettingsService;
     private final TokenStore tokenStore;
     private final PasswordEncoder userPasswordEncoder;
     private final BaseUtils utils;
@@ -62,10 +66,11 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, IUserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, IUserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
+        this.organizationSettingsService = organizationSettingsService;
         this.tokenStore = tokenStore;
         this.userPasswordEncoder = userPasswordEncoder;
         this.userRepository = userRepository;
@@ -171,7 +176,7 @@ public class AuthService implements IAuthService {
     }
 
     private void saveUserLastLogin(AuthUserDto user, HttpServletRequest request, String token) {
-        UserLastLoginCreateDto lastLogin = UserLastLoginCreateDto.builder().ipAddress(utils.getClientIpAddress(request)).userId(userRepository.find(UserCriteria.childBuilder().userName(user.getUserName()).build()).getId()).sessionToken(token).build();
+        UserLastLoginCreateDto lastLogin = UserLastLoginCreateDto.builder().ipAddress(utils.getClientIpAddress(request)).userId(userRepository.find(UserCriteria.childBuilder().userName(user.getUserName()).forAuthenticate(true).build()).getId()).sessionToken(token).build();
         userLastLoginService.create(lastLogin);
     }
 
@@ -197,8 +202,11 @@ public class AuthService implements IAuthService {
     }
 
     private boolean checkUserAuthentication(AuthUserDto userDto) {
-        User user = userRepository.find(UserCriteria.childBuilder().userName(userDto.getUserName()).build());
+
+        User user = userRepository.find(UserCriteria.childBuilder().userName(userDto.getUserName()).forAuthenticate(true).build());
         if (!utils.isEmpty(user)) {
+            OrganizationSettingsDto organizationSettings = organizationSettingsService.getOrganizationSettings(OrganizationSettingsCriteria.childBuilder().organizationId(user.getOrganizationId()).build());
+            checkUserLimit(organizationSettings);
             return userPasswordEncoder.matches(userDto.getPassword(), user.getPassword());
         }
         return false;
@@ -212,5 +220,21 @@ public class AuthService implements IAuthService {
                 tokenStore.removeAccessToken(token);
             }
         }
+    }
+
+    private void checkUserLimit(OrganizationSettingsDto dto) {
+        if (utils.isEmpty(dto))
+            throw new RuntimeException("Organization settings not found");
+
+        if (utils.isEmpty(dto.getParams().get("count").asInt()))
+            throw new RuntimeException("Count was not entered!!");
+
+        int userLimit = dto.getParams().get("count").asInt();
+        int currentUserCount = organizationSettingsService.getCurrentUserCount(dto.getOrganizationId());
+
+        if (currentUserCount > userLimit)
+            throw new RuntimeException("You can not add users. Please buy new certificate");
+
+
     }
 }
