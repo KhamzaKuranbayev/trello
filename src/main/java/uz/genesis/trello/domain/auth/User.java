@@ -35,6 +35,9 @@ public class User extends Auditable {
     @Column(name = "passwd")
     protected String password;
 
+    @Column(name = "phone_number", unique = true)
+    private String phoneNumber;
+
     @Column(name = "type_state")
     @Enumerated(EnumType.ORDINAL)
     protected UserType state;

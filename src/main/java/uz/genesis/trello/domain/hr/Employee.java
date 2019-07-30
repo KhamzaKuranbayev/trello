@@ -43,7 +43,7 @@ public class Employee extends User {
 
     @Builder(builderMethodName = "childBuilder")
     public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId, Long organizationId) {
-        super(email, userName, password, state, roles,  organizationId, null, null);
+        super(email, userName, password, null, state, roles,  organizationId, null, null);
         this.userId = userId;
         this.birthDate = birthDate;
         this.firstName = firstName;
