@@ -30,4 +30,10 @@ public class RoleRepository extends GenericDao<Role, RoleCriteria> implements IR
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
+    @Override
+    protected void onDefineWhereCause(RoleCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "t");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
 }

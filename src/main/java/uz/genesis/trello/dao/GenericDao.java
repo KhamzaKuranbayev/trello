@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import uz.genesis.trello.criterias.GenericCriteria;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.enums.Headers;
 import uz.genesis.trello.exception.CustomSqlException;
 import uz.genesis.trello.utils.BaseUtils;
@@ -273,6 +274,20 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
 
     protected boolean isAdmin() {
         return hasRole("ADMIN", userSession.getUserName());
+    }
+
+    protected void addOrganizationCheck(StringBuilder queryBuilder, Map<String, Object> params, String aliesName){
+        queryBuilder
+                .append(" and ")
+                .append(aliesName)
+                .append(".organizationId in (" +
+                        "   case when hasrole('ADMIN', :userName) is true then (" +
+                        "   select o.id from Organization o ) " +
+                            "else (select o.id from Organization o where o.id = :organizationId) end) ");
+        User currentUser = userSession.getUser();
+
+        params.put("userName", currentUser.getUserName());
+        params.put("organizationId", currentUser.getOrganizationId());
     }
 
 

@@ -13,24 +13,40 @@ public class ProjectColumnRepository extends GenericDao<ProjectColumn, ProjectCo
 
     @Override
     protected void defineCriteriaOnQuerying(ProjectColumnCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
-        if(!utils.isEmpty(criteria.getSelfId())){
+        if (!utils.isEmpty(criteria.getSelfId())) {
             whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());
         }
-        if(!utils.isEmpty(criteria.getCodeName())){
+        if (!utils.isEmpty(criteria.getCodeName())) {
             whereCause.add("t.getCodeName = :codeName");
             params.put("codeName", criteria.getCodeName());
         }
-        if(!utils.isEmpty(criteria.getProjectId())){
+        if (!utils.isEmpty(criteria.getProjectId())) {
             whereCause.add("t.projectId = :projectId");
             params.put("projectId", criteria.getProjectId());
         }
-        if(!utils.isEmpty(criteria.getName())){
+        if (!utils.isEmpty(criteria.getName())) {
             whereCause.add("t.name = :name");
             params.put("name", criteria.getName());
         }
 
 
-        onDefineWhereCause(criteria,whereCause,params,queryBuilder);
+        onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    @Override
+    protected void onDefineWhereCause(ProjectColumnCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        if (utils.isEmpty(criteria.getProjectId())) {
+            addOrganizationCheck(queryBuilder, params, "p");
+        }
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    @Override
+    protected StringBuilder joinStringOnQuerying(ProjectColumnCriteria criteria) {
+        StringBuilder joinBuilder = new StringBuilder();
+        joinBuilder.append(" inner join Project p on t.projectId = p.id");
+
+        return joinBuilder;
     }
 }

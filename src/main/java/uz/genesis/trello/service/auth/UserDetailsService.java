@@ -55,7 +55,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     private User findUser(String userName) {
         User user;
         try {
-            user = repository.find(UserCriteria.childBuilder().userName(userName).build());
+            user = repository.find(UserCriteria.childBuilder().userName(userName).forAuthenticate(true).build());
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             throw new RuntimeException(String.format("user with user name '%s' not found", userName));

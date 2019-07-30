@@ -37,6 +37,7 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
         }
 
 
+
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 
@@ -77,6 +78,18 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
                     }
                 });
     }
+    @Override
+    protected void onDefineWhereCause(UserCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        if (!criteria.isForAuthenticate()) {
+            addOrganizationCheck(queryBuilder, params, "t");
+        }
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    //    @Override
+//    public Long getId(UserCriteria criteria) {
+//        return super.(criteria);
+//    }
 
 
 }
