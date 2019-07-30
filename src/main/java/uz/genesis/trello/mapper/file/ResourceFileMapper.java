@@ -10,6 +10,5 @@ import uz.genesis.trello.mapper.BaseMapper;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ResourceFileMapper extends BaseMapper<ResourceFile, ResourceFileDto, ResourceFileCreateDto, GenericCrudDto> {
-
     ResourceFileDto fromCreateDtoToDto(ResourceFileCreateDto dto);
 }

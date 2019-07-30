@@ -14,7 +14,7 @@ public class OrganizationSettingsRepository extends GenericDao<OrganizationSetti
 
     @Override
     protected void defineCriteriaOnQuerying(OrganizationSettingsCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
-        if(!utils.isEmpty(criteria.getSelfId())){
+        if (!utils.isEmpty(criteria.getSelfId())) {
             whereCause.add("t.id = :selfId");
             params.put("selfId", criteria.getSelfId());
         }
@@ -31,4 +31,5 @@ public class OrganizationSettingsRepository extends GenericDao<OrganizationSetti
 
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
 }
