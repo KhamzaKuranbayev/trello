@@ -19,6 +19,6 @@ public class OrganizationSettings extends Auditable {
     @Column(name = "organization_id")
     private Long organizationId;
 
-    @Column(columnDefinition = "TEXT DEFAULT NULL")
+    @Column(columnDefinition = "TEXT DwEFAULT NULL")
     private String settings;
 }

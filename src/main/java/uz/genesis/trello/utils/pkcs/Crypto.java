@@ -1,6 +1,7 @@
 package uz.genesis.trello.utils.pkcs;
 
 
+import net.minidev.json.JSONArray;
 import uz.genesis.trello.utils.BaseUtils;
 
 import javax.crypto.Cipher;
@@ -23,16 +24,17 @@ public class Crypto {
         String macAddress = BaseUtils.defineMacAddress();
 
         if (!macAddress.isEmpty()) {
-            /*String key = SERVER_KEY + Base64.getEncoder().encodeToString(macAddress.getBytes());
+//            String key = MD5.getMd5("DEF_SERVER_USER_ERVFG_NSTAC") + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes());
+//
+//            System.out.println("Encrypted str : " + encrypt("{\n" +
+//                    "  \"organization\": \"MCHJ YAKUBOV\",\n" +
+//                    "  \"organizationId\": 1,\n" +
+//                    "  \"certificate_date\": \"29.07.2019\",\n" +
+//                    "  \"token_limit\": 4\n" +
+//                    "}", key));
 
-            System.out.println("Encrypted str : " + encrypt("{\n" +
-                    "  \"company\":\"mib\",\n" +
-                    "  \"registrade_date\":\"09.08.2019\",\n" +
-                    "  \"maxCount\":\"50\"\n" +
-                    "}", key));*/
-
-            String key = SERVER_KEY + macAddress;
-            System.out.println("Decrypted str : " + decrypt("lxv8OHvZRfylnPeFO4BkXboJVMoB6vtZgXw+wpA3U+xVxvtUtwiRBjUWtfmO7vEuL96oIB/ozCCB7645p6TTsREhPTlgMS3mwyJx7W0bQ80=", key));
+//           String key = MD5.getMd5("DEF_SERVER_USER_ERVFG_NSTAC") + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes());
+            System.out.println("Decrypted str : " + decodeBase("DEF_SERVER_USER_ERVFG_NSTAC", "ODtlewyuWz6bgQcBGIFWZdWjTFYdQfaMK0Vfjs4GhGEYVN2FRMZha6YfUa+bDWmv11ud1/eEC2iPFSulXNOZUjUUrWLDBJF5I2Fnl6dnGRITY3LPf6RGj5KNKvN/0cfYrLBopRN40X09HZHhimLJwFUyXIXitHp6Jvdn8v/wj8k="));
         }
     }
 
@@ -49,7 +51,7 @@ public class Crypto {
         }
     }
 
-    public static String encrypt(String strToEncrypt, String secret) {
+    private static String encrypt(String strToEncrypt, String secret) {
         try {
             setKey(secret);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -61,7 +63,7 @@ public class Crypto {
         return null;
     }
 
-    public static String decrypt(String strToDecrypt, String secret) {
+    private static String decrypt(String strToDecrypt, String secret) {
         try {
             setKey(secret);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
@@ -73,9 +75,15 @@ public class Crypto {
         return null;
     }
 
-    public static String encodeBase(String paramOne) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(BaseUtils.defineMacAddress());
-        return Base64.getEncoder().encodeToString(builder.append(paramOne).toString().getBytes());
+    public static String encodeBase(String paramOne, String paramSecond) {
+        JSONArray array = new JSONArray();
+        array.add(MD5.getMd5(paramOne));
+        array.add(paramSecond);
+        array.add(Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes()));
+        return encrypt(array.toJSONString(), MD5.getMd5(paramOne) + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes()));
+    }
+
+    public static String decodeBase(String paramOne, String encodedText) {
+        return decrypt(encodedText, MD5.getMd5(paramOne) + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes()));
     }
 }
