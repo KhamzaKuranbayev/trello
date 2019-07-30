@@ -20,6 +20,7 @@ import uz.genesis.trello.utils.UserSession;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
@@ -213,6 +214,11 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         return (R) call(domain, methodName, session, outParamType);
     }
 
+    public <R> R call(List<FunctionParam> params, String methodName, int outParamType) {
+        Session session = entityManager.unwrap(Session.class);
+        return (R) call(params, methodName, session, outParamType);
+    }
+
     /**
      * @param domain
      * @param methodName
@@ -230,19 +236,53 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
                         function.registerOutParameter(1, outParamType);
                         function.setString(2, gson.toJson(domain));
                         prepareFunction(function);
-                        switch (outParamType) {
-                            case Types.BOOLEAN:
-                                return function.getBoolean(1);
-                            case Types.VARCHAR:
-                                return function.getString(1);
-                            case Types.BIGINT:
-                                return function.getLong(1);
-                        }
-                        return function.getLong(1);
+                        return returnByOutType(outParamType, function);
                     } catch (Exception ex) {
                         throw new CustomSqlException(ex.getMessage(), ex.getCause());
                     }
                 });
+    }
+
+    private Serializable call(List<FunctionParam> params, String methodName, Session session, int outParamType) {
+        return session.doReturningWork(
+                connection -> {
+                    try (CallableStatement function = connection
+                            .prepareCall(
+                                    "{ ? = call " + methodName + utils.generateParamText(params) + " }")) {
+                        function.registerOutParameter(1, outParamType);
+
+                        for (int i = 2; i < params.size() + 2; i++) {
+                            FunctionParam param = params.get(i - 2);
+                            function.setObject(i, param.getParam(), param.getParamType());
+                        }
+
+                        function.execute();
+
+                        if (!utils.isEmpty(function.getWarnings())) {
+                            throw new RuntimeException(function.getWarnings().getMessage());
+                        }
+
+                        return returnByOutType(outParamType, function);
+                    } catch (Exception ex) {
+                        throw new CustomSqlException(ex.getMessage(), ex.getCause());
+                    }
+                });
+    }
+
+    private Serializable returnByOutType(int outParamType, CallableStatement function) throws SQLException {
+        switch (outParamType) {
+            case Types.BOOLEAN:
+                return function.getBoolean(1);
+            case Types.VARCHAR:
+                return function.getString(1);
+            case Types.BIGINT:
+                return function.getLong(1);
+            case Types.INTEGER:
+                return function.getInt(1);
+            case Types.NUMERIC:
+                return function.getDouble(1);
+        }
+        return function.getLong(1);
     }
 
     public boolean delete(Long id, String methodName) {

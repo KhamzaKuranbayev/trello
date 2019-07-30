@@ -3,16 +3,15 @@ package uz.genesis.trello.repository.auth;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import uz.genesis.trello.criterias.auth.UserCriteria;
+import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.domain.settings.OrganizationSettings;
 import uz.genesis.trello.exception.CustomSqlException;
 
-import javax.persistence.ParameterMode;
 import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
 import java.sql.CallableStatement;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

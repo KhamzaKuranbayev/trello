@@ -1,7 +1,10 @@
 package uz.genesis.trello.repository;
 
 import uz.genesis.trello.criterias.GenericCriteria;
+import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.Auditable;
+
+import java.util.List;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -22,6 +25,8 @@ public interface IGenericCrudRepository<T extends Auditable, C extends GenericCr
     <R> R call(T domain, String methodName, int outParamType);
 
     <C, R> R call(C domain, String methodName, int outParamType);
+
+    <R> R call(List<FunctionParam> params, String methodName, int outParamType);
 
     boolean delete(Long id, String methodName);
 }
