@@ -5,6 +5,7 @@ import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.achievement.UserExpenseCoin;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.organization.Organization;
+import uz.genesis.trello.domain.settings.Language;
 import uz.genesis.trello.enums.UserType;
 
 import javax.persistence.*;
@@ -42,14 +43,19 @@ public class User extends Auditable {
     @Enumerated(EnumType.ORDINAL)
     protected UserType state;
 
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    @OneToOne
+    @JoinColumn(name = "lang_id", referencedColumnName = "id")
+    private Language language;
+
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "auth_users_roles", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}
             , inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
 //    @WhereJoinTable(clause = "is_active = 1")
     protected Collection<Role> roles;
 
-    @Column(name = "organization_id")
-    private Long organizationId;
 
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
