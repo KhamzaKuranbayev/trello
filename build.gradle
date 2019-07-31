@@ -84,7 +84,9 @@ dependencies {
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
 	compile 'org.zalando:logbook-spring-boot-starter:2.0.0-RC.1'
-	
+
+	compile 'org.springframework.boot:spring-boot-starter-mail'
+	compile 'org.freemarker:freemarker'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
