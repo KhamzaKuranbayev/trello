@@ -1,10 +1,7 @@
 package uz.genesis.trello.dto.settings;
 
 import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import uz.genesis.trello.dto.GenericCrudDto;
 
 
@@ -13,7 +10,8 @@ import uz.genesis.trello.dto.GenericCrudDto;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("OrganizationSettings create request")
+@Builder
 public class OrganizationSettingsCreateDto extends GenericCrudDto {
-    private Long organizatioId;
+    private Long organizationId;
     private String settings;
 }
