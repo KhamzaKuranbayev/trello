@@ -7,6 +7,6 @@ import uz.genesis.trello.service.IAbstractService;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-public interface IEmailService extends IAbstractService {
-    void send(User user) throws MessagingException, IOException, TemplateException;
+public interface IMessageService extends IAbstractService {
+    void sendMessage(User user) throws MessagingException, IOException, TemplateException;
 }
