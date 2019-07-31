@@ -4,8 +4,8 @@ public enum Types {
 
     DEFAULT("default", "default"),
     PROJECT_TYPE(null, "PROJECT_TYPE"),
-    PROJECT_TYPE_KANBAN("PROJECT_TYPE", "PROJECT_TYPE_KANBAN"),
-    PROJECT_TYPE_TRELLO("PROJECT_TYPE", "PROJECT_TYPE_TRELLO");
+    PROJECT_TYPE_KANBAN("PROJECT_TYPE", "KANBAN"),
+    PROJECT_TYPE_TRELLO("PROJECT_TYPE", "TRELLO");
 
     public String parent;
     public String value;
