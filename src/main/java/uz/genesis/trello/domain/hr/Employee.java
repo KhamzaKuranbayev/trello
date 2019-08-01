@@ -1,9 +1,12 @@
 package uz.genesis.trello.domain.hr;
 
 import lombok.*;
+import uz.genesis.trello.domain.achievement.UserExpenseCoin;
+import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.domain.organization.Organization;
+import uz.genesis.trello.domain.settings.Language;
 import uz.genesis.trello.enums.UserType;
 
 import javax.persistence.*;
@@ -42,13 +45,12 @@ public class Employee extends User {
     private List<EmployeeGroup> employeeGroups = new ArrayList<>();
 
     @Builder(builderMethodName = "childBuilder")
-    public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, Long userId, Date birthDate, String firstName, String middleName, String lastName, Long branchId, Long organizationId) {
-        super(email, userName, password, null, state, organizationId, null, roles, null, null);
-        this.userId = userId;
+
+    public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, String phoneNumber, Long organizationId, Language language, List<UserIncomeCoin> incomeCoins, List<UserExpenseCoin> expenseCoins, Date birthDate, String firstName, String middleName, String lastName) {
+        super(email, userName, password, state, roles, phoneNumber, organizationId, language, incomeCoins, expenseCoins);
         this.birthDate = birthDate;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.branchId = branchId;
     }
 }

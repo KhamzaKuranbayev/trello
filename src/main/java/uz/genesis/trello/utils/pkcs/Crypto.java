@@ -24,8 +24,8 @@ public class Crypto {
         String macAddress = BaseUtils.defineMacAddress();
 
         if (!macAddress.isEmpty()) {
-//            String key = MD5.getMd5("DEF_SERVER_USER_ERVFG_NSTAC") + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes());
-//
+            String key = MD5.getMd5("DEF_SERVER_USER_ERVFG_NSTAC") + Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes());
+
 //            System.out.println("Encrypted str : " + encrypt("{\n" +
 //                    "  \"organization\": \"MCHJ YAKUBOV\",\n" +
 //                    "  \"organizationId\": 1,\n" +
@@ -84,6 +84,6 @@ public class Crypto {
     }
 
     public static String decodeBase(String paramOne, String encodedText) {
-        return decrypt(encodedText, MD5.getMd5(paramOne) + "MUMtMUItMEQtNUEtQ0MtODA="/*Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes())*/);
+        return decrypt(encodedText, MD5.getMd5(paramOne) + /*"MUMtMUItMEQtNUEtQ0MtODA="*/Base64.getEncoder().encodeToString(BaseUtils.defineMacAddress().getBytes()));
     }
 }

@@ -32,9 +32,11 @@ import uz.genesis.trello.dto.auth.UserLastLoginCreateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
+import uz.genesis.trello.enums.Types;
 import uz.genesis.trello.property.ServerProperties;
 import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
+import uz.genesis.trello.service.settings.ITypeService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.pkcs.PKCSChecker;
 
@@ -53,6 +55,7 @@ public class AuthService implements IAuthService {
     private static String SERVER_URL;
     private final IOrganizationSettingsService organizationSettingsService;
     private final TokenStore tokenStore;
+    private final ITypeService typeService;
     private final PasswordEncoder userPasswordEncoder;
     private final PKCSChecker pkcsChecker;
     private final BaseUtils utils;
@@ -68,12 +71,13 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
         this.organizationSettingsService = organizationSettingsService;
         this.tokenStore = tokenStore;
+        this.typeService = typeService;
         this.userPasswordEncoder = userPasswordEncoder;
         this.pkcsChecker = pkcsChecker;
         this.userRepository = userRepository;
@@ -185,22 +189,28 @@ public class AuthService implements IAuthService {
 
     private void saveAuthTry(HttpServletRequest request, AuthUserDto userDto, HttpResponse response) {
         int status = response.getStatusLine().getStatusCode();
-        long id;
+        Types type;
         switch (status) {
             case 400:
-                id = 84;
+                type = Types.AUTH_TRY_BAD_CREDENTIAL;
                 break;
             case 401:
-                id = 85;
+                type = Types.AUTH_TRY_UNAUTHORIZED;
                 break;
             case 403:
-                id = 89;
+                type = Types.AUTH_TRY_FORBIDDEN;
                 break;
             default:
-                id = 90;
+                type = Types.AUTH_TRY_UNKNOWN;
                 break;
         }
-        AuthTryCreateDto createDto = AuthTryCreateDto.builder().ipAddress(utils.getClientIpAddress(request)).userName(userDto.getUserName()).resultType(GenericDto.builder().id(id).build()).build();
+
+        Long typeId = typeService.getIdByValue(type);
+        AuthTryCreateDto createDto = AuthTryCreateDto.builder().
+                ipAddress(utils.getClientIpAddress(request)).
+                userName(userDto.getUserName()).
+                resultType(new GenericDto(typeId)).build();
+
         authTryService.create(createDto);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.OrganizationSettingsCriteria;
 import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.dto.settings.CertificateDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsCreateDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsUpdateDto;
@@ -49,12 +50,15 @@ public class OrganizationSettingsService extends AbstractCrudService<Organizatio
     }
 
     @Override
-    public ResponseEntity<DataDto<Boolean>> setCertificate(String privateKey) {
+    public ResponseEntity<DataDto<Boolean>> setCertificate(CertificateDto certificateDto) {
         ObjectNode settingsNode = objectMapper.createObjectNode();
-        settingsNode.put("certificate", privateKey);
+        settingsNode.put("certificate", certificateDto.getPrivateKey());
 
-        OrganizationSettingsCreateDto dto = OrganizationSettingsCreateDto.builder().organizationId(userSession.getUser().getOrganizationId()).settings(settingsNode.toString()).build();
-        return new ResponseEntity<>(new DataDto<>(repository.call(dto, "setCertificate", Types.BOOLEAN)), HttpStatus.OK);
+        OrganizationSettingsCreateDto dto = OrganizationSettingsCreateDto.builder().
+                organizationId(userSession.getUser().getOrganizationId()).
+                settings(settingsNode.toString()).build();
+        boolean success = repository.call(dto, "setCertificate", Types.BOOLEAN);
+        return new ResponseEntity<>(new DataDto<>(success), HttpStatus.OK);
     }
 
 

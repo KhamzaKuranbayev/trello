@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.TypeCriteria;
+import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.settings.Type;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
@@ -19,6 +20,7 @@ import uz.genesis.trello.dto.settings.SubTypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
+import uz.genesis.trello.enums.Types;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.settings.TypeMapper;
 import uz.genesis.trello.repository.settings.ITypeRepository;
@@ -27,6 +29,7 @@ import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.settings.TypeServiceValidator;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -124,5 +127,11 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     public ResponseEntity<DataDto<List<TypeDto>>> getAll(TypeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
+    }
+
+    @Override
+    public Long getIdByValue(Types type) {
+        FunctionParam value = new FunctionParam(type.name(), java.sql.Types.VARCHAR);
+        return repository.call(Collections.singletonList(value), "getIdByType", java.sql.Types.BIGINT);
     }
 }
