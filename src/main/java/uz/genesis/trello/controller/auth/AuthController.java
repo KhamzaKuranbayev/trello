@@ -1,10 +1,7 @@
 package uz.genesis.trello.controller.auth;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.auth.AuthUserDto;
 import uz.genesis.trello.dto.auth.SessionDto;
@@ -24,6 +21,17 @@ public class AuthController extends ApiController<IAuthService> {
     public ResponseEntity<DataDto<SessionDto>> login(@RequestBody AuthUserDto dto, HttpServletRequest request) {
         return service.login(dto, request);
     }
+
+    @RequestMapping(value = SIGNIN_OTP_URL,  method = RequestMethod.POST)
+    public ResponseEntity<DataDto<Boolean>> signIn(@RequestParam(value = "param") String param) {
+        return service.signInOtp(param);
+    }
+    @RequestMapping(value = OTP_CONFIRM_URL, method = RequestMethod.POST)
+    public ResponseEntity<DataDto<SessionDto>> otpConfirm(@RequestParam (value = "key") String key) {
+        return service.otpConfirm(key);
+    }
+
+
 
     @RequestMapping(value = LOGOUT_URL, method = RequestMethod.GET)
     public ResponseEntity<DataDto<Boolean>> logout(HttpServletRequest request) {

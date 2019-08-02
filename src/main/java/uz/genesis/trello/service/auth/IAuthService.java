@@ -14,4 +14,8 @@ public interface IAuthService extends IAbstractService {
     ResponseEntity<DataDto<Boolean>>logout(HttpServletRequest request);
 
     ResponseEntity<DataDto<SessionDto>> refreshToken(AuthUserDto user, HttpServletRequest request);
+
+    ResponseEntity<DataDto<Boolean>> signInOtp(String userName);
+
+    ResponseEntity<DataDto<SessionDto>> otpConfirm(String key);
 }
