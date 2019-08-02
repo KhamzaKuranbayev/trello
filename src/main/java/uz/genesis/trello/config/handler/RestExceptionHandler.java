@@ -58,7 +58,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String message = getLastCause(ex);
         logger.error(message, ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.FORBIDDEN);
+                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.BAD_REQUEST);
     }
 
     private String getLastCause(Throwable throwable) {
