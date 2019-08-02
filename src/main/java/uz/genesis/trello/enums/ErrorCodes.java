@@ -6,6 +6,7 @@ package uz.genesis.trello.enums;
 
 public enum ErrorCodes {
 
+    ERROR_MESSAGE_NOT_FOUND("ERROR_MESSAGE_NOT_FOUND", "Error message with code ~ not found"),
     USER_NOT_FOUND_AUTH("USER_NOT_FOUND_AUTH_EMAIL", "User with provided ~ not found"),
     USER_NOT_FOUND_ID("USER_NOT_FOUND_ID", "User with provided id: ~ not found"),
     OBJECT_IS_NULL("OBJECT_IS_NULL", "Provided object: '%s' is null"),
