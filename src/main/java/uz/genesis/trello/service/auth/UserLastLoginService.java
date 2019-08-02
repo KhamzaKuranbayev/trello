@@ -14,41 +14,42 @@ import uz.genesis.trello.dto.auth.UserLastLoginCreateDto;
 import uz.genesis.trello.dto.auth.UserLastLoginDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.UserLastLoginMapper;
 import uz.genesis.trello.repository.auth.IUserLastLoginRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
-import uz.genesis.trello.utils.UserSession;
 import uz.genesis.trello.utils.validators.auth.UserLastLoginValidator;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
-public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, UserLastLoginCreateDto, CrudDto, UserLastLoginCriteria, IUserLastLoginRepository> implements IUserLastLoginService{
-    private final UserLastLoginMapper mapper;
+public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, UserLastLoginCreateDto, CrudDto, UserLastLoginCriteria, IUserLastLoginRepository> implements IUserLastLoginService {
     protected final Log logger = LogFactory.getLog(getClass());
+    private final UserLastLoginMapper mapper;
     private final UserLastLoginValidator validator;
-    private final UserSession userSession;
     private final GenericMapper genericMapper;
 
-    public UserLastLoginService(IUserLastLoginRepository repository, BaseUtils utils, UserLastLoginMapper mapper, UserLastLoginValidator validator, UserSession userSession, GenericMapper genericMapper) {
-        super(repository, utils);
+    public UserLastLoginService(IUserLastLoginRepository repository, BaseUtils utils, IErrorRepository errorRepository, UserLastLoginMapper mapper, UserLastLoginValidator validator, GenericMapper genericMapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.validator = validator;
-        this.userSession = userSession;
         this.genericMapper = genericMapper;
     }
+
 
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserLastLoginCreateDto dto) {
         UserLastLogin userLastLogin = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(userLastLogin);
+
         userLastLogin.setId(repository.create(dto, "createUserLastLogin"));
         if (utils.isEmpty(userLastLogin.getId())) {
             logger.error(String.format("Non UserLastLoginCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non UserLastLoginCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(UserLastLogin.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(userLastLogin)), HttpStatus.CREATED);
@@ -60,8 +61,9 @@ public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, 
 
         if (utils.isEmpty(userLastLogin)) {
             logger.error(String.format("userLastLogin with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("userLastLogin with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(UserLastLogin.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(userLastLogin)), HttpStatus.OK);
     }

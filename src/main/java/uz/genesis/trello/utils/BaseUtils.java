@@ -122,7 +122,7 @@ public class BaseUtils {
         return null;
     }
 
-    public String encideToBase64(String data) {
+    public String encodeToBase64(String data) {
         return Base64.getEncoder().encodeToString(data.getBytes());
     }
 

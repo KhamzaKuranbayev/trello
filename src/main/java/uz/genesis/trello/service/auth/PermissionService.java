@@ -19,10 +19,12 @@ import uz.genesis.trello.dto.auth.PermissionDto;
 import uz.genesis.trello.dto.auth.PermissionUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.PermissionMapper;
 import uz.genesis.trello.repository.auth.PermissionRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.PermissionServiceValidator;
 
@@ -40,12 +42,13 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     private final PermissionServiceValidator validator;
 
     @Autowired
-    public PermissionService(PermissionRepository repository, BaseUtils utils, PermissionMapper mapper, GenericMapper genericMapper, PermissionServiceValidator validator) {
-        super(repository, utils);
+    public PermissionService(PermissionRepository repository, BaseUtils utils, IErrorRepository errorRepository, PermissionMapper mapper, GenericMapper genericMapper, PermissionServiceValidator validator) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.genericMapper = genericMapper;
         this.validator = validator;
     }
+
 
     @Override
     @CacheEvict(value = {"users", "permissions", "roles"}, allEntries = true)
@@ -56,7 +59,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
         permission.setId(repository.create(dto, "createPermission"));
         if (utils.isEmpty(permission.getId())) {
             logger.error(String.format("Non PermissionCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non PermissionCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Permission.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(permission)), HttpStatus.CREATED);
@@ -70,8 +73,9 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
 
         if (utils.isEmpty(permission)) {
             logger.error(String.format("permission with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("permission with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Permission.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(permission)), HttpStatus.OK);
     }
@@ -81,11 +85,11 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PERMISSION_UPDATE)")
     public ResponseEntity<DataDto<PermissionDto>> update(@NotNull PermissionUpdateDto dto) {
 
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updatePermission")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update permission with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Permission.class, dto.getId())));
         }
     }
 

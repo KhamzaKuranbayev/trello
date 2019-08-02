@@ -179,7 +179,7 @@ public class AuthService implements IAuthService {
     }
 
     private String getAuthorization() {
-        return "Basic " + utils.encideToBase64(clientId + ":" + clientSecret);
+        return "Basic " + utils.encodeToBase64(clientId + ":" + clientSecret);
     }
 
     private void saveUserLastLogin(AuthUserDto user, HttpServletRequest request, String token) {
