@@ -22,6 +22,7 @@ public class CustomSqlException extends RuntimeException {
     protected final Log logger = LogFactory.getLog(getClass());
 
     private Integer sqlErrorCode;
+    private HttpStatus httpStatus;
     private String friendlyMessage;
     private String systemMessage;
 
@@ -33,21 +34,25 @@ public class CustomSqlException extends RuntimeException {
     public CustomSqlException(String message, Integer sqlErrorCode) {
         super(message);
         this.sqlErrorCode = sqlErrorCode;
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         initMessage();
     }
 
     public CustomSqlException(String message, Throwable cause, Integer sqlErrorCode) {
         super(message, cause);
         this.sqlErrorCode = sqlErrorCode;
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         initMessage();
     }
 
     public CustomSqlException(String message, Throwable cause) {
         super(message, cause);
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         initMessage();
     }
 
     private void initMessage() {
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         friendlyMessage = null;
         systemMessage = null;
 
@@ -65,6 +70,17 @@ public class CustomSqlException extends RuntimeException {
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+        }
+
+        if (friendlyMessage.contains("ERROR_CODE_400")) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            friendlyMessage = friendlyMessage.replace("ERROR_CODE_400", "").trim();
+        } else if (friendlyMessage.contains("ERROR_CODE_403")) {
+            httpStatus = HttpStatus.FORBIDDEN;
+            friendlyMessage = friendlyMessage.replace("ERROR_CODE_403", "").trim();
+        } else if (friendlyMessage.contains("ERROR_CODE_404")) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            friendlyMessage = friendlyMessage.replace("ERROR_CODE_404", "").trim();
         }
 
     }

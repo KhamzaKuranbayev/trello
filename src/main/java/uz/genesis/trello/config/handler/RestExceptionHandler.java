@@ -29,6 +29,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
                 message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(AccessDeniedException.class)
     public final ResponseEntity<DataDto<?>> handleCustomException(AccessDeniedException ex, WebRequest request) {
         String message = getLastCause(ex);
@@ -48,9 +49,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<DataDto<?>> handleSqlException(CustomSqlException ex, WebRequest request) {
         String message = ex.getFriendlyMessage();
         logger.error(ex.getMessage(), ex);
-//        logger.error("#requestBody: " + request.get);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                message).systemName(ex.getSystemMessage()).build()), HttpStatus.INTERNAL_SERVER_ERROR);
+                message).systemName(ex.getSystemMessage()).build()), ex.getHttpStatus());
     }
 
     @ExceptionHandler(ValidationException.class)
