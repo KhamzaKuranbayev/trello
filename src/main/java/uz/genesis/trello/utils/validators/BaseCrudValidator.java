@@ -3,6 +3,7 @@ package uz.genesis.trello.utils.validators;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.service.AbstractService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
@@ -13,8 +14,8 @@ import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
 
 public abstract class BaseCrudValidator<T, C extends CrudDto, U extends CrudDto> extends AbstractValidator<T> {
 
-    public BaseCrudValidator(BaseUtils utils) {
-        super(utils);
+    public BaseCrudValidator(BaseUtils utils, IErrorRepository repository) {
+        super(utils, repository);
     }
 
     public void validateOnCreate(C domain) {
@@ -39,7 +40,7 @@ public abstract class BaseCrudValidator<T, C extends CrudDto, U extends CrudDto>
 
     public void validateOnDelete(Long id) {
         if (id == null) {
-            throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
+            throw new IdRequiredException(repository.getErrorMessage(ID_REQUIRED, ""));
         }
     }
 }

@@ -7,6 +7,7 @@ import uz.genesis.trello.criterias.GenericCriteria;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.repository.IAbstractRepository;
 import uz.genesis.trello.repository.IGenericRepository;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import java.util.List;
@@ -19,11 +20,13 @@ public abstract class AbstractService<T, C extends GenericCriteria, R extends IG
 
     protected final R  repository;
     protected final BaseUtils utils;
+    protected final IErrorRepository errorRepository;
 
     @Autowired
-    public AbstractService(R repository, BaseUtils utils) {
+    public AbstractService(R repository, BaseUtils utils, IErrorRepository errorRepository) {
         this.repository = repository;
         this.utils = utils;
+        this.errorRepository = errorRepository;
     }
 
     public ResponseEntity<DataDto<T>> get(Long id) {

@@ -3,7 +3,6 @@ package uz.genesis.trello.service.auth;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,11 +19,13 @@ import uz.genesis.trello.dto.auth.RoleDto;
 import uz.genesis.trello.dto.auth.RoleUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.RoleMapper;
 import uz.genesis.trello.repository.auth.RoleRepository;
 import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.RoleServiceValidator;
 
@@ -36,30 +37,30 @@ import java.util.List;
 @CacheConfig(cacheNames = {"roles"})
 public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, RoleUpdateDto, RoleCriteria, RoleRepository> implements IRoleService {
     protected final Log logger = LogFactory.getLog(getClass());
-    private final RoleMapper roleMapper;
+    private final RoleMapper mapper;
     private final GenericMapper genericMapper;
     private final RoleServiceValidator validator;
     private final UserRepository userRepository;
 
-    @Autowired
-    public RoleService(RoleRepository repository, BaseUtils utils, RoleMapper roleMapper, GenericMapper genericMapper, RoleServiceValidator validator, UserRepository userRepository) {
-        super(repository, utils);
-        this.roleMapper = roleMapper;
+    public RoleService(RoleRepository repository, BaseUtils utils, IErrorRepository errorRepository, RoleMapper mapper, GenericMapper genericMapper, RoleServiceValidator validator, UserRepository userRepository) {
+        super(repository, utils, errorRepository);
+        this.mapper = mapper;
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.userRepository = userRepository;
     }
 
+
     @Override
     @CacheEvict(value = {"users", "roles"}, allEntries = true)
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull RoleCreateDto dto) {
-        Role role = roleMapper.fromCreateDto(dto);
+        Role role = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(role);
         role.setId(repository.create(dto, "createRole"));
         if (utils.isEmpty(role.getId())) {
             logger.error(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non RoleCreatedDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Role.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(role)), HttpStatus.CREATED);
@@ -73,10 +74,11 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
         if (utils.isEmpty(role)) {
             logger.error(String.format("role with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("role with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Role.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(role)), HttpStatus.OK);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(role)), HttpStatus.OK);
     }
 
     @Override
@@ -84,11 +86,11 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_UPDATE)")
     public ResponseEntity<DataDto<RoleDto>> update(@NotNull RoleUpdateDto dto) {
 
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateRole")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update role with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Role.class, dto.getId())));
         }
     }
 
@@ -107,7 +109,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);
         Long total = repository.getTotalCount(criteria);
-        return new ResponseEntity<>(new DataDto<>(roleMapper.toDto(roles), total), HttpStatus.OK);
+        return new ResponseEntity<>(new DataDto<>(mapper.toDto(roles), total), HttpStatus.OK);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
         if (repository.call(dto, "attachpermissiontorole", Types.BOOLEAN)) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException((String.format("could not attach permissions to role with id '%s'", dto.getId())));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.COULD_NOT_ATTACH, utils.toErrorParams("permissions", "role", dto.getId())));
         }
     }
 }

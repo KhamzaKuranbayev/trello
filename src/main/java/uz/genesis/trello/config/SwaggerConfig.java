@@ -1,11 +1,11 @@
 package uz.genesis.trello.config;
 
 
-import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.*;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -29,7 +29,6 @@ public class SwaggerConfig {
     private String AUTH_SERVER;
 
     /**
-     *
      * @return Docket
      */
     @Bean
@@ -48,9 +47,6 @@ public class SwaggerConfig {
     }
 
 
-
-
-
     private OAuth securitySchema() {
 
         List<AuthorizationScope> authorizationScopeList = new ArrayList();
@@ -58,7 +54,7 @@ public class SwaggerConfig {
         authorizationScopeList.add(new AuthorizationScope("write", "access all"));
 
         List<GrantType> grantTypes = new ArrayList();
-        GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(AUTH_SERVER+"/token");
+        GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(AUTH_SERVER + "/token");
         grantTypes.add(passwordCredentialsGrant);
 
         return new OAuth("oauth2", authorizationScopeList, grantTypes);
@@ -70,7 +66,6 @@ public class SwaggerConfig {
     }
 
 
-
     private List<SecurityReference> defaultAuth() {
 
         final AuthorizationScope[] authorizationScopes = new AuthorizationScope[3];
@@ -80,7 +75,6 @@ public class SwaggerConfig {
 
         return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
     }
-
 
 
     private ApiInfo apiInfo() {

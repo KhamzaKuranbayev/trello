@@ -3,6 +3,7 @@ package uz.genesis.trello.service.file;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.file.BackgroundMapper;
 import uz.genesis.trello.repository.file.IBackgrounRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.file.BackgroundServiceValidator;
 
@@ -31,12 +33,14 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
     private final BackgroundMapper mapper;
     private final GenericMapper genericMapper;
 
-    public BackgroundService(IBackgrounRepository repository, BaseUtils utils, BackgroundServiceValidator validator, BackgroundMapper mapper, GenericMapper genericMapper) {
-        super(repository, utils);
+    @Autowired
+    public BackgroundService(IBackgrounRepository repository, BaseUtils utils, IErrorRepository errorRepository, BackgroundServiceValidator validator, BackgroundMapper mapper, GenericMapper genericMapper) {
+        super(repository, utils, errorRepository);
         this.validator = validator;
         this.mapper = mapper;
         this.genericMapper = genericMapper;
     }
+
 
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull BackgroundCreateDto dto) {
