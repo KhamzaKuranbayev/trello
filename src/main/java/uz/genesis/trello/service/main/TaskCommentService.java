@@ -22,6 +22,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskCommentMapper;
 import uz.genesis.trello.repository.main.ITaskCommentRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCommentValidator;
 
@@ -36,8 +37,8 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     private final TaskCommentValidator validator;
     private final TaskCommentMapper mapper;
     @Autowired
-    public TaskCommentService(ITaskCommentRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCommentValidator validator, TaskCommentMapper mapper) {
-        super(repository, utils);
+    public TaskCommentService(ITaskCommentRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TaskCommentValidator validator, TaskCommentMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.mapper = mapper;

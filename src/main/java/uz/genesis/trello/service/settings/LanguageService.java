@@ -26,8 +26,8 @@ public class LanguageService extends AbstractCrudService<LanguageDto, GenericCru
 
 
     @Autowired
-    public LanguageService(ILanguageRepository repository, BaseUtils utils, LanguageMapper mapper) {
-        super(repository, utils);
+    public LanguageService(ILanguageRepository repository, BaseUtils utils, IErrorRepository errorRepository, LanguageMapper mapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
     }
 

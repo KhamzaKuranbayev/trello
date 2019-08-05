@@ -21,6 +21,7 @@ import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.auth.IUserService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.EmployeeServiceValidator;
 
@@ -47,11 +48,11 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     private IUserService userService;
 
     @Autowired
-    public EmployeeService(IEmployeeRepository repository, BaseUtils utils, EmployeeServiceValidator validator, EmployeeMapper mapper, IUserService userService) {
-        super(repository, utils);
-        this.mapper = mapper;
-        this.genericMapper = Mappers.getMapper(GenericMapper.class);
+    public EmployeeService(IEmployeeRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, EmployeeServiceValidator validator, EmployeeMapper mapper, IUserService userService) {
+        super(repository, utils, errorRepository);
+        this.genericMapper = genericMapper;
         this.validator = validator;
+        this.mapper = mapper;
         this.userService = userService;
     }
 

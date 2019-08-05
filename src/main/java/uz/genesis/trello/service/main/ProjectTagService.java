@@ -22,6 +22,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.ProjectTagMapper;
 import uz.genesis.trello.repository.main.IProjectTagRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectTagValidator;
 
@@ -36,8 +37,8 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     private final ProjectTagValidator validator;
     private final ProjectTagMapper mapper;
     @Autowired
-    public ProjectTagService(IProjectTagRepository repository, BaseUtils utils, GenericMapper genericMapper, ProjectTagValidator validator, ProjectTagMapper mapper) {
-        super(repository, utils);
+    public ProjectTagService(IProjectTagRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, ProjectTagValidator validator, ProjectTagMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.mapper = mapper;

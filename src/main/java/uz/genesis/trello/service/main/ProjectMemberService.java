@@ -23,6 +23,7 @@ import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.mapper.main.ProjectMemberMapper;
 import uz.genesis.trello.repository.main.IProjectMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectMemberServiceValidator;
 
@@ -39,8 +40,8 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     private final ProjectMemberServiceValidator validator;
     private final ProjectMemberMapper mapper;
 
-    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, EmployeeMapper employeeMapper, ProjectMemberServiceValidator validator, ProjectMemberMapper mapper) {
-        super(repository, utils);
+    public ProjectMemberService(IProjectMemberRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, EmployeeMapper employeeMapper, ProjectMemberServiceValidator validator, ProjectMemberMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.employeeMapper = employeeMapper;
         this.validator = validator;

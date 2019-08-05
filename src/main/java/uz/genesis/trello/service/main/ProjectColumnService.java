@@ -23,6 +23,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.ProjectColumnMapper;
 import uz.genesis.trello.repository.main.IProjectColumnRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectColumnServiceValidator;
 
@@ -40,8 +41,8 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     private final ProjectColumnServiceValidator validator;
 
     @Autowired
-    public ProjectColumnService(IProjectColumnRepository repository, BaseUtils utils, ProjectColumnMapper mapper, GenericMapper genericMapper, ITaskService taskService, ProjectColumnServiceValidator validator) {
-        super(repository, utils);
+    public ProjectColumnService(IProjectColumnRepository repository, BaseUtils utils, IErrorRepository errorRepository, ProjectColumnMapper mapper, GenericMapper genericMapper, ITaskService taskService, ProjectColumnServiceValidator validator) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.genericMapper = genericMapper;
         this.taskService = taskService;

@@ -22,6 +22,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.GroupMapper;
 import uz.genesis.trello.repository.hr.IGroupRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.GroupServiceValidator;
 
@@ -37,8 +38,8 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     private final GroupMapper groupMapper;
 
     @Autowired
-    public GroupService(IGroupRepository repository, BaseUtils utils, GenericMapper genericMapper, GroupServiceValidator validator, GroupMapper groupMapper) {
-        super(repository, utils);
+    public GroupService(IGroupRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, GroupServiceValidator validator, GroupMapper groupMapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.groupMapper = groupMapper;

@@ -21,6 +21,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskTagMapper;
 import uz.genesis.trello.repository.main.ITaskTagRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskTagValidator;
 
@@ -35,8 +36,9 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
     private final GenericMapper genericMapper;
     private final TaskTagValidator validator;
     private final TaskTagMapper mapper;
-    public TaskTagService(ITaskTagRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskTagValidator validator, TaskTagMapper mapper) {
-        super(repository, utils);
+
+    public TaskTagService(ITaskTagRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TaskTagValidator validator, TaskTagMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.mapper = mapper;

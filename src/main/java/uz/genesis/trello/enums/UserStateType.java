@@ -4,7 +4,7 @@ package uz.genesis.trello.enums;
  * Created by 'Sherkhan' on 26/07/19.
  */
 
-public enum UserType {
+public enum UserStateType {
 
     ACTIVE("ACTIVE"),
     INACTIVE("INACTIVE"),
@@ -12,7 +12,7 @@ public enum UserType {
 
     public String code;
 
-    UserType(String code) {
+    UserStateType(String code) {
         this.code = code;
     }
 }

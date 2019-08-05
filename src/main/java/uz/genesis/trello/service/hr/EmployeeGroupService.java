@@ -17,6 +17,7 @@ import uz.genesis.trello.mapper.main.EmployeeGroupMapper;
 import uz.genesis.trello.repository.hr.IEmployeeGroupRepository;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ public class EmployeeGroupService extends AbstractCrudService<GenericDto, CrudDt
     private final EmployeeGroupMapper mapper;
 
     @Autowired
-    public EmployeeGroupService(IEmployeeGroupRepository repository, BaseUtils utils, IEmployeeRepository employeeRepository, EmployeeMapper employeeMapper, EmployeeGroupMapper mapper) {
-        super(repository, utils);
+    public EmployeeGroupService(IEmployeeGroupRepository repository, BaseUtils utils, IErrorRepository errorRepository, IEmployeeRepository employeeRepository, EmployeeMapper employeeMapper, EmployeeGroupMapper mapper) {
+        super(repository, utils, errorRepository);
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.mapper = mapper;

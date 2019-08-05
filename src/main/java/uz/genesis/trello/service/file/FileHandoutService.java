@@ -13,6 +13,7 @@ import uz.genesis.trello.dto.file.FileHandoutDto;
 import uz.genesis.trello.mapper.file.FileHandoutMapper;
 import uz.genesis.trello.repository.file.IFileHandoutRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 @Service
@@ -21,8 +22,8 @@ public class FileHandoutService extends AbstractCrudService<FileHandoutDto, File
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
-    public FileHandoutService(IFileHandoutRepository repository, BaseUtils utils, FileHandoutMapper mapper) {
-        super(repository, utils);
+    public FileHandoutService(IFileHandoutRepository repository, BaseUtils utils, IErrorRepository errorRepository, FileHandoutMapper mapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
     }
 

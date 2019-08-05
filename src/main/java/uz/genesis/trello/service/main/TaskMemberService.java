@@ -18,6 +18,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMemberMapper;
 import uz.genesis.trello.repository.main.ITaskMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskMemberValidator;
 
@@ -33,8 +34,8 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     private final TaskMemberValidator validator;
     private final TaskMemberMapper mapper;
 
-    public TaskMemberService(ITaskMemberRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskMemberValidator validator, TaskMemberMapper mapper) {
-        super(repository, utils);
+    public TaskMemberService(ITaskMemberRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TaskMemberValidator validator, TaskMemberMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.mapper = mapper;

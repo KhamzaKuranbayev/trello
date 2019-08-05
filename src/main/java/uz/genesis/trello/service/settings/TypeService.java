@@ -48,8 +48,8 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     private final TypeServiceValidator validator;
 
     @Autowired
-    public TypeService(ITypeRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper mapper, TypeServiceValidator validator) {
-        super(repository, utils);
+    public TypeService(ITypeRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TypeMapper mapper, TypeServiceValidator validator) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.mapper = mapper;
         this.validator = validator;

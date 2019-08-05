@@ -5,12 +5,14 @@ import uz.genesis.trello.domain.main.CheckListGroup;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.main.CheckListGroupCreateDto;
 import uz.genesis.trello.dto.main.CheckListGroupUpdateDto;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 @Component
 public class CheckListGroupValidator extends BaseCrudValidator<CheckListGroup, CheckListGroupCreateDto, CheckListGroupUpdateDto> {
-    public CheckListGroupValidator(BaseUtils utils) {
-        super(utils);
+
+    public CheckListGroupValidator(BaseUtils utils, IErrorRepository repository) {
+        super(utils, repository);
     }
 
     @Override

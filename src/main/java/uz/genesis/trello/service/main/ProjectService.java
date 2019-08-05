@@ -23,6 +23,7 @@ import uz.genesis.trello.mapper.settings.TypeMapper;
 import uz.genesis.trello.repository.main.IProjectRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.hr.IEmployeeGroupService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 
@@ -48,8 +49,8 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     private final IEmployeeGroupService employeeGroupService;
 
     @Autowired
-    public ProjectService(IProjectRepository repository, BaseUtils utils, GenericMapper genericMapper, TypeMapper typeMapper, ProjectTagService projectTagService, EmployeeMapper employeeMapper, ProjectServiceValidator validator, IProjectMemberService projectMemberService, ITaskActionService taskActionService, ProjectMapper mapper, IProjectColumnService projectColumnService, ITaskService taskService, IEmployeeGroupService employeeGroupService) {
-        super(repository, utils);
+    public ProjectService(IProjectRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TypeMapper typeMapper, IProjectTagService projectTagService, EmployeeMapper employeeMapper, ProjectServiceValidator validator, IProjectMemberService projectMemberService, ITaskActionService taskActionService, ProjectMapper mapper, IProjectColumnService projectColumnService, ITaskService taskService, IEmployeeGroupService employeeGroupService) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.typeMapper = typeMapper;
         this.projectTagService = projectTagService;
@@ -62,7 +63,6 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         this.taskService = taskService;
         this.employeeGroupService = employeeGroupService;
     }
-
 
     @Override
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectCreateDto dto) {

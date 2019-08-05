@@ -3,7 +3,7 @@ package uz.genesis.trello.dto.auth;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.enums.UserType;
+import uz.genesis.trello.enums.UserStateType;
 
 import java.util.Collection;
 
@@ -36,7 +36,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getState().equals(UserType.ACTIVE);
+        return user.getState().equals(UserStateType.ACTIVE);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getState().equals(UserType.ACTIVE);
+        return user.getState().equals(UserStateType.ACTIVE);
     }
 
     public User getUser() {

@@ -4,13 +4,15 @@ import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.main.TaskMember;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.main.TaskMemberCreateDto;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 
 @Component
 public class TaskMemberValidator extends BaseCrudValidator<TaskMember, TaskMemberCreateDto, CrudDto> {
-    public TaskMemberValidator(BaseUtils utils) {
-        super(utils);
+
+    public TaskMemberValidator(BaseUtils utils, IErrorRepository repository) {
+        super(utils, repository);
     }
 
     @Override

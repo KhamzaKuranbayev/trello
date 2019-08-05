@@ -20,6 +20,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.CheckListGroupMapper;
 import uz.genesis.trello.repository.main.ICheckListGroupRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.CheckListGroupValidator;
 
@@ -30,8 +31,8 @@ import java.util.List;
 public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto, CheckListGroupCreateDto, CheckListGroupUpdateDto, CheckListGroupCriteria, ICheckListGroupRepository> implements ICheckListGroupService {
 
     @Autowired
-    public CheckListGroupService(ICheckListGroupRepository repository, BaseUtils utils, CheckListGroupMapper mapper, CheckListGroupValidator validator, GenericMapper genericMapper) {
-        super(repository, utils);
+    public CheckListGroupService(ICheckListGroupRepository repository, BaseUtils utils, IErrorRepository errorRepository, CheckListGroupMapper mapper, CheckListGroupValidator validator, GenericMapper genericMapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.validator = validator;
         this.genericMapper = genericMapper;

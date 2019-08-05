@@ -5,13 +5,15 @@ import uz.genesis.trello.domain.files.Background;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.file.BackgroundCreateDto;
 import uz.genesis.trello.dto.file.BackgroundUpdateDto;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 
 @Component
 public class BackgroundServiceValidator extends BaseCrudValidator<Background, BackgroundCreateDto, BackgroundUpdateDto> {
-    public BackgroundServiceValidator(BaseUtils utils) {
-        super(utils);
+
+    public BackgroundServiceValidator(BaseUtils utils, IErrorRepository repository) {
+        super(utils, repository);
     }
 
     @Override
