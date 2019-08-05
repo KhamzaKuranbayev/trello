@@ -19,8 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -42,15 +48,14 @@ import uz.genesis.trello.service.message.IOtpHelperService;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.service.settings.ITypeService;
 import uz.genesis.trello.utils.BaseUtils;
+import uz.genesis.trello.utils.auth.AuthUtils;
 import uz.genesis.trello.utils.pkcs.PKCSChecker;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AuthService implements IAuthService {
@@ -69,20 +74,25 @@ public class AuthService implements IAuthService {
     private final PKCSChecker pkcsChecker;
     private final BaseUtils utils;
     private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
     private final IAuthTryService authTryService;
     private final IUserLastLoginService userLastLoginService;
+    private final AuthUtils authUtils;
+
     private final ITypeRepository typeRepository;
     private final IUserOtpRepository userOtpRepository;
     private final IOtpHelperService otpHelperService;
     @Resource(name = "tokenServices")
     ConsumerTokenServices tokenServices;
+    @Resource(name = "tokenServices")
+    AuthorizationServerTokenServices authorizationServerTokenServices;
     @Value("${oauth2.clientId}")
     private String clientId;
     @Value("${oauth2.clientSecret}")
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
@@ -97,6 +107,9 @@ public class AuthService implements IAuthService {
         this.typeRepository = typeRepository;
         this.userOtpRepository = userOtpRepository;
         this.otpHelperService = otpHelperService;
+        this.userDetailsService = userDetailsService;
+        this.authUtils = authUtils;
+        //        SERVER_URL = "https://" + serverProperties.getUrl();
         OAUTH_AUTH_URL = SERVER_URL + OAUTH_AUTH_URL;
     }
 
@@ -173,6 +186,9 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<DataDto<SessionDto>> otpConfirm(UserOtpConfirmDto dto) {
         boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode());
+        if (isConfirmed) {
+            return createSessionForOtpClient(dto.getUsername());
+        }
         return null;//TODO implement response.
     }
 
@@ -286,5 +302,24 @@ public class AuthService implements IAuthService {
             throw new RuntimeException("You can not add users. Please buy new certificate");
 
 
+    }
+
+    private ResponseEntity<DataDto<SessionDto>> createSessionForOtpClient(String userName) {
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userName);
+
+        Set<String> scopes = new HashSet<>(Arrays.asList("read", "write"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails,
+                userDetails.getPassword(), userDetails.getAuthorities());
+        OAuth2Request oauth2Request = new OAuth2Request(null,
+                "spring-security-oauth2-read-write-client", userDetails.getAuthorities(), true, scopes,
+                null, null, null, null);
+
+        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oauth2Request, authentication);
+        OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
+        oAuth2Authentication.setDetails(token);
+
+        SecurityContextHolder.getContext().setAuthentication(oAuth2Authentication);
+
+        return new ResponseEntity<>(new DataDto<>(authUtils.onSuccessSession(token)), HttpStatus.OK);
     }
 }
