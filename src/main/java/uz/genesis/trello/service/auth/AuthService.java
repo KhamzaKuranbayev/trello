@@ -268,7 +268,7 @@ public class AuthService implements IAuthService {
     private boolean checkUserAuthentication(AuthUserDto userDto) {
         User user = userRepository.find(UserCriteria.childBuilder().userName(userDto.getUserName()).forAuthenticate(true).build());
         if (!utils.isEmpty(user)) {
-            if (!userRepository.isAdmin()) {
+            if (!userRepository.isAdmin(userDto.getUserName())) {
                 OrganizationSettingsDto organizationSettings = organizationSettingsService.getOrganizationSettings(OrganizationSettingsCriteria.childBuilder().organizationId(user.getOrganizationId()).build());
                 checkUserLimit(organizationSettings);
             }

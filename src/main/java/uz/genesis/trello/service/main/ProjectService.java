@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.criterias.main.*;
 import uz.genesis.trello.domain.main.Project;
-import uz.genesis.trello.domain.main.ProjectDetailDto;
+import uz.genesis.trello.dto.main.ProjectDetailDto;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.hr.EmployeeGroupDto;
 import uz.genesis.trello.dto.main.*;

@@ -1,4 +1,4 @@
-package uz.genesis.trello.domain.main;
+package uz.genesis.trello.dto.main;
 
 import lombok.*;
 import uz.genesis.trello.dto.GenericDto;

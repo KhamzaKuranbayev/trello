@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.criterias.main.ProjectCriteria;
-import uz.genesis.trello.domain.main.ProjectDetailDto;
+import uz.genesis.trello.dto.main.ProjectDetailDto;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;

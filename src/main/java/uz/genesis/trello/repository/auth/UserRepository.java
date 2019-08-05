@@ -40,9 +40,9 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 
-    @Override
-    public boolean isAdmin() {
-        return super.isAdmin();
+
+    public boolean isAdmin(String userName) {
+        return hasRole("ADMIN", userName);
     }
 
     @Override

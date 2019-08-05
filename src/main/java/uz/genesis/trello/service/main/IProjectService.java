@@ -2,8 +2,7 @@ package uz.genesis.trello.service.main;
 
 import org.springframework.http.ResponseEntity;
 import uz.genesis.trello.criterias.main.ProjectCriteria;
-import uz.genesis.trello.domain.main.ProjectDetailDto;
-import uz.genesis.trello.dto.hr.EmployeeDto;
+import uz.genesis.trello.dto.main.ProjectDetailDto;
 import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.IGenericCrudService;
