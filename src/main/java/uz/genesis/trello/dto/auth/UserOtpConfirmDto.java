@@ -8,13 +8,13 @@ import uz.genesis.trello.dto.GenericDto;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserOtpConfirmDto extends GenericDto {
-    private Long userId;
+    private String username;
     private String otpCode;
 
     @Builder(builderMethodName = "childBuilder")
-    public UserOtpConfirmDto(Long id, Long userId, String otpCode) {
+    public UserOtpConfirmDto(Long id, String username, String otpCode) {
         super(id);
-        this.userId = userId;
+        this.username = username;
         this.otpCode = otpCode;
     }
 }

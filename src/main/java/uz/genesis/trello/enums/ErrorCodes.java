@@ -20,7 +20,8 @@ public enum ErrorCodes {
     OBJECT_NOT_FOUND("OBJECT_NOT_FOUND_ID", "~ not found"),
     OBJECT_ID_REQUIRED("OBJECT_ID_REQUIRED", "~ id not provided"),
     END_BEFORE_BEGIN_ON_DATE("END_BEFORE_BEGIN_ON_DATE", "The beginning of the selected Date should not be more than the end of the selected Date"),
-    ID_REQUIRED("ID_REQUIRED", "Object id not provided");
+    ID_REQUIRED("ID_REQUIRED", "Object id not provided"),
+    EXTERNAL_SERVICE_ERROR("EXTERNAL_SERVICE_ERROR", "Service not working.");
 
     public String code;
     public String example;

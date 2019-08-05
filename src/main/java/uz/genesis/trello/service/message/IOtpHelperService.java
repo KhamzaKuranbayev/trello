@@ -1,8 +1,11 @@
 package uz.genesis.trello.service.message;
 
-import uz.genesis.trello.domain.auth.User;
+import freemarker.template.TemplateException;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 public interface IOtpHelperService {
-    void send(User user);
-    String generateOpt(User user);
+    boolean confirmOtp(String username, String code);
+    void sendOtp(String username) throws MessagingException, IOException, TemplateException;
 }

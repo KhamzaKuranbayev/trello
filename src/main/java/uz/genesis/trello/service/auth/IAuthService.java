@@ -3,6 +3,7 @@ package uz.genesis.trello.service.auth;
 import org.springframework.http.ResponseEntity;
 import uz.genesis.trello.dto.auth.AuthUserDto;
 import uz.genesis.trello.dto.auth.SessionDto;
+import uz.genesis.trello.dto.auth.UserOtpConfirmDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.IAbstractService;
 
@@ -17,5 +18,5 @@ public interface IAuthService extends IAbstractService {
 
     ResponseEntity<DataDto<Boolean>> signInOtp(String userName);
 
-    ResponseEntity<DataDto<SessionDto>> otpConfirm(String key);
+    ResponseEntity<DataDto<SessionDto>> otpConfirm(UserOtpConfirmDto dto);
 }

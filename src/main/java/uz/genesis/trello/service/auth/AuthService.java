@@ -3,6 +3,9 @@ package uz.genesis.trello.service.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.GrantType;
+import freemarker.template.TemplateException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,22 +28,24 @@ import uz.genesis.trello.criterias.auth.UserCriteria;
 import uz.genesis.trello.criterias.settings.OrganizationSettingsCriteria;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.auth.AuthTryCreateDto;
-import uz.genesis.trello.dto.auth.AuthUserDto;
-import uz.genesis.trello.dto.auth.SessionDto;
-import uz.genesis.trello.dto.auth.UserLastLoginCreateDto;
+import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.enums.Types;
+import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.property.ServerProperties;
+import uz.genesis.trello.repository.auth.IUserOtpRepository;
 import uz.genesis.trello.repository.auth.UserRepository;
+import uz.genesis.trello.repository.settings.ITypeRepository;
+import uz.genesis.trello.service.message.IOtpHelperService;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.service.settings.ITypeService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.pkcs.PKCSChecker;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +58,10 @@ public class AuthService implements IAuthService {
 
     public static String OAUTH_AUTH_URL = "/oauth/token";
     private static String SERVER_URL;
+    /**
+     * Common logger for use in subclasses.
+     */
+    private final Log logger = LogFactory.getLog(getClass());
     private final IOrganizationSettingsService organizationSettingsService;
     private final TokenStore tokenStore;
     private final ITypeService typeService;
@@ -62,7 +71,9 @@ public class AuthService implements IAuthService {
     private final UserRepository userRepository;
     private final IAuthTryService authTryService;
     private final IUserLastLoginService userLastLoginService;
-
+    private final ITypeRepository typeRepository;
+    private final IUserOtpRepository userOtpRepository;
+    private final IOtpHelperService otpHelperService;
     @Resource(name = "tokenServices")
     ConsumerTokenServices tokenServices;
     @Value("${oauth2.clientId}")
@@ -71,7 +82,7 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
@@ -83,10 +94,11 @@ public class AuthService implements IAuthService {
         this.userRepository = userRepository;
         this.authTryService = authTryService;
         this.userLastLoginService = userLastLoginService;
-        //        SERVER_URL = "https://" + serverProperties.getUrl();
+        this.typeRepository = typeRepository;
+        this.userOtpRepository = userOtpRepository;
+        this.otpHelperService = otpHelperService;
         OAUTH_AUTH_URL = SERVER_URL + OAUTH_AUTH_URL;
     }
-
 
     @Override
     public ResponseEntity<DataDto<SessionDto>> login(AuthUserDto user, HttpServletRequest request) {
@@ -147,7 +159,25 @@ public class AuthService implements IAuthService {
         }
     }
 
-    private ResponseEntity<DataDto<SessionDto>> getAuthDtoDataDto(AuthUserDto user, HttpResponse response, boolean authentication, HttpServletRequest request) throws IOException {
+    @Override
+    public ResponseEntity<DataDto<Boolean>> signInOtp(String username) {
+        try {
+            otpHelperService.sendOtp(username);
+        } catch (TemplateException | IOException | MessagingException e) {
+            throw new GenericRuntimeException(e.getMessage(), e);
+        }
+
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DataDto<SessionDto>> otpConfirm(UserOtpConfirmDto dto) {
+        boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode());
+        return null;//TODO implement response.
+    }
+
+    private ResponseEntity<DataDto<SessionDto>> getAuthDtoDataDto(AuthUserDto user, HttpResponse response,
+                                                                  boolean authentication, HttpServletRequest request) throws IOException {
         JsonNode json_auth = new ObjectMapper().readTree(EntityUtils.toString(response.getEntity()));
 
         if (!json_auth.has("error")) {
