@@ -16,6 +16,7 @@ import uz.genesis.trello.dto.hr.EmployeeGroupDto;
 import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.mapper.main.ProjectMapper;
@@ -23,7 +24,7 @@ import uz.genesis.trello.mapper.settings.TypeMapper;
 import uz.genesis.trello.repository.main.IProjectRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.hr.IEmployeeGroupService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectServiceValidator;
 
@@ -72,7 +73,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         project.setId(repository.create(dto, "createProject"));
         if (utils.isEmpty(project.getId())) {
             logger.error(String.format("Non ProjectCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non ProjectCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Project.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(project)), HttpStatus.CREATED);
@@ -83,8 +84,9 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         Project project = repository.find(ProjectCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(project)) {
             logger.error(String.format("project with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("project with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Project.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(project)), HttpStatus.OK);
     }
@@ -96,7 +98,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         if (repository.update(dto, "updateProject")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update project with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Project.class, dto.getId())));
         }
     }
 
@@ -120,8 +122,9 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
             List<EmployeeGroupDto> employeeGroupDtoList = new ArrayList<>();
             if (utils.isEmpty(project)) {
                 logger.error(String.format("project with id '%s' not found", id));
-                return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                        String.format("project with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                        .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Project.class, id)))
+                        .build()), HttpStatus.NOT_FOUND);
             }
             if(!utils.isEmpty(project.getGroup())){
                 employeeGroupDtoList = employeeGroupService.getAllEmployeeGroup(EmployeeCriteria.childBuilder().groupId(project.getGroup().getId()).build());
@@ -136,8 +139,6 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
                     .name(project.getName())
                     .codeName(project.getCodeName())
                     .projectType(typeMapper.toDto(project.getProjectType()))
-//                    .projectLevelType(typeMapper.toDto(project.getProjectLevelType()))
-//                    .projectPriorityType(typeMapper.toDto(project.getProjectPriorityType()))
                     .manager(employeeMapper.toDto(project.getManager()))
                     .employeeGroups(employeeGroupDtoList)
                     .columns(projectColumnDtoList)

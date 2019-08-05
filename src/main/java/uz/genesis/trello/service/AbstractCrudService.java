@@ -6,7 +6,7 @@ import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.repository.IGenericCrudRepository;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import javax.validation.constraints.NotNull;

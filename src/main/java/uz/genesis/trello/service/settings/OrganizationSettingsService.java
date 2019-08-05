@@ -13,6 +13,7 @@ import uz.genesis.trello.dto.settings.OrganizationSettingsCreateDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsUpdateDto;
 import uz.genesis.trello.mapper.settings.OrganizationSettingsMapper;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.repository.settings.IOrganizationSettingsRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;

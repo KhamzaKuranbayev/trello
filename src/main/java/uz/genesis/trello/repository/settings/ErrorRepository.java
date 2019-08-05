@@ -1,4 +1,4 @@
-package uz.genesis.trello.service.settings;
+package uz.genesis.trello.repository.settings;
 
 import org.springframework.stereotype.Repository;
 import uz.genesis.trello.criterias.GenericCriteria;
@@ -6,6 +6,7 @@ import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.enums.ErrorCodes;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 
 import java.sql.Types;
 import java.util.ArrayList;

@@ -25,7 +25,7 @@ import uz.genesis.trello.mapper.auth.RoleMapper;
 import uz.genesis.trello.repository.auth.RoleRepository;
 import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.RoleServiceValidator;
 

@@ -16,9 +16,11 @@ import uz.genesis.trello.dto.file.ResourceFileCreateDto;
 import uz.genesis.trello.dto.file.ResourceFileDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.TypeDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
 import uz.genesis.trello.property.FileStorageProperties;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import javax.annotation.PostConstruct;
@@ -33,13 +35,15 @@ import java.util.Objects;
 @Service
 public class FileStorageService implements IFileStorageService {
     private final BaseUtils baseUtils;
+    private final IErrorRepository errorRepository;
     private final IResourceFileService resourceFileService;
     private final Path rootLocation;
     private final IFileHandoutService handoutService;
 
     @Autowired
-    public FileStorageService(BaseUtils baseUtils, IResourceFileService resourceFileService, FileStorageProperties properties, IFileHandoutService handoutService) {
+    public FileStorageService(BaseUtils baseUtils, IErrorRepository errorRepository, IResourceFileService resourceFileService, FileStorageProperties properties, IFileHandoutService handoutService) {
         this.baseUtils = baseUtils;
+        this.errorRepository = errorRepository;
         this.resourceFileService = resourceFileService;
         this.rootLocation = Paths.get(properties.getUploadDir());
         this.handoutService = handoutService;
@@ -61,12 +65,11 @@ public class FileStorageService implements IFileStorageService {
         ObjectNode object = (ObjectNode) new ObjectMapper().readTree(json);
         String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         if (file.isEmpty()) {
-            throw new RequestObjectNullPointerException("Failed to store empty file " + filename);
+            throw new RequestObjectNullPointerException(errorRepository.getErrorMessage(ErrorCodes.FAILED_STORE_ILLEGAL_CHARACTERS, baseUtils.toErrorParams(filename)));
         }
         if (filename.contains("..")) {
             throw new RequestObjectNullPointerException(
-                    "Cannot store file with relative path outside current directory "
-                            + filename);
+                    errorRepository.getErrorMessage(ErrorCodes.FAILED_STORE_EMPTY_FILE, baseUtils.toErrorParams(filename)));
         }
 
         FileHandoutCreateDto handout = new FileHandoutCreateDto();
@@ -82,8 +85,8 @@ public class FileStorageService implements IFileStorageService {
 
         try {
             String fileNamePrefix = Objects.requireNonNull(StringUtils.split(filename, "."))[0];
-            String fileExtention = StringUtils.getFilenameExtension(filename);
-            String newFileName = baseUtils.encodeToMd5(fileNamePrefix) + new Date().getTime() + "." + fileExtention;
+            String fileExtension = StringUtils.getFilenameExtension(filename);
+            String newFileName = baseUtils.encodeToMd5(fileNamePrefix) + new Date().getTime() + "." + fileExtension;
             Files.copy(file.getInputStream(), this.rootLocation.resolve(newFileName), StandardCopyOption.REPLACE_EXISTING);
 
             ResourceFileCreateDto fileCreateDto = new ResourceFileCreateDto();
@@ -99,7 +102,7 @@ public class FileStorageService implements IFileStorageService {
             return new ResponseEntity<>(new DataDto<>(fileDto), HttpStatus.CREATED);
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store file " + filename, e);
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.FAILED_TO_STORE, ""));
         }
 
     }
@@ -112,10 +115,10 @@ public class FileStorageService implements IFileStorageService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new GenericRuntimeException("File not found " + fileName);
+                throw new GenericRuntimeException(errorRepository.getErrorMessage(ErrorCodes.FILE_NOT_FOUND, baseUtils.toErrorParams(fileName)));
             }
         } catch (Exception ex) {
-            throw new GenericRuntimeException("File not found " + fileName, ex);
+            throw new GenericRuntimeException(errorRepository.getErrorMessage(ErrorCodes.FAILED_TO_STORE, baseUtils.toErrorParams(fileName)));
         }
     }
 

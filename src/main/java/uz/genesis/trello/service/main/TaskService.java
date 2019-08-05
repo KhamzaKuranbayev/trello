@@ -17,12 +17,13 @@ import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMapper;
 import uz.genesis.trello.mapper.main.TaskTimeEntryMapper;
 import uz.genesis.trello.repository.main.ITaskRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskValidator;
 
@@ -61,7 +62,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         task.setId(repository.create(dto, "createTask"));
         if (utils.isEmpty(task.getId())) {
             logger.error(String.format("Non TaskCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TaskCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Task.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(task)), HttpStatus.CREATED);
@@ -82,9 +83,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteTask")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete task with id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -92,8 +91,9 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         Task task = repository.find(TaskCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(task)) {
             logger.error(String.format("task with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("task with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Task.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(task)), HttpStatus.OK);
     }
@@ -103,7 +103,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         if (repository.call(dto, "moveTask", Types.BOOLEAN)) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException((String.format("could not move task with id '%s'", dto.getId())));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.COULD_NOT_MOVE, utils.toErrorParams(Task.class, dto.getId())));
         }
 
     }
@@ -120,7 +120,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         taskTimeEntry.setId(repository.call(taskTimeEntryCreateDto, "createTaskTimeEntry", Types.BIGINT));
         if (utils.isEmpty(taskTimeEntry.getId())) {
             logger.error(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
-            throw new RuntimeException(String.format("Non TaskTimeEntryCreateDto defined '%s' ", new Gson().toJson(taskTimeEntryCreateDto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(TaskTimeEntry.class)));
         }
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskTimeEntry)), HttpStatus.CREATED);
     }

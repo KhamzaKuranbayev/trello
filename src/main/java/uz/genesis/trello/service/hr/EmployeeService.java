@@ -2,7 +2,6 @@ package uz.genesis.trello.service.hr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
@@ -16,12 +15,13 @@ import uz.genesis.trello.dto.hr.EmployeeDto;
 import uz.genesis.trello.dto.hr.EmployeeUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.auth.IUserService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.EmployeeServiceValidator;
 
@@ -43,8 +43,8 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
      */
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
-    private EmployeeServiceValidator validator;
     private final EmployeeMapper mapper;
+    private EmployeeServiceValidator validator;
     private IUserService userService;
 
     @Autowired
@@ -74,7 +74,7 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
         if (repository.call(dto, "createEmployee", Types.BOOLEAN)) {
             return new ResponseEntity<>(new DataDto<>(new GenericDto(dto.getUserId())), HttpStatus.CREATED);
         } else {
-            throw new RuntimeException(String.format("cannot create employee with this user id '%s'", dto.getUserId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Employee.class)));
         }
 
     }
@@ -82,21 +82,19 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     @Override
     @CacheEvict(value = {"projectMembers"}, allEntries = true)
     public ResponseEntity<DataDto<EmployeeDto>> update(@NotNull EmployeeUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
         if (repository.update(dto, "updateEmployee")) {
             return get(dto.getUserId());
         } else {
-            throw new RuntimeException(String.format("could not update employee with user id '%s'", dto.getUserId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Employee.class)));
         }
     }
 
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteEmployee")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete employee with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -104,8 +102,9 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
         Employee employee = repository.find(EmployeeCriteria.childBuilder().selfId(userId).build());
         if (utils.isEmpty(employee)) {
             logger.error(String.format("employee with id '%s' not found", userId));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("employee with id '%s' not found", userId)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Employee.class, userId)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(employee)), HttpStatus.OK);
     }

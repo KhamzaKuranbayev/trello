@@ -2,7 +2,6 @@ package uz.genesis.trello.utils.validators.auth;
 
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.domain.auth.UserLastLogin;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.auth.AttachRoleDto;
 import uz.genesis.trello.dto.auth.UserCreateDto;
@@ -11,11 +10,9 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
 import uz.genesis.trello.exception.ValidationException;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
-
-import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
 
 /**
  * Created by 'javokhir' on 27/06/2019

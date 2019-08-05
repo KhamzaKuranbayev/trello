@@ -24,7 +24,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.PermissionMapper;
 import uz.genesis.trello.repository.auth.PermissionRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.PermissionServiceValidator;
 
@@ -99,6 +99,7 @@ public class PermissionService extends AbstractCrudService<PermissionDto, Permis
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deletePermission")), HttpStatus.OK);
+
     }
 
     @Override

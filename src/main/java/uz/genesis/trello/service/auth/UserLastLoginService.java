@@ -19,7 +19,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.auth.UserLastLoginMapper;
 import uz.genesis.trello.repository.auth.IUserLastLoginRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.auth.UserLastLoginValidator;
 

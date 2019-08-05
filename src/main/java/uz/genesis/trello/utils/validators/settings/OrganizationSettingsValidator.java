@@ -5,7 +5,7 @@ import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsCreateDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsUpdateDto;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 

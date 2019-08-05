@@ -15,11 +15,12 @@ import uz.genesis.trello.dto.file.BackgroundDto;
 import uz.genesis.trello.dto.file.BackgroundUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.file.BackgroundMapper;
 import uz.genesis.trello.repository.file.IBackgrounRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.file.BackgroundServiceValidator;
 
@@ -28,8 +29,8 @@ import java.util.List;
 
 @Service
 public class BackgroundService extends AbstractCrudService<BackgroundDto, BackgroundCreateDto, BackgroundUpdateDto, BackgroundCriteria, IBackgrounRepository> implements IBackgroundService {
-    private final BackgroundServiceValidator validator;
     protected final Log logger = LogFactory.getLog(getClass());
+    private final BackgroundServiceValidator validator;
     private final BackgroundMapper mapper;
     private final GenericMapper genericMapper;
 
@@ -49,7 +50,7 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
         background.setId(repository.create(dto, "createFileBackground"));
         if (utils.isEmpty(background.getId())) {
             logger.error(String.format("Non BackgroundCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non BackgroundCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Background.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(background)), HttpStatus.CREATED);
@@ -62,16 +63,14 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
         if (repository.update(dto, "updateFileBackground")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update background with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Background.class, dto.getId())));
         }
     }
 
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteFileBackground")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete background with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteFileBackground")), HttpStatus.OK);
     }
 
     @Override
@@ -79,8 +78,9 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
         Background background = repository.find(id);
         if (utils.isEmpty(background)) {
             logger.error(String.format("background with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("background with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Background.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(background)), HttpStatus.OK);
     }

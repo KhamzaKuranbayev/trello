@@ -20,9 +20,11 @@ import uz.genesis.trello.dto.settings.SubTypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeCreateDto;
 import uz.genesis.trello.dto.settings.TypeDto;
 import uz.genesis.trello.dto.settings.TypeUpdateDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.enums.Types;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.settings.TypeMapper;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.repository.settings.ITypeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -63,7 +65,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
         type.setId(repository.create(dto, "createType"));
         if (utils.isEmpty(type.getId())) {
             logger.error(String.format("Non TypeCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TypeCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Type.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(type)), HttpStatus.CREATED);
@@ -76,8 +78,9 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
         if (utils.isEmpty(type)) {
             logger.error(String.format("type with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("type with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Type.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(type)), HttpStatus.OK);
     }
@@ -86,11 +89,11 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
     public ResponseEntity<DataDto<TypeDto>> update(@NotNull TypeUpdateDto dto) {
 
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateType")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update type with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Type.class, dto.getId())));
         }
     }
 
@@ -116,7 +119,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
         }
         if (utils.isEmpty(type.getId())) {
             logger.error(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non SubTypeCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Type.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(type)), HttpStatus.CREATED);

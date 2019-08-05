@@ -3,7 +3,6 @@ package uz.genesis.trello.service.hr;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,11 +17,12 @@ import uz.genesis.trello.dto.hr.GroupDto;
 import uz.genesis.trello.dto.hr.GroupUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.GroupMapper;
 import uz.genesis.trello.repository.hr.IGroupRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.GroupServiceValidator;
 
@@ -53,7 +53,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
         group.setId(repository.create(dto, "createGroup"));
         if (utils.isEmpty(group.getId())) {
             logger.error(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(Group.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(group)), HttpStatus.CREATED);
@@ -64,8 +64,9 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
         Group group = repository.find(id);
         if (utils.isEmpty(group)) {
             logger.error(String.format("group with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("group with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Group.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(group)), HttpStatus.OK);
     }
@@ -74,11 +75,11 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     @CacheEvict(value = {"employeeGroups"}, allEntries = true)
     public ResponseEntity<DataDto<GroupDto>> update(@NotNull GroupUpdateDto dto) {
 
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(groupMapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateGroup")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update group with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Group.class, dto.getId())));
         }
     }
 

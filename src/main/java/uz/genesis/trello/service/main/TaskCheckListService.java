@@ -18,11 +18,12 @@ import uz.genesis.trello.dto.main.TaskCheckListDto;
 import uz.genesis.trello.dto.main.TaskCheckListUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskCheckListMapper;
 import uz.genesis.trello.repository.main.ITaskCheckListRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCheckListValidator;
 
@@ -53,7 +54,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
         taskCheckList.setId(repository.create(dto, "createTaskCheckList"));
         if (utils.isEmpty(taskCheckList.getId())) {
             logger.error(String.format("Non TaskCheckListCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TaskCheckListCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(TaskCheckList.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskCheckList)), HttpStatus.CREATED);
@@ -62,12 +63,12 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     @Override
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<TaskCheckListDto>> update(@NotNull TaskCheckListUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
         if (repository.update(dto, "updateTaskChecklist")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update taskCheckList with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(TaskCheckList.class, dto.getId())));
         }
     }
 
@@ -75,9 +76,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteTaskCheckList")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete taskCheckList with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -85,8 +84,9 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
         TaskCheckList taskCheckList = repository.find(TaskCheckListCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskCheckList)) {
             logger.error(String.format("taskCheckList with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("taskCheckList with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(TaskCheckList.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskCheckList)), HttpStatus.OK);
     }
@@ -99,7 +99,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
 
     @Override
     @Cacheable(key = "#root.methodName + #criteria.taskId")
-    public CheckListCountDto getCheckListCount(TaskCheckListCriteria criteria){
+    public CheckListCountDto getCheckListCount(TaskCheckListCriteria criteria) {
         criteria.setProjectDetail(true);
         Long totalCount = repository.getTotalCount(criteria);
         criteria.setChecked(true);

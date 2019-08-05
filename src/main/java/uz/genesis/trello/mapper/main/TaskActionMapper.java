@@ -12,4 +12,6 @@ import java.util.List;
 @Component
 public interface TaskActionMapper {
     List<TaskActionDto> toDto(List<TaskAction> taskActionList);
+
+    TaskActionDto toDto(TaskAction taskAction);
 }

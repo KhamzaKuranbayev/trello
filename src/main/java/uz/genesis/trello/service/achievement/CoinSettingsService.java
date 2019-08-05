@@ -17,7 +17,7 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.achievement.CoinSettingsMapper;
 import uz.genesis.trello.repository.achievement.ICoinSettingsRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.achievement.CoinSettingsValidator;
 

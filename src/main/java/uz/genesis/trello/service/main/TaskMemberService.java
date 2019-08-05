@@ -14,11 +14,12 @@ import uz.genesis.trello.dto.main.TaskMemberCreateDto;
 import uz.genesis.trello.dto.main.TaskMemberDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMemberMapper;
 import uz.genesis.trello.repository.main.ITaskMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskMemberValidator;
 
@@ -49,7 +50,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
         taskMember.setId(repository.create(dto, "createTaskMember"));
         if (utils.isEmpty(taskMember.getId())) {
             logger.error(String.format("Non TaskMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TaskMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(TaskMember.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskMember)), HttpStatus.CREATED);
@@ -58,9 +59,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteTaskMember")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete taskMember with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -68,8 +67,9 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
         TaskMember taskmember = repository.find(TaskMemberCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskmember)) {
             logger.error(String.format("taskMember with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("taskMember with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(TaskMember.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskmember)), HttpStatus.OK);
     }

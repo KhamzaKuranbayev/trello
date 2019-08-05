@@ -19,11 +19,12 @@ import uz.genesis.trello.dto.main.ProjectColumnDto;
 import uz.genesis.trello.dto.main.ProjectColumnUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.ProjectColumnMapper;
 import uz.genesis.trello.repository.main.IProjectColumnRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectColumnServiceValidator;
 
@@ -57,7 +58,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
         projectColumn.setId(repository.create(dto, "createProjectColumn"));
         if (utils.isEmpty(projectColumn.getId())) {
             logger.error(String.format("Non ProjectColumnCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non ProjectColumnCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(ProjectColumn.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(projectColumn)), HttpStatus.CREATED);
@@ -69,8 +70,9 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
         if (utils.isEmpty(projectColumn)) {
             logger.error(String.format("projectColumn with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("projectColumn with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(ProjectColumn.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(projectColumn)), HttpStatus.OK);
     }
@@ -83,7 +85,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
         if (repository.update(dto, "updateProjectColumn")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update projectColumn with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(ProjectColumn.class, dto.getId())));
         }
     }
 

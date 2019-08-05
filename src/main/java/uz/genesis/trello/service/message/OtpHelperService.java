@@ -27,7 +27,7 @@ import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.property.PlayMobileProperties;
 import uz.genesis.trello.repository.auth.IUserOtpRepository;
 import uz.genesis.trello.repository.auth.IUserRepository;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.otp.OtpUtils;
 

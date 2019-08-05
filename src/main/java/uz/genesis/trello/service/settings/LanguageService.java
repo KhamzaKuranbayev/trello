@@ -12,7 +12,9 @@ import uz.genesis.trello.dto.GenericCrudDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.LanguageDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.settings.LanguageMapper;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.repository.settings.ILanguageRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -36,8 +38,9 @@ public class LanguageService extends AbstractCrudService<LanguageDto, GenericCru
         Language language = repository.find(LanguageCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(language)) {
             logger.error(String.format("language with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("language with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Language.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(language)), HttpStatus.OK);
     }

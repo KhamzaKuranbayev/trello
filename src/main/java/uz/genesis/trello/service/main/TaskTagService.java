@@ -17,11 +17,12 @@ import uz.genesis.trello.dto.main.TaskTagDto;
 import uz.genesis.trello.dto.main.TaskTagUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskTagMapper;
 import uz.genesis.trello.repository.main.ITaskTagRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskTagValidator;
 
@@ -53,7 +54,7 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
         tasktag.setId(repository.create(dto, "createProjectTaskTag"));
         if (utils.isEmpty(tasktag.getId())) {
             logger.error(String.format("Non TaskTagCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TaskTagCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(TaskTag.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(tasktag)), HttpStatus.CREATED);
@@ -62,12 +63,12 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
     @Override
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<TaskTagDto>> update(@NotNull TaskTagUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
         if (repository.update(dto, "updateProjectTaskTag")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update task with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(TaskTag.class, dto.getId())));
         }
     }
 
@@ -75,9 +76,7 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteProjectTaskTag")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete taskTag with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -85,8 +84,9 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
         TaskTag tasktag = repository.find(TaskTagCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(tasktag)) {
             logger.error(String.format("taskTag with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("taskTag with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(TaskTag.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(tasktag)), HttpStatus.OK);
     }

@@ -2,8 +2,7 @@ package uz.genesis.trello.utils.validators;
 
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.exception.IdRequiredException;
-import uz.genesis.trello.service.AbstractService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;

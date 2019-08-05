@@ -1,4 +1,4 @@
-package uz.genesis.trello.service.settings;
+package uz.genesis.trello.repository.settings;
 
 import uz.genesis.trello.criterias.GenericCriteria;
 import uz.genesis.trello.domain.Auditable;

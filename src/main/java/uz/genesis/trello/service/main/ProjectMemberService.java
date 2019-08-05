@@ -18,12 +18,13 @@ import uz.genesis.trello.dto.main.ProjectMemberDto;
 import uz.genesis.trello.dto.main.ProjectMemberUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.mapper.main.ProjectMemberMapper;
 import uz.genesis.trello.repository.main.IProjectMemberRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectMemberServiceValidator;
 
@@ -56,7 +57,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
         projectMember.setId(repository.create(dto, "createProjectMember"));
         if (utils.isEmpty(projectMember.getId())) {
             logger.error(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non ProjectMemberCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(ProjectMember.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(projectMember)), HttpStatus.CREATED);
@@ -67,8 +68,9 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
         ProjectMember projectMember = repository.find(ProjectMemberCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(projectMember)) {
             logger.error(String.format("projectMember with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("projectMember with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new  ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(ProjectMember.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(projectMember)), HttpStatus.OK);
     }

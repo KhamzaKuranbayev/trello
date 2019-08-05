@@ -96,8 +96,8 @@ public class BaseUtils {
 
     public String toErrorParams(Object... args) {
         StringBuilder builder = new StringBuilder();
-        Arrays.asList(args).forEach(t -> builder.append("|").append(toStringErrorParam(t)));
-        return builder.toString();
+        Arrays.asList(args).forEach(t -> builder.append("#").append(toStringErrorParam(t)));
+        return builder.toString().substring(1);
     }
 
     private String toStringErrorParam(Object argument) {

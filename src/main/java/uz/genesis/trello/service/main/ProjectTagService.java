@@ -18,11 +18,12 @@ import uz.genesis.trello.dto.main.ProjectTagDto;
 import uz.genesis.trello.dto.main.ProjectTagUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.ProjectTagMapper;
 import uz.genesis.trello.repository.main.IProjectTagRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.ProjectTagValidator;
 
@@ -36,6 +37,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     private final GenericMapper genericMapper;
     private final ProjectTagValidator validator;
     private final ProjectTagMapper mapper;
+
     @Autowired
     public ProjectTagService(IProjectTagRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, ProjectTagValidator validator, ProjectTagMapper mapper) {
         super(repository, utils, errorRepository);
@@ -53,7 +55,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
         projectTag.setId(repository.create(dto, "createProjectTag"));
         if (utils.isEmpty(projectTag.getId())) {
             logger.error(String.format("Non ProjectTagCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non ProjectTagCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(ProjectTag.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(projectTag)), HttpStatus.CREATED);
@@ -62,12 +64,12 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     @Override
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<ProjectTagDto>> update(@NotNull ProjectTagUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
         if (repository.update(dto, "updateProjectTag")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update task with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(ProjectTag.class, dto.getId())));
         }
     }
 
@@ -75,9 +77,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteProjectTag")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete projectTag with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -85,8 +85,9 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
         ProjectTag projectTag = repository.find(ProjectTagCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(projectTag)) {
             logger.error(String.format("projectTag with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("projectTag with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(ProjectTag.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(projectTag)), HttpStatus.OK);
     }
@@ -99,7 +100,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
 
     @Override
     @Cacheable(key = "#root.methodName + #criteria.projectId")
-    public List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria){
+    public List<ProjectTagDto> getAllTag(ProjectTagCriteria criteria) {
         return mapper.toDto(repository.findAll(criteria));
     }
 }

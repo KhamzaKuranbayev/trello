@@ -17,7 +17,7 @@ import uz.genesis.trello.mapper.main.EmployeeGroupMapper;
 import uz.genesis.trello.repository.hr.IEmployeeGroupRepository;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import java.util.ArrayList;

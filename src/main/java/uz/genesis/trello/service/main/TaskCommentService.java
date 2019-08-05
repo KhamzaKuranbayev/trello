@@ -18,11 +18,12 @@ import uz.genesis.trello.dto.main.TaskCommentDto;
 import uz.genesis.trello.dto.main.TaskCommentUpdateDto;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskCommentMapper;
 import uz.genesis.trello.repository.main.ITaskCommentRepository;
 import uz.genesis.trello.service.AbstractCrudService;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCommentValidator;
 
@@ -36,6 +37,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     private final GenericMapper genericMapper;
     private final TaskCommentValidator validator;
     private final TaskCommentMapper mapper;
+
     @Autowired
     public TaskCommentService(ITaskCommentRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TaskCommentValidator validator, TaskCommentMapper mapper) {
         super(repository, utils, errorRepository);
@@ -53,7 +55,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
         taskComment.setId(repository.create(dto, "createTaskComment"));
         if (utils.isEmpty(taskComment.getId())) {
             logger.error(String.format("Non TaskCommentCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non TaskCommentCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(TaskComment.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(taskComment)), HttpStatus.CREATED);
@@ -61,12 +63,12 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
 
     @Override
     public ResponseEntity<DataDto<TaskCommentDto>> update(@NotNull TaskCommentUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
         if (repository.update(dto, "updateTaskComment")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update task with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(TaskComment.class, dto.getId())));
         }
     }
 
@@ -74,9 +76,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
-        if (repository.delete(id, "deleteTaskComment")) {
-            return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
-        } else throw new RuntimeException((String.format("could not delete taskComment with user id '%s'", id)));
+        return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
@@ -84,8 +84,9 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
         TaskComment taskComment = repository.find(TaskCommentCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskComment)) {
             logger.error(String.format("taskComment with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("taskComment with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(TaskComment.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(taskComment)), HttpStatus.OK);
     }

@@ -17,10 +17,12 @@ import uz.genesis.trello.dto.settings.ErrorMessageCreateDto;
 import uz.genesis.trello.dto.settings.ErrorMessageDto;
 import uz.genesis.trello.dto.settings.ErrorMessageTranslationCreateDto;
 import uz.genesis.trello.dto.settings.ErrorMessageUpdateDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.enums.LanguageType;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.settings.ErrorMessageMapper;
 import uz.genesis.trello.repository.settings.IErrorMessageRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.repository.settings.ILanguageRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -57,7 +59,7 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
         errorMessage.setId(repository.create(dto, "createErrorMessage"));
         if (utils.isEmpty(errorMessage.getId())) {
             logger.error(String.format("Non ErrorMessageCreateDto defined '%s' ", new Gson().toJson(dto)));
-            throw new RuntimeException(String.format("Non ErrorMessageCreateDto defined '%s' ", new Gson().toJson(dto)));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_CREATED, utils.toErrorParams(ErrorMessage.class)));
         }
 
         return new ResponseEntity<>(new DataDto<>(genericMapper.fromDomain(errorMessage)), HttpStatus.CREATED);
@@ -65,11 +67,11 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
 
     @Override
     public ResponseEntity<DataDto<ErrorMessageDto>> update(@NotNull ErrorMessageUpdateDto dto) {
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateErrorMessage")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update errorMessage with id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(ErrorMessage.class, dto.getId())));
         }
     }
 
@@ -85,8 +87,9 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
 
         if (utils.isEmpty(errorMessage)) {
             logger.error(String.format("errorMessage with id '%s' not found", id));
-            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                    String.format("errorMessage with id '%s' not found", id)).build()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                    .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(ErrorMessage.class, id)))
+                    .build()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(errorMessage)), HttpStatus.OK);
     }

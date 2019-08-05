@@ -9,11 +9,10 @@ import uz.genesis.trello.dto.settings.TypeUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
-import uz.genesis.trello.service.settings.IErrorRepository;
+import uz.genesis.trello.exception.ValidationException;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
-
-import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
 
 /**
  * Created by 'javokhir' on 01/07/2019
@@ -31,22 +30,24 @@ public class TypeServiceValidator extends BaseCrudValidator<Type, TypeCreateDto,
 
     }
 
-    public void validateOnSubTypeCreate(SubTypeCreateDto subTypeCreateDto){
-        if(utils.isEmpty(subTypeCreateDto)){
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Type.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
-        } else if(utils.isEmpty(subTypeCreateDto.getTypeCode())){
-            throw new RuntimeException("TypeCode  is required");
+    public void validateOnSubTypeCreate(SubTypeCreateDto subTypeCreateDto) {
+        if (utils.isEmpty(subTypeCreateDto)) {
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)));
+        } else if (utils.isEmpty(subTypeCreateDto.getTypeCode())) {
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("typeCode", Type.class)));
         }
     }
 
     @Override
     public void baseValidation(Type domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Type.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)));
         } else if (idRequired && utils.isEmpty(domain.getId())) {
-            throw new IdRequiredException(ID_REQUIRED.example/*repository.getError(ID_REQUIRED)*/);
+            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""));
+        } else if (utils.isEmpty(domain.getName())) {
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("name", Type.class)));
         } else if (utils.isEmpty(domain.getValue())) {
-
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("value", Type.class)));
         }
     }
 
