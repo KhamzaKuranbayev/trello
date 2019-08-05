@@ -7,6 +7,7 @@ import uz.genesis.trello.criterias.GenericCriteria;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class RoleCriteria extends GenericCriteria {
     private String roleName;
     private String codeName;

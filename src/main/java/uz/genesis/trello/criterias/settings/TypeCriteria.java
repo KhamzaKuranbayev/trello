@@ -11,6 +11,7 @@ import uz.genesis.trello.criterias.GenericCriteria;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TypeCriteria extends GenericCriteria {
 
     private String name;
@@ -24,4 +25,6 @@ public class TypeCriteria extends GenericCriteria {
         this.typeCode = typeCode;
         this.value = value;
     }
+
+
 }

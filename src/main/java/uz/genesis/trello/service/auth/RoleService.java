@@ -104,7 +104,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.toString()")
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_READ)")
     public ResponseEntity<DataDto<List<RoleDto>>> getAll(RoleCriteria criteria) {
         List<Role> roles = repository.findAll(criteria);

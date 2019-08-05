@@ -126,7 +126,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #criteria.toString()")
     public ResponseEntity<DataDto<List<TypeDto>>> getAll(TypeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

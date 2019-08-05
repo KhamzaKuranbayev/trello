@@ -7,6 +7,7 @@ import uz.genesis.trello.criterias.GenericCriteria;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class PermissionCriteria extends GenericCriteria {
 
     private String name;
@@ -18,4 +19,7 @@ public class PermissionCriteria extends GenericCriteria {
         this.name = name;
         this.codeName = codeName;
     }
+
+
+
 }
