@@ -9,6 +9,7 @@ import uz.genesis.trello.dto.settings.TypeUpdateDto;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
 
@@ -21,9 +22,8 @@ import static uz.genesis.trello.enums.ErrorCodes.ID_REQUIRED;
 @Component
 public class TypeServiceValidator extends BaseCrudValidator<Type, TypeCreateDto, TypeUpdateDto> {
 
-
-    public TypeServiceValidator(BaseUtils utils) {
-        super(utils);
+    public TypeServiceValidator(BaseUtils utils, IErrorRepository repository) {
+        super(utils, repository);
     }
 
     @Override

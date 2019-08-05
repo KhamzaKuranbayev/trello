@@ -22,6 +22,7 @@ import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskCheckListMapper;
 import uz.genesis.trello.repository.main.ITaskCheckListRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskCheckListValidator;
 
@@ -35,8 +36,9 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     private final GenericMapper genericMapper;
     private final TaskCheckListValidator validator;
     private final TaskCheckListMapper mapper;
-    public TaskCheckListService(ITaskCheckListRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCheckListValidator validator, TaskCheckListMapper mapper) {
-        super(repository, utils);
+
+    public TaskCheckListService(ITaskCheckListRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, TaskCheckListValidator validator, TaskCheckListMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.validator = validator;
         this.mapper = mapper;

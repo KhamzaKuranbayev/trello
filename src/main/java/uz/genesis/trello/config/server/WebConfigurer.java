@@ -16,17 +16,6 @@ import java.util.Properties;
 @Configuration
 public class WebConfigurer implements WebMvcConfigurer {
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/api/v1/ispring/**")
-                .addResourceLocations(
-                        "file:///nfs/academy/uploads/")
-                .setCachePeriod(0);
-        registry.addResourceHandler("/api/v1/pdf/**")
-                .addResourceLocations("file:///nfs/academy/uploads/")
-                .setCachePeriod(0);
-    }
-
     @Bean
     public FreeMarkerConfigurationFactoryBean getFreeMarkerConfiguration() {
         FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();

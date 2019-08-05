@@ -5,9 +5,8 @@ import uz.genesis.trello.domain.achievement.UserExpenseCoin;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.auth.Role;
 import uz.genesis.trello.domain.auth.User;
-import uz.genesis.trello.domain.organization.Organization;
 import uz.genesis.trello.domain.settings.Language;
-import uz.genesis.trello.enums.UserType;
+import uz.genesis.trello.enums.UserStateType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class Employee extends User {
 
     @Builder(builderMethodName = "childBuilder")
 
-    public Employee(String email, String userName, String password, UserType state, Collection<Role> roles, String phoneNumber, Long organizationId, Language language, List<UserIncomeCoin> incomeCoins, List<UserExpenseCoin> expenseCoins, Date birthDate, String firstName, String middleName, String lastName) {
+    public Employee(String email, String userName, String password, UserStateType state, Collection<Role> roles, String phoneNumber, Long organizationId, Language language, List<UserIncomeCoin> incomeCoins, List<UserExpenseCoin> expenseCoins, Date birthDate, String firstName, String middleName, String lastName) {
         super(email, userName, password, state, roles, phoneNumber, organizationId, language, incomeCoins, expenseCoins);
         this.birthDate = birthDate;
         this.firstName = firstName;

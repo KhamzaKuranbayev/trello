@@ -10,6 +10,7 @@ import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.mapper.main.TaskActionMapper;
 import uz.genesis.trello.repository.main.ITaskActionRepository;
 import uz.genesis.trello.service.AbstractService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class TaskActionService extends AbstractService<TaskActionDto, TaskAction
     private final TaskActionMapper mapper;
 
     @Autowired
-    public TaskActionService(ITaskActionRepository repository, BaseUtils utils, TaskActionMapper mapper) {
-        super(repository, utils);
+    public TaskActionService(ITaskActionRepository repository, BaseUtils utils, IErrorRepository errorRepository, TaskActionMapper mapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
     }
 

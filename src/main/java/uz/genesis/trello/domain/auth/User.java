@@ -5,7 +5,7 @@ import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.domain.achievement.UserExpenseCoin;
 import uz.genesis.trello.domain.achievement.UserIncomeCoin;
 import uz.genesis.trello.domain.settings.Language;
-import uz.genesis.trello.enums.UserType;
+import uz.genesis.trello.enums.UserStateType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class User extends Auditable {
     protected String password;
     @Column(name = "type_state")
     @Enumerated(EnumType.ORDINAL)
-    protected UserType state;
+    protected UserStateType state;
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "auth_users_roles", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")}
             , inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})

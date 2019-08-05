@@ -22,6 +22,7 @@ import uz.genesis.trello.mapper.main.TaskMapper;
 import uz.genesis.trello.mapper.main.TaskTimeEntryMapper;
 import uz.genesis.trello.repository.main.ITaskRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.main.TaskValidator;
 
@@ -41,8 +42,8 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     private final TaskMapper mapper;
 
     @Autowired
-    public TaskService(ITaskRepository repository, BaseUtils utils, GenericMapper genericMapper, TaskCommentService taskCommentService, ITaskCheckListService taskCheckListService, ITaskTagService taskTagService, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
-        super(repository, utils);
+    public TaskService(ITaskRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, ITaskCommentService taskCommentService, ITaskCheckListService taskCheckListService, ITaskTagService taskTagService, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
+        super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.taskCommentService = taskCommentService;
         this.taskCheckListService = taskCheckListService;

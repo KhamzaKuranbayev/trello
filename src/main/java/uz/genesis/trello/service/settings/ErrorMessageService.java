@@ -38,8 +38,8 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
     private final GenericMapper genericMapper;
     private final ErrorMessageServiceValidator validator;
 
-    public ErrorMessageService(IErrorMessageRepository repository, BaseUtils utils, ErrorMessageMapper mapper, ILanguageRepository languageRepository, GenericMapper genericMapper, ErrorMessageServiceValidator validator) {
-        super(repository, utils);
+    public ErrorMessageService(IErrorMessageRepository repository, BaseUtils utils, IErrorRepository errorRepository, ErrorMessageMapper mapper, ILanguageRepository languageRepository, GenericMapper genericMapper, ErrorMessageServiceValidator validator) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.languageRepository = languageRepository;
         this.genericMapper = genericMapper;

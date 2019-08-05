@@ -12,6 +12,7 @@ import uz.genesis.trello.dto.file.ResourceFileDto;
 import uz.genesis.trello.mapper.file.ResourceFileMapper;
 import uz.genesis.trello.repository.file.IResourceFileRepository;
 import uz.genesis.trello.service.AbstractCrudService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 
 @Service
@@ -19,8 +20,8 @@ public class ResourceFileService extends AbstractCrudService<ResourceFileDto, Re
     protected final Log logger = LogFactory.getLog(getClass());
     private final ResourceFileMapper mapper;
 
-    public ResourceFileService(IResourceFileRepository repository, BaseUtils utils, ResourceFileMapper mapper) {
-        super(repository, utils);
+    public ResourceFileService(IResourceFileRepository repository, BaseUtils utils, IErrorRepository errorRepository, ResourceFileMapper mapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
     }
 

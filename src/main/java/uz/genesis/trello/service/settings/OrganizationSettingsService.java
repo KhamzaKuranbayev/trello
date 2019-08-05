@@ -29,8 +29,8 @@ public class OrganizationSettingsService extends AbstractCrudService<Organizatio
     private final ObjectMapper objectMapper;
 
 
-    public OrganizationSettingsService(IOrganizationSettingsRepository repository, BaseUtils utils, OrganizationSettingsMapper mapper, UserSession userSession, ObjectMapper objectMapper) {
-        super(repository, utils);
+    public OrganizationSettingsService(IOrganizationSettingsRepository repository, BaseUtils utils, IErrorRepository errorRepository, OrganizationSettingsMapper mapper, UserSession userSession, ObjectMapper objectMapper) {
+        super(repository, utils, errorRepository);
         this.mapper = mapper;
         this.userSession = userSession;
         this.objectMapper = objectMapper;
