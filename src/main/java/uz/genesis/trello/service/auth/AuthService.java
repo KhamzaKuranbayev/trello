@@ -52,6 +52,7 @@ import uz.genesis.trello.service.settings.ITypeService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.auth.AuthUtils;
 import uz.genesis.trello.utils.pkcs.PKCSChecker;
+import uz.genesis.trello.utils.validators.auth.UserServiceValidator;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -85,6 +86,7 @@ public class AuthService implements IAuthService {
     private final ITypeRepository typeRepository;
     private final IUserOtpRepository userOtpRepository;
     private final IOtpHelperService otpHelperService;
+    private final UserServiceValidator userServiceValidator;
     @Resource(name = "tokenServices")
     ConsumerTokenServices tokenServices;
     @Resource(name = "tokenServices")
@@ -94,8 +96,9 @@ public class AuthService implements IAuthService {
     @Value("${oauth2.clientSecret}")
     private String clientSecret;
 
+
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils, IErrorRepository errorRepository) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils, IErrorRepository errorRepository, UserServiceValidator userServiceValidator) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
@@ -113,12 +116,15 @@ public class AuthService implements IAuthService {
         this.userDetailsService = userDetailsService;
         this.authUtils = authUtils;
         this.errorRepository = errorRepository;
+        this.userServiceValidator = userServiceValidator;
         //        SERVER_URL = "https://" + serverProperties.getUrl();
         OAUTH_AUTH_URL = SERVER_URL + OAUTH_AUTH_URL;
     }
 
     @Override
     public ResponseEntity<DataDto<SessionDto>> login(AuthUserDto user, HttpServletRequest request) {
+
+        userServiceValidator.validateOnAuth(user);
         try {
             clearExistingTokens(user);
             HttpClient httpclient = HttpClientBuilder.create().build();
@@ -189,6 +195,7 @@ public class AuthService implements IAuthService {
 
     @Override
     public ResponseEntity<DataDto<SessionDto>> otpConfirm(UserOtpConfirmDto dto) {
+        userServiceValidator.validateOnOtpConfirm(dto);
         boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode());
         if (isConfirmed) {
             return createSessionForOtpClient(dto.getUsername());

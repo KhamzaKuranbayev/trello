@@ -2,10 +2,9 @@ package uz.genesis.trello.utils.validators.auth;
 
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
+import uz.genesis.trello.domain.auth.UserOtp;
 import uz.genesis.trello.dto.CrudDto;
-import uz.genesis.trello.dto.auth.AttachRoleDto;
-import uz.genesis.trello.dto.auth.UserCreateDto;
-import uz.genesis.trello.dto.auth.UserUpdateDto;
+import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
 import uz.genesis.trello.exception.RequestObjectNullPointerException;
@@ -25,12 +24,35 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
         super(utils, repository);
     }
 
+
     @Override
     public void baseValidation(CrudDto domain) {
         if (domain instanceof UserCreateDto) {
         } else {
         }
     }
+
+    public void validateOnAuth(AuthUserDto authUserDto) {
+        if (utils.isEmpty(authUserDto.getUserName()))
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName",User.class)));
+
+        if (utils.isEmpty(authUserDto.getPassword()))
+            throw  new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("password",User.class)));
+
+        if (utils.isEmpty(authUserDto.getResfreshToken()))
+            throw  new ValidationException(repository.getErrorMessage(ErrorCodes.EXTERNAL_SERVICE_ERROR, ""));
+
+    }
+     public void validateOnOtpConfirm(UserOtpConfirmDto otpConfirmDto){
+
+         if (utils.isEmpty(otpConfirmDto.getUsername()))
+             throw  new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)));
+
+        if (utils.isEmpty(otpConfirmDto.getOtpCode()))
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED,utils.toErrorParams("otpCode", UserOtp.class)));
+
+
+     }
 
     public void validateOnAttach(AttachRoleDto attachRoleDto){
         if(utils.isEmpty(attachRoleDto.getUserId())){
