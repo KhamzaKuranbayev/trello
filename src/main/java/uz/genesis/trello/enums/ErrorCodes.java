@@ -21,7 +21,8 @@ public enum ErrorCodes {
     OBJECT_ID_REQUIRED("OBJECT_ID_REQUIRED", "~ id not provided"),
     END_BEFORE_BEGIN_ON_DATE("END_BEFORE_BEGIN_ON_DATE", "The beginning of the selected Date should not be more than the end of the selected Date"),
     ID_REQUIRED("ID_REQUIRED", "Object id not provided"),
-    EXTERNAL_SERVICE_ERROR("EXTERNAL_SERVICE_ERROR", "Service not working.");
+    EXTERNAL_SERVICE_ERROR("EXTERNAL_SERVICE_ERROR", "Service not working."),
+    OTP_NOT_CONFIRMED("OTP_NOT_CONFIRMED", "One time password not confirmed.");
 
     public String code;
     public String example;

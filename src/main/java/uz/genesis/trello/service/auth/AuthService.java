@@ -38,6 +38,7 @@ import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.dto.settings.OrganizationSettingsDto;
+import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.enums.Types;
 import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.property.ServerProperties;
@@ -45,6 +46,7 @@ import uz.genesis.trello.repository.auth.IUserOtpRepository;
 import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.repository.settings.ITypeRepository;
 import uz.genesis.trello.service.message.IOtpHelperService;
+import uz.genesis.trello.service.settings.IErrorRepository;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.service.settings.ITypeService;
 import uz.genesis.trello.utils.BaseUtils;
@@ -78,6 +80,7 @@ public class AuthService implements IAuthService {
     private final IAuthTryService authTryService;
     private final IUserLastLoginService userLastLoginService;
     private final AuthUtils authUtils;
+    private final IErrorRepository errorRepository;
 
     private final ITypeRepository typeRepository;
     private final IUserOtpRepository userOtpRepository;
@@ -92,7 +95,7 @@ public class AuthService implements IAuthService {
     private String clientSecret;
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils, IErrorRepository errorRepository) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
@@ -109,6 +112,7 @@ public class AuthService implements IAuthService {
         this.otpHelperService = otpHelperService;
         this.userDetailsService = userDetailsService;
         this.authUtils = authUtils;
+        this.errorRepository = errorRepository;
         //        SERVER_URL = "https://" + serverProperties.getUrl();
         OAUTH_AUTH_URL = SERVER_URL + OAUTH_AUTH_URL;
     }
@@ -188,8 +192,9 @@ public class AuthService implements IAuthService {
         boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode());
         if (isConfirmed) {
             return createSessionForOtpClient(dto.getUsername());
+        } else {
+            throw new GenericRuntimeException(errorRepository.getErrorMessage(ErrorCodes.OTP_NOT_CONFIRMED, utils.toErrorParams(AuthService.class)));
         }
-        return null;//TODO implement response.
     }
 
     private ResponseEntity<DataDto<SessionDto>> getAuthDtoDataDto(AuthUserDto user, HttpResponse response,
