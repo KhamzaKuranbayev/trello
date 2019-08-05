@@ -117,7 +117,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
 
     @Override
     public ResponseEntity<DataDto<ProjectDetailDto>> getProjectDetail(Long id) {
-        if(repository.call(GenericDto.builder().id(id).build(), "hasaccesstoproject", Types.BOOLEAN)){
+        if (repository.call(GenericDto.builder().id(id).build(), "hasaccesstoproject", Types.BOOLEAN)) {
             Project project = repository.find(id);
             List<EmployeeGroupDto> employeeGroupDtoList = new ArrayList<>();
             if (utils.isEmpty(project)) {
@@ -126,7 +126,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
                         .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Project.class, id)))
                         .build()), HttpStatus.NOT_FOUND);
             }
-            if(!utils.isEmpty(project.getGroup())){
+            if (!utils.isEmpty(project.getGroup())) {
                 employeeGroupDtoList = employeeGroupService.getAllEmployeeGroup(EmployeeCriteria.childBuilder().groupId(project.getGroup().getId()).build());
             }
             List<ProjectTagDto> projectTagDtoList = projectTagService.getAllTag(ProjectTagCriteria.childBuilder().projectId(id).build());
@@ -148,6 +148,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
                     .build();
             return new ResponseEntity<>(new DataDto<>(detailDto), HttpStatus.OK);
         }
+        //todo change validation exception to return http 403
         throw new ValidationException("You are not member of this project");
 
     }
@@ -159,15 +160,15 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
-    public ResponseEntity<DataDto<Boolean>> changeProjectBackground(ProjectBackgroundChangeDto dto){
+    public ResponseEntity<DataDto<Boolean>> changeProjectBackground(ProjectBackgroundChangeDto dto) {
         boolean success = false;
-        if(repository.call(dto, "changeprojectbackround", Types.BOOLEAN)){
+        if (repository.call(dto, "changeprojectbackround", Types.BOOLEAN)) {
             success = true;
         }
         return new ResponseEntity<>(new DataDto<>(success), HttpStatus.OK);
     }
 
-    private List<ProjectColumnDetailDto> attachTaskToProjectColumn(List<ProjectColumnDetailDto> dtoList){
+    private List<ProjectColumnDetailDto> attachTaskToProjectColumn(List<ProjectColumnDetailDto> dtoList) {
         dtoList.forEach(dto -> dto.setTasks(taskService.getProjectDetailTask(TaskCriteria.childBuilder().projectId(dto.getProjectId()).columnId(dto.getId()).build())));
         return dtoList;
     }
