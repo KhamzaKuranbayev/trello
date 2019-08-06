@@ -11,8 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
-import uz.genesis.trello.exception.CustomSqlException;
-import uz.genesis.trello.exception.ValidationException;
+import uz.genesis.trello.exception.*;
 
 /**
  * Created by 'javokhir' on 12/06/2019
@@ -58,7 +57,31 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String message = getLastCause(ex);
         logger.error(message, ex);
         return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
-                message).systemName(ex.getLocalizedMessage()).build()), HttpStatus.BAD_REQUEST);
+                message).systemName(ex.getLocalizedMessage()).fieldKey(ex.getKey()).build()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RequestObjectNullPointerException.class)
+    public final ResponseEntity<DataDto<?>> handleRequestObjectNullPointerException(RequestObjectNullPointerException ex, WebRequest request) {
+        String message = getLastCause(ex);
+        logger.error(message, ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getLocalizedMessage()).fieldKey(ex.getKey()).build()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(GenericNotFoundException.class)
+    public final ResponseEntity<DataDto<?>> handleRequestObjectNullPointerException(GenericNotFoundException ex, WebRequest request) {
+        String message = getLastCause(ex);
+        logger.error(message, ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getLocalizedMessage()).fieldKey(ex.getKey()).build()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IdRequiredException.class)
+    public final ResponseEntity<DataDto<?>> handleRequestObjectNullPointerException(IdRequiredException ex, WebRequest request) {
+        String message = getLastCause(ex);
+        logger.error(message, ex);
+        return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder().friendlyMessage(
+                message).systemName(ex.getLocalizedMessage()).fieldKey(ex.getKey()).build()), HttpStatus.BAD_REQUEST);
     }
 
     private String getLastCause(Throwable throwable) {

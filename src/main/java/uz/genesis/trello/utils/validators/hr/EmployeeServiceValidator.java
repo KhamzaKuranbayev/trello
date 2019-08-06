@@ -30,14 +30,14 @@ public class EmployeeServiceValidator extends BaseCrudValidator<Employee, Employ
     @Override
     public void baseValidation(CrudDto domain) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Employee.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Employee.class)), "Employee");
         }
         if (domain instanceof EmployeeCreateDto) {
 
         } else {
             EmployeeUpdateDto dto = (EmployeeUpdateDto) domain;
             if (utils.isEmpty(dto.getUserId())) {
-                throw new ValidationException(String.format(ID_REQUIRED.example, utils.toErrorParams(Employee.class)));
+                throw new ValidationException(String.format(ID_REQUIRED.example, utils.toErrorParams(Employee.class)), "userId");
             }
         }
     }
@@ -45,11 +45,11 @@ public class EmployeeServiceValidator extends BaseCrudValidator<Employee, Employ
     @Override
     public void baseValidation(Employee domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(ResourceFile.class)));
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(ResourceFile.class)), "ResourceFile");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
-            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""));
+            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getUserId())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userId", ResourceFile.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userId", ResourceFile.class)), "userId");
         }
     }
 }

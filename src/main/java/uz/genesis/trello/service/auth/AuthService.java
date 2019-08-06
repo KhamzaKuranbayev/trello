@@ -167,7 +167,7 @@ public class AuthService implements IAuthService {
 
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("grant_type", GrantType.REFRESH_TOKEN.getValue()));
-            nameValuePairs.add(new BasicNameValuePair("refresh_token", user.getResfreshToken()));
+            nameValuePairs.add(new BasicNameValuePair("refresh_token", user.getRefreshToken()));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             httppost.addHeader(HttpHeaders.AUTHORIZATION, getAuthorization());

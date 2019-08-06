@@ -21,6 +21,8 @@ public class AppErrorDto implements Serializable {
 
     private String systemName;
 
+    private String fieldKey;
+
     private String action;
 
     private Boolean show;

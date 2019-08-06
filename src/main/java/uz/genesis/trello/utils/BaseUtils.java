@@ -90,6 +90,10 @@ public class BaseUtils {
         return s == null || s.isEmpty();
     }
 
+    public boolean isEmpty(List<?> items) {
+        return items == null || items.isEmpty();
+    }
+
     public boolean isEmpty(Object l) {
         return l == null;
     }
