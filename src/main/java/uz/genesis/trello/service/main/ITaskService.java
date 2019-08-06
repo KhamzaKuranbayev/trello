@@ -15,4 +15,6 @@ public interface ITaskService extends IGenericCrudService<TaskDto, TaskCreateDto
     ResponseEntity<DataDto<GenericDto>> createTaskTimeEntry(TaskTimeEntryCreateDto taskTimeEntryCreateDto);
 
     List<TaskProjectDetailDto> getProjectDetailTask(TaskCriteria criteria);
+
+    ResponseEntity<DataDto<TaskDetailsDto>> getTaskDetail(Long id);
 }

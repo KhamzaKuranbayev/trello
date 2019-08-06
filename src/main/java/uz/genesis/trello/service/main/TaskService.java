@@ -6,11 +6,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import uz.genesis.trello.criterias.main.TaskCheckListCriteria;
-import uz.genesis.trello.criterias.main.TaskCommentCriteria;
-import uz.genesis.trello.criterias.main.TaskCriteria;
-import uz.genesis.trello.criterias.main.TaskTagCriteria;
+import uz.genesis.trello.criterias.main.*;
 import uz.genesis.trello.domain.main.Task;
 import uz.genesis.trello.domain.main.TaskTimeEntry;
 import uz.genesis.trello.dto.GenericDto;
@@ -21,6 +19,7 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMapper;
 import uz.genesis.trello.mapper.main.TaskTimeEntryMapper;
+import uz.genesis.trello.mapper.settings.TypeMapper;
 import uz.genesis.trello.repository.main.ITaskRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.repository.settings.IErrorRepository;
@@ -37,20 +36,26 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     private final GenericMapper genericMapper;
     private final ITaskCommentService taskCommentService;
     private final ITaskCheckListService taskCheckListService;
+    private final ITaskMemberService taskMemberService;
+    private final ICheckListGroupService checkListGroupService;
     private final ITaskTagService taskTagService;
     private final TaskTimeEntryMapper taskTimeEntryMapper;
     private final TaskValidator validator;
+    private final TypeMapper typeMapper;
     private final TaskMapper mapper;
 
     @Autowired
-    public TaskService(ITaskRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, ITaskCommentService taskCommentService, ITaskCheckListService taskCheckListService, ITaskTagService taskTagService, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TaskMapper mapper) {
+    public TaskService(ITaskRepository repository, BaseUtils utils, IErrorRepository errorRepository, GenericMapper genericMapper, ITaskCommentService taskCommentService, ITaskCheckListService taskCheckListService, ITaskMemberService taskMemberService, ICheckListGroupService checkListGroupService, ITaskTagService taskTagService, TaskTimeEntryMapper taskTimeEntryMapper, TaskValidator validator, TypeMapper typeMapper, TaskMapper mapper) {
         super(repository, utils, errorRepository);
         this.genericMapper = genericMapper;
         this.taskCommentService = taskCommentService;
         this.taskCheckListService = taskCheckListService;
+        this.taskMemberService = taskMemberService;
+        this.checkListGroupService = checkListGroupService;
         this.taskTagService = taskTagService;
         this.taskTimeEntryMapper = taskTimeEntryMapper;
         this.validator = validator;
+        this.typeMapper = typeMapper;
         this.mapper = mapper;
     }
 
@@ -78,7 +83,6 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
             throw new RuntimeException(String.format("could not update task with  id '%s'", dto.getId()));
         }
     }
-
 
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
@@ -136,5 +140,44 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
             dto.setCheckListCount(taskCheckListService.getCheckListCount(TaskCheckListCriteria.childBuilder().taskId(dto.getId()).build()));
         });
         return tasks;
+    }
+
+    @Override
+    public ResponseEntity<DataDto<TaskDetailsDto>> getTaskDetail(Long id) {
+        if (repository.call(GenericDto.builder().id(id).build(), "hasaccesstotask", Types.BOOLEAN)){
+            Task task = repository.find(id);
+
+            if (utils.isEmpty(task)){
+                logger.error(String.format("task with id '%s' not found", id));
+                return new ResponseEntity<>(new DataDto<>(AppErrorDto.builder()
+                        .friendlyMessage(errorRepository.getErrorMessage(ErrorCodes.OBJECT_NOT_FOUND_ID, utils.toErrorParams(Task.class, id)))
+                        .build()), HttpStatus.NOT_FOUND);
+            }
+
+            List<TaskTagDto> taskTagDtoList = taskTagService.getAllTaskTagList(TaskTagCriteria.childBuilder().taskId(id).build());
+            List<TaskMemberDto> taskMemberDtoList = taskMemberService.getAllTaskMemberList(TaskMemberCriteria.childBuilder().taskId(id).build());
+            List<CheckListGroupDto> checkListGroupDtoList = checkListGroupService.getAllCheckListGroupList(CheckListGroupCriteria.childBuilder().taskId(id).build());
+            List<TaskCommentDto> taskCommentDtoList = taskCommentService.getAllTaskCommentList(TaskCommentCriteria.childBuilder().taskId(id).build());
+
+            TaskDetailsDto taskDetailsDto = TaskDetailsDto.childBuilder()
+                    .id(task.getId())
+                    .projectId(task.getProjectId())
+                    .columnId(task.getColumnId())
+                    .name(task.getName())
+                    .description(task.getDescription())
+                    .startAt(task.getStartAt())
+                    .deadLine(task.getDeadLine())
+                    .ordering(task.getOrdering())
+                    .tags(taskTagDtoList)
+                    .members(taskMemberDtoList)
+                    .checkListGroups(checkListGroupDtoList)
+                    .comments(taskCommentDtoList)
+                    .levelType(typeMapper.toDto(task.getTaskLevelType()))
+                    .priorityType(typeMapper.toDto(task.getTaskPriorityType()))
+                    .build();
+
+            return new ResponseEntity<>(new DataDto<>(taskDetailsDto), HttpStatus.OK);
+        }
+        throw new AccessDeniedException("You are not authorized to access this task.");
     }
 }

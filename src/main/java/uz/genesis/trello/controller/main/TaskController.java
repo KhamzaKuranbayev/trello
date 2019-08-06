@@ -23,6 +23,11 @@ public class TaskController extends ApiController<ITaskService> {
         return service.get(id);
     }
 
+    @RequestMapping(value = API_PATH + V_1 + "/tasks/details/{id}", method = RequestMethod.GET)
+    public ResponseEntity<DataDto<TaskDetailsDto>> getDetail(@PathVariable(value = "id") Long id) {
+        return service.getTaskDetail(id);
+    }
+
     @RequestMapping(value = API_PATH + V_1 + "/tasks", method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> create(@RequestBody TaskCreateDto dto) {
         return service.create(dto);

@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,13 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"checkListGroup"})
 public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto, CheckListGroupCreateDto, CheckListGroupUpdateDto, CheckListGroupCriteria, ICheckListGroupRepository> implements ICheckListGroupService {
-
     protected final Log logger = LogFactory.getLog(getClass());
     private final CheckListGroupMapper mapper;
     private final CheckListGroupValidator validator;
     private final GenericMapper genericMapper;
+
     @Autowired
     public CheckListGroupService(ICheckListGroupRepository repository, BaseUtils utils, IErrorRepository errorRepository, CheckListGroupMapper mapper, CheckListGroupValidator validator, GenericMapper genericMapper) {
         super(repository, utils, errorRepository);
@@ -44,6 +47,7 @@ public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull CheckListGroupCreateDto dto) {
         CheckListGroup checkListGroup = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(checkListGroup);
@@ -70,6 +74,7 @@ public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<CheckListGroupDto>> update(@NotNull CheckListGroupUpdateDto dto) {
 
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
@@ -91,5 +96,11 @@ public class CheckListGroupService extends AbstractCrudService<CheckListGroupDto
     public ResponseEntity<DataDto<List<CheckListGroupDto>>> getAll(CheckListGroupCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
+    }
+
+    @Override
+    @Cacheable(key = "#root.methodName + #criteria.taskId")
+    public List<CheckListGroupDto> getAllCheckListGroupList(CheckListGroupCriteria criteria){
+        return mapper.toDto(repository.findAll(criteria));
     }
 }

@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.criterias.main.*;
@@ -102,7 +103,6 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
         }
     }
 
-
     @Override
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
@@ -148,9 +148,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
                     .build();
             return new ResponseEntity<>(new DataDto<>(detailDto), HttpStatus.OK);
         }
-        //todo change validation exception to return http 403
-        throw new ValidationException("You are not member of this project");
-
+        throw new AccessDeniedException("You are not authorized to access this project.");
     }
 
     @Override

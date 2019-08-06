@@ -102,12 +102,9 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
-
     @Override
     @Cacheable(key = "#root.methodName + #criteria.projectId")
     public List<ProjectColumnDetailDto> getAllColumns(ProjectColumnCriteria criteria) {
         return mapper.toDetailDto(repository.findAll(criteria));
     }
-
-
 }

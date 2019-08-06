@@ -62,6 +62,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<TaskCommentDto>> update(@NotNull TaskCommentUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -101,5 +102,11 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     @Cacheable(key = "#root.methodName + #criteria.taskId")
     public Long getCommentCount(TaskCommentCriteria criteria) {
         return repository.getTotalCount(criteria);
+    }
+
+    @Override
+    @Cacheable(key = "#root.methodName + #criteria.taskId")
+    public List<TaskCommentDto> getAllTaskCommentList(TaskCommentCriteria criteria){
+        return mapper.toDto(repository.findAll(criteria));
     }
 }

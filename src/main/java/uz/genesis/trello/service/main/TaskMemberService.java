@@ -3,6 +3,9 @@ package uz.genesis.trello.service.main;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,9 +30,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"taskMember"})
 public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMemberCreateDto, CrudDto, TaskMemberCriteria, ITaskMemberRepository> implements ITaskMemberService {
-
-
     protected final Log logger = LogFactory.getLog(getClass());
     private final GenericMapper genericMapper;
     private final TaskMemberValidator validator;
@@ -43,6 +45,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskMemberCreateDto dto) {
 
         TaskMember taskMember = mapper.fromCreateDto(dto);
@@ -57,6 +60,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
@@ -78,5 +82,11 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     public ResponseEntity<DataDto<List<TaskMemberDto>>> getAll(TaskMemberCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
+    }
+
+    @Override
+    @Cacheable(key = "#root.methodName + #criteria.taskId")
+    public List<TaskMemberDto> getAllTaskMemberList(TaskMemberCriteria criteria){
+        return mapper.toDto(repository.findAll(criteria));
     }
 }
