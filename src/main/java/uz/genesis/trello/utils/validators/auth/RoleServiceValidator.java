@@ -22,13 +22,15 @@ public class RoleServiceValidator extends BaseCrudValidator<Role, RoleCreateDto,
 
     @Override
     public void baseValidation(CrudDto domain) {
-
+        if (utils.isEmpty(domain)){
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Role.class)), "role");
+        }
     }
 
     @Override
     public void baseValidation(Role domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Role.class)), "Role");
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Role.class)), "role");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getCodeName())) {

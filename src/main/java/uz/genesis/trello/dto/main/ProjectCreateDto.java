@@ -18,8 +18,12 @@ public class ProjectCreateDto extends GenericCrudDto {
     private String name;
     @ApiModelProperty(required = true)
     private String codeName;
+    @ApiModelProperty(required = true)
     private GenericDto group;
     @ApiModelProperty(required = true)
     private GenericDto projectType;
+    @ApiModelProperty(required = true)
     private GenericDto manager;
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

@@ -22,7 +22,7 @@ public class PermissionServiceValidator extends BaseCrudValidator<Permission, Pe
     @Override
     public void baseValidation(CrudDto domain) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Permission.class)));
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Permission.class)), "permission");
         }
     }
 
@@ -30,7 +30,7 @@ public class PermissionServiceValidator extends BaseCrudValidator<Permission, Pe
     @Override
     public void baseValidation(Permission domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Permission.class)), "Permission");
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Permission.class)), "permission");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getCodeName())) {

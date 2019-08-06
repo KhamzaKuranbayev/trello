@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.CrudDto;
 import uz.genesis.trello.dto.GenericDto;
-import uz.genesis.trello.dto.settings.LanguageDto;
 
 /**
  * Created by 'javokhir' on 26/06/2019
@@ -26,6 +25,7 @@ public class UserCreateDto implements CrudDto {
     private String userName;
     @ApiModelProperty(required = true, example = "password")
     private String password;
-    @ApiModelProperty(required = true, example = "language")
     private GenericDto language;
+    @ApiModelProperty(required = true, example = "0")
+    private Long organizationId;
 }

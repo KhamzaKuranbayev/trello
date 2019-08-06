@@ -19,4 +19,7 @@ public class BackgroundUpdateDto extends GenericCrudDto {
 
     @ApiModelProperty(required = true)
     private Long id;
+
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

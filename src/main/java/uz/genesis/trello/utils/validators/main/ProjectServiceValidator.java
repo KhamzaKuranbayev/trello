@@ -27,8 +27,14 @@ public class ProjectServiceValidator extends BaseCrudValidator<Project, ProjectC
         if (utils.isEmpty(domain)) {
             throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Project.class)), "CrudDto"/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
         }
-        if (domain instanceof Project) {
-
+        if (domain instanceof ProjectCreateDto) {
+            if (utils.isEmpty(((ProjectCreateDto) domain).getProjectType())) {
+                throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(Project.class)), "GenericDto");
+            } else if (utils.isEmpty(((ProjectCreateDto) domain).getProjectType())) {
+                throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("projectType", Project.class)), "projectType");
+            } else if (utils.isEmpty(((ProjectCreateDto) domain).getManager())) {
+                throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("manager", Project.class)), "manager");
+            }
         } else {
             ProjectUpdateDto dto = (ProjectUpdateDto) domain;
             if (utils.isEmpty(dto.getId())) {
@@ -50,6 +56,8 @@ public class ProjectServiceValidator extends BaseCrudValidator<Project, ProjectC
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("codeName", Project.class)), "codeName");
         } else if (utils.isEmpty(domain.getOrganizationId())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("organizationId", Project.class)), "organizationId");
+        } else if (utils.isEmpty(domain.getGroup())) {
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("group", Project.class)), "group");
         }
     }
 }

@@ -16,11 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @ApiModel(value = "Role create request")
 public class RoleCreateDto implements CrudDto {
-    @ApiModelProperty(required = true, example = "client")
+    @ApiModelProperty(required = true, example = "roleName")
     private String roleName;
 
-    @ApiModelProperty(required = true, example = "CLIENT")
+    @ApiModelProperty(required = true, example = "codeName")
     private String codeName;
+
+    @ApiModelProperty(required = true, example = "organizationId")
+    private Long organizationId;
 
     private List<GenericDto> permissions;
 }

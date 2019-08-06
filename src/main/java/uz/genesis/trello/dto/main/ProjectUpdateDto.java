@@ -19,7 +19,11 @@ public class ProjectUpdateDto extends GenericCrudDto {
     private String name;
     @ApiModelProperty(required = true)
     private String codeName;
-    private GenericDto group;
     @ApiModelProperty(required = true)
+    private GenericDto group;
+
     private GenericDto projectType;
+
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

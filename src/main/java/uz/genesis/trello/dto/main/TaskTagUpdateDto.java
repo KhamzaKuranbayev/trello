@@ -1,6 +1,7 @@
 package uz.genesis.trello.dto.main;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,11 @@ import uz.genesis.trello.dto.GenericCrudDto;
 @AllArgsConstructor
 @ApiModel(value = "TaskTag update request")
 public class TaskTagUpdateDto extends GenericCrudDto {
+    @ApiModelProperty(required = true)
     private Long id;
+    @ApiModelProperty(required = true)
     private Long projectTagId;
+    @ApiModelProperty(required = true)
     private Long taskId;
 
 }

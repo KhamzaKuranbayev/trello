@@ -22,7 +22,6 @@ public class TaskValidator extends BaseCrudValidator<Task, TaskCreateDto, TaskUp
 
     @Override
     public void baseValidation(CrudDto domain) {
-
     }
 
     @Override

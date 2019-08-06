@@ -82,6 +82,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     public ResponseEntity<DataDto<ProjectColumnDto>> update(@NotNull ProjectColumnUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateProjectColumn")) {
             return get(dto.getId());
         } else {

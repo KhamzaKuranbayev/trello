@@ -20,4 +20,7 @@ public class CoinSettingsCrudDto extends GenericCrudDto {
 
     @ApiModelProperty(required = true)
     private Long coins;
+
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

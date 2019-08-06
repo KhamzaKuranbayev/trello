@@ -23,6 +23,9 @@ public class TaskCheckListValidator extends BaseCrudValidator<TaskCheckList, Tas
     @Override
     public void baseValidation(CrudDto domain) {
 
+        if (utils.isEmpty(domain)) {
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(TaskCheckList.class)), "CrudDto"/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+        }
     }
 
     @Override

@@ -76,6 +76,8 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)), "userName");
         } else if (utils.isEmpty(domain.getPassword())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("password", User.class)), "password");
+        } else if (utils.isEmpty(domain.getOrganizationId())) {
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("organizationId", User.class)), "organizationId");
         }
     }
 

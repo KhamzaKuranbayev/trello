@@ -28,7 +28,7 @@ public class UserLastLoginValidator extends BaseCrudValidator<UserLastLogin, Use
     @Override
     public void baseValidation(UserLastLogin domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(UserLastLogin.class)), "UserLastLogin");
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(UserLastLogin.class)), "userLastLogin");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getSessionToken())) {

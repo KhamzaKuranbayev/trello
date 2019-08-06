@@ -18,11 +18,14 @@ public class RoleUpdateDto implements CrudDto {
     @ApiModelProperty(required = true, example = "15")
     private Long id;
 
-    @ApiModelProperty(required = true, example = "Client")
+    @ApiModelProperty(required = true, example = "roleName")
     private String roleName;
 
-    @ApiModelProperty(required = true, example = "CLIENT")
+    @ApiModelProperty(required = true, example = "codeName")
     private String codeName;
+
+    @ApiModelProperty(required = true, example = "organizationId")
+    private Long organizationId;
 
     private List<GenericDto> permissions;
 

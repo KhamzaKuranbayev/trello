@@ -18,4 +18,6 @@ public class BackgroundCreateDto extends GenericCrudDto {
     @ApiModelProperty(required = true)
     private String name;
 
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

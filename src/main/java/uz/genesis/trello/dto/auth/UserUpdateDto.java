@@ -34,5 +34,10 @@ public class UserUpdateDto implements CrudDto {
     @ApiModelProperty(example = "password", required = true)
     private String password;
 
+    private GenericDto language;
+
+    @ApiModelProperty(example = "organizationId", required = true)
+    private Long organizationId;
+
     private List<GenericDto> roles;
 }

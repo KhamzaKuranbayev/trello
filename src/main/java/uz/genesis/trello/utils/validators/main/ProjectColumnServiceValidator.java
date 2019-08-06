@@ -12,6 +12,7 @@ import uz.genesis.trello.exception.ValidationException;
 import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.BaseCrudValidator;
+
 @Component
 public class ProjectColumnServiceValidator extends BaseCrudValidator<ProjectColumn, ProjectColumnCreateDto, ProjectColumnUpdateDto> {
 
@@ -21,6 +22,16 @@ public class ProjectColumnServiceValidator extends BaseCrudValidator<ProjectColu
 
     @Override
     public void baseValidation(CrudDto domain) {
+        if (utils.isEmpty(domain)) {
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(ProjectColumn.class)), "CrudDto"/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+        }
+        if (domain instanceof ProjectColumnCreateDto) {
+
+        } else {
+            if (utils.isEmpty(((ProjectColumnUpdateDto) domain).getOrdering())) {
+                throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("ordering", ProjectColumn.class)), "ordering");
+            }
+        }
 
     }
 

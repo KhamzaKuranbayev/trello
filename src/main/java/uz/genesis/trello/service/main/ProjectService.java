@@ -70,6 +70,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectCreateDto dto) {
 
         Project project = mapper.fromCreateDto(dto);
+        validator.validateOnCreate(dto);
         validator.validateDomainOnCreate(project);
         project.setId(repository.create(dto, "createProject"));
         if (utils.isEmpty(project.getId())) {
@@ -95,7 +96,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     @Override
     public ResponseEntity<DataDto<ProjectDto>> update(@NotNull ProjectUpdateDto dto) {
 
-        validator.validateOnUpdate(dto);
+        validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateProject")) {
             return get(dto.getId());
         } else {

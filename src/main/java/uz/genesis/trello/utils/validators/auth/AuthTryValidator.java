@@ -28,7 +28,7 @@ public class AuthTryValidator extends BaseCrudValidator<AuthTry, AuthTryCreateDt
     @Override
     public void baseValidation(AuthTry domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(AuthTry.class)), "Authority");
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(AuthTry.class)), "authTry");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
             throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getUserName())) {
