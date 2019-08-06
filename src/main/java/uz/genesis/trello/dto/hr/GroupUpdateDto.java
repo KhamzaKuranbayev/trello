@@ -24,7 +24,11 @@ import java.util.List;
 public class GroupUpdateDto extends GenericCrudDto {
     @ApiModelProperty(required = true, example = "1")
     private Long id;
+    @ApiModelProperty(required = true)
     private String name;
     private boolean watcher;
+    @ApiModelProperty(required = true)
     private List<GenericDto> userIds;
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

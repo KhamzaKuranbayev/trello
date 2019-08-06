@@ -28,13 +28,13 @@ public class CheckListGroupValidator extends BaseCrudValidator<CheckListGroup, C
     @Override
     public void baseValidation(CheckListGroup domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(CheckListGroup.class)));
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(CheckListGroup.class)), "CheckListGroup");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
-            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""));
+            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getName())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("name", CheckListGroup.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("name", CheckListGroup.class)), "name");
         } else if (utils.isEmpty(domain.getTaskId())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("taskId", CheckListGroup.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("taskId", CheckListGroup.class)), "taskId");
         }
     }
 }

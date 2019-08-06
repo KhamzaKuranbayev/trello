@@ -21,8 +21,8 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.GroupMapper;
 import uz.genesis.trello.repository.hr.IGroupRepository;
-import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.repository.settings.IErrorRepository;
+import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.GroupServiceValidator;
 
@@ -50,6 +50,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
         Group group = groupMapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(group);
+        validator.validateOnCreate(dto);
         group.setId(repository.create(dto, "createGroup"));
         if (utils.isEmpty(group.getId())) {
             logger.error(String.format("Non GroupCreateDto defined '%s' ", new Gson().toJson(dto)));
@@ -74,8 +75,8 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     @Override
     @CacheEvict(value = {"employeeGroups"}, allEntries = true)
     public ResponseEntity<DataDto<GroupDto>> update(@NotNull GroupUpdateDto dto) {
-
         validator.validateDomainOnUpdate(groupMapper.fromUpdateDto(dto));
+        validator.validateOnUpdate(dto);
         if (repository.update(dto, "updateGroup")) {
             return get(dto.getId());
         } else {

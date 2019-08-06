@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.genesis.trello.dto.GenericCrudDto;
-import uz.genesis.trello.dto.GenericDto;
 import uz.genesis.trello.dto.main.UserLeaderDto;
 
 import java.util.List;
@@ -26,5 +25,8 @@ public class GroupCreateDto extends GenericCrudDto {
     private String name;
     @ApiModelProperty(example = "false")
     private boolean watcher;
+    @ApiModelProperty(required = true)
     private List<UserLeaderDto> userIds;
+    @ApiModelProperty(required = true)
+    private Long organizationId;
 }

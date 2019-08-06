@@ -32,22 +32,22 @@ public class TypeServiceValidator extends BaseCrudValidator<Type, TypeCreateDto,
 
     public void validateOnSubTypeCreate(SubTypeCreateDto subTypeCreateDto) {
         if (utils.isEmpty(subTypeCreateDto)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)));
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)), "subTypeCreateDto");
         } else if (utils.isEmpty(subTypeCreateDto.getTypeCode())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("typeCode", Type.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("typeCode", Type.class)), "typeCode");
         }
     }
 
     @Override
     public void baseValidation(Type domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)));
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(Type.class)), "type");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
-            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""));
+            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getName())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("name", Type.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("name", Type.class)), "name");
         } else if (utils.isEmpty(domain.getValue())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("value", Type.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("value", Type.class)), "value");
         }
     }
 

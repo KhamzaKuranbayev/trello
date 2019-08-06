@@ -25,14 +25,14 @@ public class ProjectMemberServiceValidator extends BaseCrudValidator<ProjectMemb
     @Override
     public void baseValidation(CrudDto domain) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(ProjectMember.class))/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
+            throw new RequestObjectNullPointerException(String.format(ErrorCodes.OBJECT_IS_NULL.example, utils.toErrorParams(ProjectMember.class)), "CrudDto"/*repository.getError(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(User.class))*/);
         }
         if (domain instanceof ProjectMember) {
 
         } else {
             ProjectMemberUpdateDto dto = (ProjectMemberUpdateDto) domain;
             if (utils.isEmpty(dto.getId())) {
-                throw new ValidationException(repository.getErrorMessage(ID_REQUIRED.example, utils.toErrorParams(ProjectMember.class)));
+                throw new ValidationException(repository.getErrorMessage(ID_REQUIRED.example, utils.toErrorParams(ProjectMember.class)), "id");
             }
         }
     }
@@ -40,13 +40,13 @@ public class ProjectMemberServiceValidator extends BaseCrudValidator<ProjectMemb
     @Override
     public void baseValidation(ProjectMember domain, boolean idRequired) {
         if (utils.isEmpty(domain)) {
-            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(ProjectMember.class)));
+            throw new RequestObjectNullPointerException(repository.getErrorMessage(ErrorCodes.OBJECT_IS_NULL, utils.toErrorParams(ProjectMember.class)), "ProjectMember");
         } else if (idRequired && utils.isEmpty(domain.getId())) {
-            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""));
+            throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "id");
         } else if (utils.isEmpty(domain.getEmployee())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("employee", ProjectMember.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("employee", ProjectMember.class)), "employee");
         } else if (utils.isEmpty(domain.getProjectId())) {
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("projectId", ProjectMember.class)));
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("projectId", ProjectMember.class)), "projectId");
         }
     }
 }

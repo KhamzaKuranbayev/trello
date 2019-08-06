@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.Auditable;
+import uz.genesis.trello.dto.CrudDto;
+import uz.genesis.trello.dto.Dto;
+import uz.genesis.trello.dto.GenericDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -106,10 +109,18 @@ public class BaseUtils {
 
     private String toStringErrorParam(Object argument) {
 
-        if (argument instanceof Auditable) {
-            return argument.getClass().getSimpleName();
+        try {
+            if (((Class) argument).getGenericSuperclass().getTypeName().contains(Auditable.class.getSimpleName())) {
+                return ((Class) argument).getSimpleName();
+            } else if (((Class) argument).getGenericSuperclass().getTypeName().contains(Dto.class.getSimpleName())) {
+                return ((Class) argument).getSimpleName();
+            } else if (((Class) argument).getGenericSuperclass().getTypeName().contains(CrudDto.class.getSimpleName())) {
+                return ((Class) argument).getSimpleName();
+            } else if (((Class) argument).getTypeName().contains(GenericDto.class.getSimpleName())) {
+                return ((Class) argument).getSimpleName();
+            }
+        } catch (Exception ignored) {
         }
-
         return argument.toString();
     }
 
