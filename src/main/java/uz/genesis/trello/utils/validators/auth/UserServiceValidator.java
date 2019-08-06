@@ -4,10 +4,6 @@ import org.springframework.stereotype.Component;
 import uz.genesis.trello.domain.auth.User;
 import uz.genesis.trello.domain.auth.UserOtp;
 import uz.genesis.trello.dto.CrudDto;
-import uz.genesis.trello.dto.auth.AttachRoleDto;
-import uz.genesis.trello.dto.auth.AuthUserDto;
-import uz.genesis.trello.dto.auth.UserCreateDto;
-import uz.genesis.trello.dto.auth.UserUpdateDto;
 import uz.genesis.trello.dto.auth.*;
 import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.exception.IdRequiredException;
@@ -38,31 +34,29 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
 
     public void validateOnAuth(AuthUserDto authUserDto) {
         if (utils.isEmpty(authUserDto.getUserName()))
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName",User.class)), "userName");
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)), "userName");
 
         if (utils.isEmpty(authUserDto.getPassword()))
-            throw  new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("password",User.class)), "password");
-
-        if (utils.isEmpty(authUserDto.getRefreshToken()))
-            throw  new ValidationException(repository.getErrorMessage(ErrorCodes.EXTERNAL_SERVICE_ERROR, ""), "refreshToken");
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("password", User.class)), "password");
 
     }
-     public void validateOnOtpConfirm(UserOtpConfirmDto otpConfirmDto){
 
-         if (utils.isEmpty(otpConfirmDto.getUsername()))
-             throw  new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)), "userName");
+    public void validateOnOtpConfirm(UserOtpConfirmDto otpConfirmDto) {
+
+        if (utils.isEmpty(otpConfirmDto.getUsername()))
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)), "userName");
 
         if (utils.isEmpty(otpConfirmDto.getOtpCode()))
-            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED,utils.toErrorParams("otpCode", UserOtp.class)), "otpCode");
+            throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("otpCode", UserOtp.class)), "otpCode");
 
 
-     }
+    }
 
-    public void validateOnAttach(AttachRoleDto attachRoleDto){
-        if(utils.isEmpty(attachRoleDto.getUserId())){
+    public void validateOnAttach(AttachRoleDto attachRoleDto) {
+        if (utils.isEmpty(attachRoleDto.getUserId())) {
             throw new IdRequiredException(repository.getErrorMessage(ErrorCodes.ID_REQUIRED, ""), "userId");
         }
-        if(utils.isEmpty(attachRoleDto.getRoles())){
+        if (utils.isEmpty(attachRoleDto.getRoles())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("roles", User.class)), "roles");
         }
     }
