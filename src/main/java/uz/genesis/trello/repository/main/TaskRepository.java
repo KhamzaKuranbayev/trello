@@ -51,12 +51,19 @@ public class TaskRepository extends GenericDao<Task, TaskCriteria> implements IT
     }
 
     @Override
+    protected void onDefineWhereCause(TaskCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "p");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+
+    @Override
     protected StringBuilder joinStringOnQuerying(TaskCriteria criteria) {
         StringBuilder joinBuilder = new StringBuilder();
 
         if (!utils.isEmpty(criteria.getOwnTask()) && criteria.getOwnTask()) {
             joinBuilder.append(" inner join TaskMember tm on t.id = tm.taskId and tm.deleted is false ");
         } else {
+            joinBuilder.append(" left join Project p on p.id = t.projectId and p.deleted is false ");
             if (!isAdmin()) {
                 joinBuilder.append(" inner join ProjectMember pm on t.projectId = pm.projectId and pm.deleted is false ");
             }
