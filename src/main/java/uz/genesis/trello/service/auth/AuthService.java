@@ -83,8 +83,6 @@ public class AuthService implements IAuthService {
     private final AuthUtils authUtils;
     private final IErrorRepository errorRepository;
 
-    private final ITypeRepository typeRepository;
-    private final IUserOtpRepository userOtpRepository;
     private final IOtpHelperService otpHelperService;
     private final UserServiceValidator userServiceValidator;
     @Resource(name = "tokenServices")
@@ -98,7 +96,7 @@ public class AuthService implements IAuthService {
 
 
     @Autowired
-    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, ITypeRepository typeRepository, IUserOtpRepository userOtpRepository, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils, IErrorRepository errorRepository, UserServiceValidator userServiceValidator) {
+    public AuthService(BaseUtils utils, ServerProperties serverProperties, IOrganizationSettingsService organizationSettingsService, TokenStore tokenStore, ITypeService typeService, PasswordEncoder userPasswordEncoder, PKCSChecker pkcsChecker, UserRepository userRepository, IAuthTryService authTryService, IUserLastLoginService userLastLoginService, IOtpHelperService otpHelperService, UserDetailsService userDetailsService, AuthUtils authUtils, IErrorRepository errorRepository, UserServiceValidator userServiceValidator) {
         this.utils = utils;
 
         SERVER_URL = "http://" + serverProperties.getIp() + ":" + serverProperties.getPort() + "";
@@ -110,8 +108,6 @@ public class AuthService implements IAuthService {
         this.userRepository = userRepository;
         this.authTryService = authTryService;
         this.userLastLoginService = userLastLoginService;
-        this.typeRepository = typeRepository;
-        this.userOtpRepository = userOtpRepository;
         this.otpHelperService = otpHelperService;
         this.userDetailsService = userDetailsService;
         this.authUtils = authUtils;

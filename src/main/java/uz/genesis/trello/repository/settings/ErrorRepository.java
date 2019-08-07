@@ -29,7 +29,7 @@ public class ErrorRepository extends GenericDao<Auditable, GenericCriteria> impl
         List<FunctionParam> funcParams = new ArrayList<>();
         funcParams.add(new FunctionParam(errorCode, Types.VARCHAR));
         funcParams.add(new FunctionParam(params, Types.VARCHAR));
-        funcParams.add(new FunctionParam(userSession.getUser().getId(), Types.BIGINT));
+        funcParams.add(new FunctionParam(userSession.getUser() == null ? null : userSession.getUser().getId(), Types.BIGINT));
 
         return funcParams;
     }

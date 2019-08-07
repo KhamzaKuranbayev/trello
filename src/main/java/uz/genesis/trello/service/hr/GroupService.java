@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.GroupCriteria;
 import uz.genesis.trello.domain.hr.Group;
@@ -46,6 +47,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).GROUP_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull GroupCreateDto dto) {
 
         Group group = groupMapper.fromCreateDto(dto);
@@ -61,6 +63,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).GROUP_READ)")
     public ResponseEntity<DataDto<GroupDto>> get(Long id) {
         Group group = repository.find(id);
         if (utils.isEmpty(group)) {
@@ -74,6 +77,7 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
     @Override
     @CacheEvict(value = {"employeeGroups"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).GROUP_UPDATE)")
     public ResponseEntity<DataDto<GroupDto>> update(@NotNull GroupUpdateDto dto) {
         validator.validateDomainOnUpdate(groupMapper.fromUpdateDto(dto));
         validator.validateOnUpdate(dto);
@@ -86,12 +90,14 @@ public class GroupService extends AbstractCrudService<GroupDto, GroupCreateDto, 
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).GROUP_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteGroup")), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).GROUP_READ)")
     public ResponseEntity<DataDto<List<GroupDto>>> getAll(GroupCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(groupMapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

@@ -26,4 +26,12 @@ public interface Permissions {
     String PERMISSION_UPDATE = "PERMISSION_UPDATE";
     String PERMISSION_DELETE = "PERMISSION_DELETE";
     String PERMISSION_READ = "PERMISSION_READ";
+
+    /**
+     * GROUP
+     */
+    String GROUP_CREATE = "GROUP_CREATE";
+    String GROUP_UPDATE = "GROUP_UPDATE";
+    String GROUP_DELETE = "GROUP_DELETE";
+    String GROUP_READ = "GROUP_READ";
 }
