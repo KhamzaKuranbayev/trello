@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskCheckListCriteria;
 import uz.genesis.trello.domain.main.TaskCheckList;
@@ -47,6 +48,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CHECK_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCheckListCreateDto dto) {
 
         TaskCheckList taskCheckList = mapper.fromCreateDto(dto);
@@ -62,6 +64,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CHECK_UPDATE)")
     public ResponseEntity<DataDto<TaskCheckListDto>> update(@NotNull TaskCheckListUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -74,12 +77,14 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CHECK_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CHECK_READ)")
     public ResponseEntity<DataDto<TaskCheckListDto>> get(Long id) {
         TaskCheckList taskCheckList = repository.find(TaskCheckListCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskCheckList)) {
@@ -92,6 +97,7 @@ public class TaskCheckListService extends AbstractCrudService<TaskCheckListDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CHECK_READ)")
     public ResponseEntity<DataDto<List<TaskCheckListDto>>> getAll(TaskCheckListCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.AuthTryCriteria;
 import uz.genesis.trello.domain.auth.AuthTry;
@@ -44,6 +45,7 @@ public class AuthTryService extends AbstractCrudService<AuthTryDto, AuthTryCreat
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).AUTH_TRY_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull AuthTryCreateDto dto) {
         AuthTry authTry = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(authTry);
@@ -57,6 +59,7 @@ public class AuthTryService extends AbstractCrudService<AuthTryDto, AuthTryCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).AUTH_TRY_READ)")
     public ResponseEntity<DataDto<AuthTryDto>> get(Long id) {
         AuthTry authTry = repository.find(AuthTryCriteria.childBuilder().selfId(id).build());
 
@@ -70,6 +73,7 @@ public class AuthTryService extends AbstractCrudService<AuthTryDto, AuthTryCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).AUTH_TRY_READ)")
     public ResponseEntity<DataDto<List<AuthTryDto>>> getAll(AuthTryCriteria criteria) {
         List<AuthTry> authTryList = repository.findAll(criteria);
         Long total = repository.getTotalCount(criteria);

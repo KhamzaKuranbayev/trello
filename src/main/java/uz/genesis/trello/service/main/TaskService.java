@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.*;
 import uz.genesis.trello.domain.main.Task;
@@ -60,6 +61,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCreateDto dto) {
 
         Task task = mapper.fromCreateDto(dto);
@@ -74,6 +76,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_UPDATE)")
     public ResponseEntity<DataDto<TaskDto>> update(@NotNull TaskUpdateDto dto) {
         validator.validateOnUpdate(dto);
 
@@ -85,12 +88,14 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_READ)")
     public ResponseEntity<DataDto<TaskDto>> get(Long id) {
         Task task = repository.find(TaskCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(task)) {
@@ -103,6 +108,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_MOVE)")
     public ResponseEntity<DataDto<TaskDto>> move(MovingTaskDto dto) {
         if (repository.call(dto, "moveTask", Types.BOOLEAN)) {
             return get(dto.getId());
@@ -113,12 +119,14 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_READ)")
     public ResponseEntity<DataDto<List<TaskDto>>> getAll(TaskCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_CREATE_TIME)")
     public ResponseEntity<DataDto<GenericDto>> createTaskTimeEntry(TaskTimeEntryCreateDto taskTimeEntryCreateDto) {
         TaskTimeEntry taskTimeEntry = taskTimeEntryMapper.fromCreateDto(taskTimeEntryCreateDto);
         taskTimeEntry.setId(repository.call(taskTimeEntryCreateDto, "createTaskTimeEntry", Types.BIGINT));
@@ -143,6 +151,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_READ_DETAILS)")
     public ResponseEntity<DataDto<TaskDetailsDto>> getTaskDetail(Long id) {
         if (repository.call(GenericDto.builder().id(id).build(), "hasaccesstotask", Types.BOOLEAN)){
             Task task = repository.find(id);

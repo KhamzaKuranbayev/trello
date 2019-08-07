@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.domain.hr.Employee;
@@ -57,6 +58,7 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull EmployeeCreateDto dto) {
 
         validator.validateOnCreate(dto);
@@ -81,6 +83,7 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
 
     @Override
     @CacheEvict(value = {"projectMembers"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_UPDATE)")
     public ResponseEntity<DataDto<EmployeeDto>> update(@NotNull EmployeeUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -92,12 +95,14 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_READ)")
     public ResponseEntity<DataDto<EmployeeDto>> get(Long userId) {
         Employee employee = repository.find(EmployeeCriteria.childBuilder().selfId(userId).build());
         if (utils.isEmpty(employee)) {
@@ -110,12 +115,14 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_READ)")
     public ResponseEntity<DataDto<List<EmployeeDto>>> getAll(EmployeeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_ALL_WITH_PHOTO)")
     public ResponseEntity<DataDto<List<EmployeeDto>>> getAllWithPhoto(EmployeeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(repository.getEmployeesWithPhoto(criteria), total), HttpStatus.OK);

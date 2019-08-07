@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.TypeCriteria;
 import uz.genesis.trello.dao.FunctionParam;
@@ -59,6 +60,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @CacheEvict(allEntries = true, cacheNames = {"types", "projectColumns"})
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TYPE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TypeCreateDto dto) {
         Type type = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(type);
@@ -73,6 +75,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @Cacheable(key = "#root.methodName + #id")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TYPE_READ)")
     public ResponseEntity<DataDto<TypeDto>> get(Long id) {
         Type type = repository.find(TypeCriteria.childBuilder().selfId(id).build());
 
@@ -87,6 +90,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TYPE_UPDATE)")
     public ResponseEntity<DataDto<TypeDto>> update(@NotNull TypeUpdateDto dto) {
 
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
@@ -100,6 +104,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TYPE_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteType")), HttpStatus.OK);
@@ -107,6 +112,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @CacheEvict(value = {"types", "projectColumns"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).SUB_TYPE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> createSubType(SubTypeCreateDto dto) {
         Type type = mapper.fromSubTypeCreaeteDto(dto);
         validator.validateOnSubTypeCreate(dto);
@@ -127,6 +133,7 @@ public class TypeService extends AbstractCrudService<TypeDto, TypeCreateDto, Typ
 
     @Override
     @Cacheable(key = "#root.methodName + #criteria.toString()")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TYPE_READ)")
     public ResponseEntity<DataDto<List<TypeDto>>> getAll(TypeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

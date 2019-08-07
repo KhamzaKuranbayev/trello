@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.OrganizationSettingsCriteria;
 import uz.genesis.trello.dao.FunctionParam;
@@ -51,6 +52,7 @@ public class OrganizationSettingsService extends AbstractCrudService<Organizatio
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).CERTIFICATE_UPDATE)")
     public ResponseEntity<DataDto<Boolean>> setCertificate(CertificateDto certificateDto) {
         ObjectNode settingsNode = objectMapper.createObjectNode();
         settingsNode.put("certificate", certificateDto.getPrivateKey());

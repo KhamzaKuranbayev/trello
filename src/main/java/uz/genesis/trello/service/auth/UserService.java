@@ -139,9 +139,9 @@ public class UserService extends AbstractCrudService<UserDto, UserCreateDto, Use
     }
 
     @Override
-    @Cacheable(key = "#root.methodName")
+    @Cacheable(key = "#root.methodName + #userName")
     public List<Role> getRoles(String userName) {
-        User user = repository.find(UserCriteria.childBuilder().userName(userName).build());
+        User user = repository.find(UserCriteria.childBuilder().userName(userName).forAuthenticate(true).build());
 
         if (utils.isEmpty(user)) {
             logger.error(String.format("user with userName '%s' not found", userName));

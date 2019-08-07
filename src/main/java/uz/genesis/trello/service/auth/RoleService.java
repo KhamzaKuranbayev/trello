@@ -114,6 +114,7 @@ public class RoleService extends AbstractCrudService<RoleDto, RoleCreateDto, Rol
 
     @Override
     @CacheEvict(value = {"users", "roles"}, allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ROLE_ATTACH_ROLE)")
     public ResponseEntity<DataDto<RoleDto>> attachPermissionsToRole(AttachPermissionDto dto) {
         validator.validateOnAttach(dto);
         if (repository.call(dto, "attachpermissiontorole", Types.BOOLEAN)) {

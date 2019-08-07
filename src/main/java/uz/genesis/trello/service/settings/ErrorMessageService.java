@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.ErrorMessageCriteria;
 import uz.genesis.trello.criterias.settings.LanguageCriteria;
@@ -49,6 +50,7 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ERROR_MESSAGE_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ErrorMessageCreateDto dto) {
         ErrorMessage errorMessage = mapper.fromCreateDto(dto);
 
@@ -66,6 +68,7 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ERROR_MESSAGE_UPDATE)")
     public ResponseEntity<DataDto<ErrorMessageDto>> update(@NotNull ErrorMessageUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
         if (repository.update(dto, "updateErrorMessage")) {
@@ -76,12 +79,14 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ERROR_MESSAGE_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteErrorMessage")), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ERROR_MESSAGE_READ)")
     public ResponseEntity<DataDto<ErrorMessageDto>> get(Long id) {
         ErrorMessage errorMessage = repository.find(ErrorMessageCriteria.childBuilder().selfId(id).build());
 
@@ -95,6 +100,7 @@ public class ErrorMessageService extends AbstractCrudService<ErrorMessageDto, Er
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).ERROR_MESSAGE_READ)")
     public ResponseEntity<DataDto<List<ErrorMessageDto>>> getAll(ErrorMessageCriteria criteria) {
         List<ErrorMessage> errorMessageList = repository.findAll(criteria);
         Long total = repository.getTotalCount(criteria);

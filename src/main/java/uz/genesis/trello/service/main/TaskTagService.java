@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskTagCriteria;
 import uz.genesis.trello.domain.main.TaskTag;
@@ -47,6 +48,7 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_TAG_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskTagCreateDto dto) {
 
         TaskTag tasktag = mapper.fromCreateDto(dto);
@@ -62,6 +64,7 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_TAG_UPDATE)")
     public ResponseEntity<DataDto<TaskTagDto>> update(@NotNull TaskTagUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -74,12 +77,14 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_TAG_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_TAG_READ)")
     public ResponseEntity<DataDto<TaskTagDto>> get(Long id) {
         TaskTag tasktag = repository.find(TaskTagCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(tasktag)) {
@@ -92,6 +97,7 @@ public class TaskTagService extends AbstractCrudService<TaskTagDto, TaskTagCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_TAG_READ)")
     public ResponseEntity<DataDto<List<TaskTagDto>>> getAll(TaskTagCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

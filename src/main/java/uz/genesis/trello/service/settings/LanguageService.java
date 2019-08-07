@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.settings.LanguageCriteria;
 import uz.genesis.trello.domain.settings.Language;
@@ -34,6 +35,7 @@ public class LanguageService extends AbstractCrudService<LanguageDto, GenericCru
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).LANGUAGE_READ)")
     public ResponseEntity<DataDto<LanguageDto>> get(Long id) {
         Language language = repository.find(LanguageCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(language)) {
@@ -46,6 +48,7 @@ public class LanguageService extends AbstractCrudService<LanguageDto, GenericCru
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).LANGUAGE_READ)")
     public ResponseEntity<DataDto<List<LanguageDto>>> getAll(LanguageCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

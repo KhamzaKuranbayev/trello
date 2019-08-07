@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +62,7 @@ public class FileStorageService implements IFileStorageService {
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).FILE_STORAGE_CREATE)")
     public ResponseEntity<DataDto<ResourceFileDto>> storeFile(MultipartFile file, String json) throws IOException {
         ObjectNode object = (ObjectNode) new ObjectMapper().readTree(json);
         String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
@@ -108,6 +110,7 @@ public class FileStorageService implements IFileStorageService {
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).FILE_STORAGE_READ)")
     public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = rootLocation.resolve(fileName).normalize();

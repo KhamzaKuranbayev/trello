@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskCommentCriteria;
 import uz.genesis.trello.domain.main.TaskComment;
@@ -48,6 +49,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_COMMENT_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskCommentCreateDto dto) {
 
         TaskComment taskComment = mapper.fromCreateDto(dto);
@@ -63,6 +65,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_COMMENT_UPDATE)")
     public ResponseEntity<DataDto<TaskCommentDto>> update(@NotNull TaskCommentUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -75,12 +78,14 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_COMMENT_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_COMMENT_READ)")
     public ResponseEntity<DataDto<TaskCommentDto>> get(Long id) {
         TaskComment taskComment = repository.find(TaskCommentCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskComment)) {
@@ -93,6 +98,7 @@ public class TaskCommentService extends AbstractCrudService<TaskCommentDto, Task
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_COMMENT_READ)")
     public ResponseEntity<DataDto<List<TaskCommentDto>>> getAll(TaskCommentCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

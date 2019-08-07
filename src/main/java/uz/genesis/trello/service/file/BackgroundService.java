@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.file.BackgroundCriteria;
 import uz.genesis.trello.domain.files.Background;
@@ -44,6 +45,7 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).BACKGROUND_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull BackgroundCreateDto dto) {
         Background background = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(background);
@@ -57,6 +59,7 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).BACKGROUND_UPDATE)")
     public ResponseEntity<DataDto<BackgroundDto>> update(@NotNull BackgroundUpdateDto dto) {
         validator.validateOnUpdate(dto);
 
@@ -68,12 +71,14 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).BACKGROUND_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteFileBackground")), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).BACKGROUND_READ)")
     public ResponseEntity<DataDto<BackgroundDto>> get(Long id) {
         Background background = repository.find(id);
         if (utils.isEmpty(background)) {
@@ -86,6 +91,7 @@ public class BackgroundService extends AbstractCrudService<BackgroundDto, Backgr
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).BACKGROUND_READ)")
     public ResponseEntity<DataDto<List<BackgroundDto>>> getAll(BackgroundCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

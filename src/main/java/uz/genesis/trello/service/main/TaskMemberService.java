@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskMemberCriteria;
 import uz.genesis.trello.domain.main.TaskMember;
@@ -46,6 +47,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_MEMBER_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull TaskMemberCreateDto dto) {
 
         TaskMember taskMember = mapper.fromCreateDto(dto);
@@ -61,12 +63,14 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_MEMBER_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_MEMBER_READ)")
     public ResponseEntity<DataDto<TaskMemberDto>> get(Long id) {
         TaskMember taskmember = repository.find(TaskMemberCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(taskmember)) {
@@ -79,6 +83,7 @@ public class TaskMemberService extends AbstractCrudService<TaskMemberDto, TaskMe
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_MEMBER_READ)")
     public ResponseEntity<DataDto<List<TaskMemberDto>>> getAll(TaskMemberCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

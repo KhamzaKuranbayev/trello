@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.ProjectMemberCriteria;
 import uz.genesis.trello.domain.main.ProjectMember;
@@ -51,6 +52,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_MEMBER_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectMemberCreateDto dto) {
         ProjectMember projectMember = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectMember);
@@ -64,6 +66,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_MEMBER_READ)")
     public ResponseEntity<DataDto<ProjectMemberDto>> get(Long id) {
         ProjectMember projectMember = repository.find(ProjectMemberCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(projectMember)) {
@@ -95,6 +98,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_MEMBER_READ)")
     public ResponseEntity<DataDto<List<ProjectMemberDto>>> getAll(ProjectMemberCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
@@ -108,6 +112,7 @@ public class ProjectMemberService extends AbstractCrudService<ProjectMemberDto, 
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_MEMBER_READ_EMPLOYEE)")
     public ResponseEntity<DataDto<List<EmployeeDto>>> getEmployeeListByProjectId(ProjectMemberCriteria criteria) {
         return new ResponseEntity<>(new DataDto<>(repository.findAll(criteria).stream().map(projectMember -> employeeMapper.toDto(projectMember.getEmployee())).collect(Collectors.toList())), HttpStatus.OK);
     }

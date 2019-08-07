@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.ProjectColumnCriteria;
 import uz.genesis.trello.domain.main.ProjectColumn;
@@ -52,6 +53,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectColumnCreateDto dto) {
         ProjectColumn projectColumn = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(projectColumn);
@@ -65,6 +67,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_READ)")
     public ResponseEntity<DataDto<ProjectColumnDto>> get(Long id) {
         ProjectColumn projectColumn = repository.find(ProjectColumnCriteria.childBuilder().selfId(id).build());
 
@@ -79,6 +82,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_UPDATE)")
     public ResponseEntity<DataDto<ProjectColumnDto>> update(@NotNull ProjectColumnUpdateDto dto) {
 
         validator.validateOnUpdate(dto);
@@ -92,12 +96,14 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProjectColumn")), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_READ)")
     public ResponseEntity<DataDto<List<ProjectColumnDto>>> getAll(ProjectColumnCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
@@ -105,6 +111,7 @@ public class ProjectColumnService extends AbstractCrudService<ProjectColumnDto, 
 
     @Override
     @Cacheable(key = "#root.methodName + #criteria.projectId")
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_COLUMN_READ_DETAILS)")
     public List<ProjectColumnDetailDto> getAllColumns(ProjectColumnCriteria criteria) {
         return mapper.toDetailDto(repository.findAll(criteria));
     }

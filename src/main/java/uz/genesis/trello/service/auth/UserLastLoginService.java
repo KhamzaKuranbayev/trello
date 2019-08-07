@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.auth.UserLastLoginCriteria;
 import uz.genesis.trello.domain.auth.UserLastLogin;
@@ -42,6 +43,7 @@ public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, 
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_LAST_LOGIN_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull UserLastLoginCreateDto dto) {
         UserLastLogin userLastLogin = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(userLastLogin);
@@ -56,6 +58,7 @@ public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_LAST_LOGIN_READ)")
     public ResponseEntity<DataDto<UserLastLoginDto>> get(Long id) {
         UserLastLogin userLastLogin = repository.find(UserLastLoginCriteria.childBuilder().selfId(id).build());
 
@@ -69,6 +72,7 @@ public class UserLastLoginService extends AbstractCrudService<UserLastLoginDto, 
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).USER_LAST_LOGIN_READ)")
     public ResponseEntity<DataDto<List<UserLastLoginDto>>> getAll(UserLastLoginCriteria criteria) {
         List<UserLastLogin> userLastLoginList = repository.findAll(criteria);
         Long total = repository.getTotalCount(criteria);

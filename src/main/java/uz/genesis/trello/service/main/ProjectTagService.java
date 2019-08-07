@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.ProjectTagCriteria;
 import uz.genesis.trello.domain.main.ProjectTag;
@@ -48,6 +49,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_TAG_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectTagCreateDto dto) {
 
         ProjectTag projectTag = mapper.fromCreateDto(dto);
@@ -63,6 +65,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_TAG_UPDATE)")
     public ResponseEntity<DataDto<ProjectTagDto>> update(@NotNull ProjectTagUpdateDto dto) {
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
 
@@ -75,12 +78,14 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
 
     @Override
     @CacheEvict(allEntries = true)
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_TAG_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_TAG_READ)")
     public ResponseEntity<DataDto<ProjectTagDto>> get(Long id) {
         ProjectTag projectTag = repository.find(ProjectTagCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(projectTag)) {
@@ -93,6 +98,7 @@ public class ProjectTagService extends AbstractCrudService<ProjectTagDto, Projec
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_TAG_READ)")
     public ResponseEntity<DataDto<List<ProjectTagDto>>> getAll(ProjectTagCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

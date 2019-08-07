@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.hr.EmployeeCriteria;
 import uz.genesis.trello.criterias.main.*;
@@ -67,6 +68,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_CREATE)")
     public ResponseEntity<DataDto<GenericDto>> create(@NotNull ProjectCreateDto dto) {
 
         Project project = mapper.fromCreateDto(dto);
@@ -82,6 +84,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_READ)")
     public ResponseEntity<DataDto<ProjectDto>> get(Long id) {
         Project project = repository.find(ProjectCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(project)) {
@@ -94,6 +97,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_UPDATE)")
     public ResponseEntity<DataDto<ProjectDto>> update(@NotNull ProjectUpdateDto dto) {
 
         validator.validateDomainOnUpdate(mapper.fromUpdateDto(dto));
@@ -105,18 +109,21 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_DELETE)")
     public ResponseEntity<DataDto<Boolean>> delete(@NotNull Long id) {
         validator.validateOnDelete(id);
         return new ResponseEntity<>(new DataDto<>(repository.delete(id, "deleteProject")), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_READ)")
     public ResponseEntity<DataDto<List<ProjectDto>>> getAll(ProjectCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_READ_DETAILS)")
     public ResponseEntity<DataDto<ProjectDetailDto>> getProjectDetail(Long id) {
         if (repository.call(GenericDto.builder().id(id).build(), "hasaccesstoproject", Types.BOOLEAN)) {
             Project project = repository.find(id);
@@ -159,6 +166,7 @@ public class ProjectService extends AbstractCrudService<ProjectDto, ProjectCreat
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).PROJECT_CHANGE_PHOTO)")
     public ResponseEntity<DataDto<Boolean>> changeProjectBackground(ProjectBackgroundChangeDto dto) {
         boolean success = false;
         if (repository.call(dto, "changeprojectbackround", Types.BOOLEAN)) {

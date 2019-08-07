@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.achievement.CoinSettingsCriteria;
 import uz.genesis.trello.domain.achievement.CoinSettings;
@@ -40,6 +41,7 @@ public class CoinSettingsService extends AbstractCrudService<CoinSettingsDto, Co
 
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).COIN_CREATE_AND_UPDATE)")
     public ResponseEntity<DataDto<CoinSettingsDto>> saveAndUpdateCoinSettings(CoinSettingsCrudDto dto) {
         CoinSettings coinSettings = mapper.fromCreateDto(dto);
         validator.validateDomainOnCreate(coinSettings);
@@ -52,6 +54,7 @@ public class CoinSettingsService extends AbstractCrudService<CoinSettingsDto, Co
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).COIN_READ)")
     public ResponseEntity<DataDto<CoinSettingsDto>> get(Long id) {
         CoinSettings coinSettings = repository.find(CoinSettingsCriteria.childBuilder().selfId(id).build());
         if (utils.isEmpty(coinSettings)) {
@@ -64,6 +67,7 @@ public class CoinSettingsService extends AbstractCrudService<CoinSettingsDto, Co
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).COIN_READ)")
     public ResponseEntity<DataDto<List<CoinSettingsDto>>> getAll(CoinSettingsCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.main.TaskActionCriteria;
 import uz.genesis.trello.domain.main.TaskAction;
@@ -32,6 +33,7 @@ public class TaskActionService extends AbstractService<TaskActionDto, TaskAction
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_ACTION_READ)")
     public ResponseEntity<DataDto<List<TaskActionDto>>> getAll(TaskActionCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
@@ -43,6 +45,7 @@ public class TaskActionService extends AbstractService<TaskActionDto, TaskAction
     }
 
     @Override
+    @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_ACTION_READ)")
     public ResponseEntity<DataDto<TaskActionDto>> get(Long id) {
         TaskAction taskAction = repository.find(TaskActionCriteria.childBuilder().selfId(id).build());
 
