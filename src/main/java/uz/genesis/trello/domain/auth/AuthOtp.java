@@ -7,7 +7,7 @@ import uz.genesis.trello.domain.settings.Type;
 import javax.persistence.*;
 
 /**
- * Created by 'ergashev_sh' on 30.07.2019
+ * Created by 'ergashev_sh' on 07.08.2019
  */
 
 @Entity
@@ -16,11 +16,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "auth_user_otps")
-public class UserOtp extends Auditable {
+@Table(name = "auth_otps")
+public class AuthOtp extends Auditable {
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "username", unique = true)
+    protected String userName;
 
     @Column(name = "otp_code", length = 6)
     private String otpCode;
