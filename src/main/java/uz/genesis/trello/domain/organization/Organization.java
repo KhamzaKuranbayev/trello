@@ -28,8 +28,8 @@ public class Organization extends Auditable {
     @Column(unique = true)
     private String prefix;
 
-    @Column(name = "member_limit")
-    private int memberLimit;
+    @Column(unique = true)
+    private String email;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "organization_id")
