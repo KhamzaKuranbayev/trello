@@ -42,10 +42,8 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.enums.Types;
 import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.property.ServerProperties;
-import uz.genesis.trello.repository.auth.IUserOtpRepository;
 import uz.genesis.trello.repository.auth.UserRepository;
 import uz.genesis.trello.repository.settings.IErrorRepository;
-import uz.genesis.trello.repository.settings.ITypeRepository;
 import uz.genesis.trello.service.message.IOtpHelperService;
 import uz.genesis.trello.service.settings.IOrganizationSettingsService;
 import uz.genesis.trello.service.settings.ITypeService;
@@ -192,7 +190,7 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<DataDto<SessionDto>> otpConfirm(UserOtpConfirmDto dto) {
         userServiceValidator.validateOnOtpConfirm(dto);
-        boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode());
+        boolean isConfirmed = otpHelperService.confirmOtp(dto.getUsername(), dto.getOtpCode(), "checkuserotpcode");
         if (isConfirmed) {
             return createSessionForOtpClient(dto.getUsername());
         } else {

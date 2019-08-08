@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static uz.genesis.trello.enums.Types.AUTH_OTP_TYPE_EMAIL;
 import static uz.genesis.trello.enums.Types.AUTH_OTP_TYPE_PHONE;
 
 @Service
@@ -76,13 +77,13 @@ public class OtpHelperService implements IOtpHelperService {
     public void sendOtp(String username) {
         User user = userRepository.find(UserCriteria.childBuilder().userName(username).forAuthenticate(true).build());
 
-        String otp = generateOpt(username);
+        String otp = generateUserOtp(username);
 
         if (!baseUtils.isEmpty(user.getPhoneNumber())) {
             sendSms(user, otp);
         } else if (!baseUtils.isEmpty(user.getEmail())) {
             try {
-                sendMail(user, otp);
+                sendMailUser(user, otp);
             } catch (TemplateException | IOException | MessagingException e) {
                 logger.error(e);
                 throw new GenericRuntimeException(e.getMessage(), e);
@@ -93,11 +94,11 @@ public class OtpHelperService implements IOtpHelperService {
     }
 
     @Override
-    public boolean confirmOtp(String username, String key) {
+    public boolean confirmOtp(String uniqueParam, String key, String methodName) {
         List<FunctionParam> params = new ArrayList<>();
-        params.add(FunctionParam.builder().param(username).paramType(Types.VARCHAR).build());
+        params.add(FunctionParam.builder().param(uniqueParam).paramType(Types.VARCHAR).build());
         params.add(FunctionParam.builder().param(key).paramType(Types.VARCHAR).build());
-        return userOtpRepository.call(params, "checkuserotpcode", Types.BOOLEAN);
+        return userOtpRepository.call(params, methodName, Types.BOOLEAN);
     }
 
     private void sendSms(User user, String otp) {
@@ -123,26 +124,14 @@ public class OtpHelperService implements IOtpHelperService {
         }
     }
 
-    private void sendMail(User user, String otp) throws MessagingException, IOException, TemplateException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-
+    private void sendMailUser(User user, String otp) throws MessagingException, IOException, TemplateException {
         HashMap<String, Object> model = new HashMap<>();
         model.put("name", user.getUserName());
         model.put("code", otp);
-
-        Template t = freemarkerConfig.getTemplate("mail-template.ftl");
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
-
-        helper.setFrom("no-reply@gmail.com");
-        helper.setTo(user.getEmail());
-        helper.setSubject("Verification code");
-        helper.setText(html, true);
-
-        mailSender.send(message);
+        sendEmail(user.getEmail(), model, "mail-template.ftl");
     }
 
-    private String generateOpt(String username) {
+    private String generateUserOtp(String username) {
         List<FunctionParam> params = new ArrayList<>();
         params.add(FunctionParam
                 .builder()
@@ -150,10 +139,53 @@ public class OtpHelperService implements IOtpHelperService {
                 .paramType(Types.VARCHAR)
                 .build());
 
-        Long typeId = userOtpRepository.call(params, "getidbytype", Types.BIGINT);
-        List<FunctionParam> userOtpParams = new ArrayList<>();
-        userOtpParams.add(FunctionParam.builder().param(username).paramType(Types.VARCHAR).build());
-        userOtpParams.add(FunctionParam.builder().param(typeId).paramType(Types.BIGINT).build());
+        List<FunctionParam> userOtpParams = prepareOtpParams(username, params);
         return userOtpRepository.call(userOtpParams, "createUserOtp", Types.VARCHAR);
     }
+
+    private List<FunctionParam> prepareOtpParams(String username, List<FunctionParam> params) {
+        List<FunctionParam> userOtpParams = new ArrayList<>();
+        Long typeId = userOtpRepository.call(params, "getidbytype", Types.BIGINT);
+        userOtpParams.add(FunctionParam.builder().param(username).paramType(Types.VARCHAR).build());
+        userOtpParams.add(FunctionParam.builder().param(typeId).paramType(Types.BIGINT).build());
+
+        return userOtpParams;
+    }
+
+    @Override
+    public String generateAuthOtp(String mail) {
+        List<FunctionParam> params = new ArrayList<>();
+        params.add(FunctionParam
+                .builder()
+                .param(AUTH_OTP_TYPE_EMAIL.parent)
+                .paramType(Types.VARCHAR)
+                .build());
+        List<FunctionParam> userOtpParams = prepareOtpParams(mail, params);
+        return userOtpRepository.call(userOtpParams, "createorganizationotp", Types.VARCHAR);
+    }
+
+    @Override
+    public void sendEmailAuth(String email, String otp) throws MessagingException, IOException, TemplateException {
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("code", otp);
+        sendEmail(email, model, "auth-verification-code-template.ftl");
+    }
+
+    private void sendEmail(String sendTo, HashMap<String, Object> model, String template) throws MessagingException, IOException, TemplateException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = null;
+
+        helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+
+        Template t = freemarkerConfig.getTemplate(template);
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
+
+        helper.setFrom("no-reply@gmail.com");
+        helper.setTo(sendTo);
+        helper.setSubject("Verification code");
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
+
 }

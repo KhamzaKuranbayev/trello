@@ -20,9 +20,9 @@ import uz.genesis.trello.enums.ErrorCodes;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.hr.EmployeeMapper;
 import uz.genesis.trello.repository.hr.IEmployeeRepository;
+import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.service.AbstractCrudService;
 import uz.genesis.trello.service.auth.IUserService;
-import uz.genesis.trello.repository.settings.IErrorRepository;
 import uz.genesis.trello.utils.BaseUtils;
 import uz.genesis.trello.utils.validators.hr.EmployeeServiceValidator;
 
@@ -118,10 +118,13 @@ public class EmployeeService extends AbstractCrudService<EmployeeDto, EmployeeCr
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_READ)")
     public ResponseEntity<DataDto<List<EmployeeDto>>> getAll(EmployeeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
+
+        if (!utils.isEmpty(criteria.getWithPhoto()) && criteria.getWithPhoto()) {
+            return new ResponseEntity<>(new DataDto<>(repository.getEmployeesWithPhoto(criteria), total), HttpStatus.OK);
+        }
         return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
     }
 
-    @Override
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).EMPLOYEE_ALL_WITH_PHOTO)")
     public ResponseEntity<DataDto<List<EmployeeDto>>> getAllWithPhoto(EmployeeCriteria criteria) {
         Long total = repository.getTotalCount(criteria);

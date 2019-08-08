@@ -70,7 +70,7 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
         } else if (utils.isEmpty(domain.getEmail())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("email", User.class)), "email");
         }
-        if (!isValidEmail(domain.getEmail())) {
+        if (!utils.isValidEmail(domain.getEmail())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.EMAIL_NOT_VALID, utils.toErrorParams(domain.getEmail())), "email");
         } else if (utils.isEmpty(domain.getUserName())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("userName", User.class)), "userName");
@@ -79,11 +79,5 @@ public class UserServiceValidator extends BaseCrudValidator<User, UserCreateDto,
         } else if (utils.isEmpty(domain.getOrganizationId())) {
             throw new ValidationException(repository.getErrorMessage(ErrorCodes.OBJECT_GIVEN_FIELD_REQUIRED, utils.toErrorParams("organizationId", User.class)), "organizationId");
         }
-    }
-
-    private boolean isValidEmail(String email) {
-
-        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-        return email.matches(regex);
     }
 }

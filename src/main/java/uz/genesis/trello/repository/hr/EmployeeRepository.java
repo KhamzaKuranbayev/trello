@@ -14,6 +14,7 @@ import java.util.Map;
 public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> implements IEmployeeRepository {
     @Override
     protected void defineCriteriaOnQuerying(EmployeeCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+
         if (!utils.isEmpty(criteria.getSelfId())) {
             whereCause.add("t.userId = :selfId");
             params.put("selfId", criteria.getSelfId());
@@ -42,7 +43,13 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
     }
 
     @Override
+    protected void onDefineWhereCause(EmployeeCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
+        addOrganizationCheck(queryBuilder, params, "t");
+        super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
+    }
+    @Override
     protected Query defineQuerySelect(EmployeeCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
+
         String queryStr;
         if (!utils.isEmpty(criteria.getWithPhoto()) && criteria.getWithPhoto()) {
             queryStr = " select" + (onDefineCount ? " count(t) " : " new uz.genesis.trello.dto.hr.EmployeeDto(t, getemployeephotourl(t.userId))") + " from  Employee t " +
