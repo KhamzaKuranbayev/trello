@@ -8,8 +8,11 @@ import uz.genesis.trello.dto.organization.OrganizationUserDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.service.IGenericService;
 
+import javax.servlet.http.HttpServletResponse;
+
+
 public interface IOrganizationService extends IGenericService<OrganizationUserDto, Long, OrganizationCriteria> {
-    ResponseEntity<DataDto<GenericDto>> checkByEmail(String mail);
+    ResponseEntity<DataDto<GenericDto>> checkByEmail(String mail, HttpServletResponse response);
 
     ResponseEntity<DataDto<Boolean>> authOtpConfirm(OrganizationOtpConfirmDto dto);
 

@@ -1,7 +1,10 @@
 package uz.genesis.trello.service.organization;
 
 import freemarker.template.TemplateException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,9 @@ import uz.genesis.trello.utils.UserSession;
 import uz.genesis.trello.utils.validators.organization.OrganizationValidator;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.sql.Types;
 import java.util.List;
 
@@ -43,7 +48,7 @@ public class OrganizationService extends AbstractService<OrganizationUserDto, Or
     }
 
     @Override
-    public ResponseEntity<DataDto<GenericDto>> checkByEmail(String email) {
+    public ResponseEntity<DataDto<GenericDto>> checkByEmail(String email,HttpServletResponse response) {
         Organization organization = repository.find(OrganizationCriteria.childBuilder().email(email).build());
         if (utils.isEmpty(organization)) {
             String emailMessage = otpHelperService.generateAuthOtp(email);
@@ -52,7 +57,13 @@ public class OrganizationService extends AbstractService<OrganizationUserDto, Or
             } catch (MessagingException | IOException | TemplateException e) {
                 e.printStackTrace();
             }
-        }//todo on else redirect url ask Javokhir Farhodjon front url
+        } else{
+            String url = "http://";
+            response.setHeader("Location", url);
+            response.setStatus(302);
+            return null;
+        }
+
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
 
