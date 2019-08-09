@@ -53,7 +53,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         http
                 .authorizeRequests()
-                .antMatchers(API_PATH + V_1 + "/uploads/**", LOGIN_URL, SIGNIN_OTP_URL, OTP_CONFIRM_URL).permitAll()
+                .antMatchers(API_PATH + V_1 + "/uploads/**", LOGIN_URL, SIGNIN_OTP_URL, OTP_CONFIRM_URL,
+                        ORGANIZATION_OTP_URL, ORGANIZATION_OTP_CONFIRM_URL).permitAll()
                 .antMatchers(API_PATH + "/**").access(SECURED_WRITE_SCOPE)
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler())

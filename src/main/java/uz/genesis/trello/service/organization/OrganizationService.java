@@ -58,7 +58,7 @@ public class OrganizationService extends AbstractService<OrganizationUserDto, Or
                 e.printStackTrace();
             }
         } else{
-            String url = "http://";
+            String url = "https://kun.uz/";
             response.setHeader("Location", url);
             response.setStatus(302);
             return null;

@@ -19,12 +19,12 @@ public class OrganizationController extends ApiController<IOrganizationService> 
         super(service);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/organizations/otp", method = RequestMethod.POST)
+    @RequestMapping(value = ORGANIZATION_OTP_URL, method = RequestMethod.POST)
     public ResponseEntity<DataDto<GenericDto>> createOrganizationWithOtp(@RequestParam String mail, HttpServletResponse httpServletResponse) {
-        return service.checkByEmail(mail,httpServletResponse);
+        return service.checkByEmail(mail, httpServletResponse);
     }
 
-    @RequestMapping(value = API_PATH + V_1 + "/organizations/otp/confirm", method = RequestMethod.POST)
+    @RequestMapping(value = ORGANIZATION_OTP_CONFIRM_URL, method = RequestMethod.POST)
     public ResponseEntity<DataDto<Boolean>> confirmOtp(@RequestBody OrganizationOtpConfirmDto dto) {
         return service.authOtpConfirm(dto);
     }

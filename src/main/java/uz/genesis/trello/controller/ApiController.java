@@ -19,6 +19,8 @@ public abstract class ApiController<T extends IAbstractService> {
     public static final String LOGOUT_URL = API_PATH + V_1 + "/logout";
     public static final String REFRESH_TOKEN_URL = AUTH + "/refresh-token";
     public static final String SIGNIN_OTP_URL = AUTH + "/otp/sign-in";
+    public static final String ORGANIZATION_OTP_URL = AUTH + "/organizations/otp";
+    public static final String ORGANIZATION_OTP_CONFIRM_URL = AUTH + "/organizations/otp/confirm";
     public static final String OTP_CONFIRM_URL = AUTH + "otp/confirm";
 
     protected T service;
