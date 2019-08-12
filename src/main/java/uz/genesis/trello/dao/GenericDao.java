@@ -316,18 +316,16 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         return hasRole("ADMIN", userSession.getUserName());
     }
 
-    protected void addOrganizationCheck(StringBuilder queryBuilder, Map<String, Object> params, String aliesName){
-        queryBuilder
-                .append(" and ")
-                .append(aliesName)
-                .append(".organizationId in (" +
-                        "   case when hasrole('ADMIN', :userName) is true then (" +
-                        "   select o.id from Organization o ) " +
-                            "else (select o.id from Organization o where o.id = :organizationId) end) ");
-        User currentUser = userSession.getUser();
+    protected void addOrganizationCheck(StringBuilder queryBuilder, Map<String, Object> params, String aliesName) {
+        if (!isAdmin()) {
+            queryBuilder
+                    .append(" and ")
+                    .append(aliesName).append(".organizationId")
+                    .append(" in (select o.id from Organization o where o.id = :organizationId) ");
 
-        params.put("userName", currentUser.getUserName());
-        params.put("organizationId", currentUser.getOrganizationId());
+            User currentUser = userSession.getUser();
+            params.put("organizationId", currentUser.getOrganizationId());
+        }
     }
 
 
