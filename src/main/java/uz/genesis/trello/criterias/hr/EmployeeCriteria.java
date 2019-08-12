@@ -20,6 +20,8 @@ public class EmployeeCriteria extends GenericCriteria {
     private String middleName;
     private String branchId;
     private String name;
+    private Boolean isWatcher;
+    private Boolean isManager;
 
 
 

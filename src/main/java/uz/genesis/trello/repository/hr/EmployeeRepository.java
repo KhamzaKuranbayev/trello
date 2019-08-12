@@ -39,6 +39,14 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
                 params.put("middleName", "%" + criteria.getMiddleName().toLowerCase() + "%");
             }
         }
+
+        if ((!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) && (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager())){
+            whereCause.add(" g.watcher is true or rs.codeName = ('MANAGER') ");
+        } else if (!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()){
+            whereCause.add(" g.watcher is true ");
+        } else if (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager()){
+            whereCause.add(" rs.codeName = ('MANAGER') ");
+        }
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
 
@@ -47,17 +55,37 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
         addOrganizationCheck(queryBuilder, params, "t");
         super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
+
+    @Override
+    protected StringBuilder joinStringOnQuerying(EmployeeCriteria criteria) {
+        StringBuilder joinBuilder = new StringBuilder();
+
+        if ((!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) || (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager())) {
+            joinBuilder.append(" left join User us on us.id = t.userId ");
+        }
+
+        if (!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) {
+            joinBuilder.append(" left join EmployeeGroup eg on eg.employeeId = us.id " +
+                    " left join Group g on g.id = eg.groupId ");
+        }
+        if (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager()) {
+            joinBuilder.append(" left join User u on u.id = us.id " +
+                    " left join u.roles rs ");
+        }
+        return joinBuilder;
+    }
+
     @Override
     protected Query defineQuerySelect(EmployeeCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
 
         String queryStr;
         if (!utils.isEmpty(criteria.getWithPhoto()) && criteria.getWithPhoto()) {
-            queryStr = " select" + (onDefineCount ? " count(t) " : " new uz.genesis.trello.dto.hr.EmployeeDto(t, getemployeephotourl(t.userId))") + " from  Employee t " +
+            queryStr = " select" + (onDefineCount ? " count(distinct t) " : " new uz.genesis.trello.dto.hr.EmployeeDto(distinct(t), getemployeephotourl(t.userId))") + " from  Employee t " +
                     joinStringOnQuerying(criteria) +
                     " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
             return entityManager.createQuery(queryStr);
         } else {
-            queryStr = " select " + (onDefineCount ? " count(t) " : " t ") + " from  Employee t " +
+            queryStr = " select " + (onDefineCount ? " count(distinct t) " : " distinct(t) ") + " from  Employee t " +
                     joinStringOnQuerying(criteria) +
                     " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
             return onDefineCount ? entityManager.createQuery(queryStr, Long.class) : entityManager.createQuery(queryStr);
