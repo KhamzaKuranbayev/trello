@@ -40,11 +40,11 @@ public class EmployeeRepository extends GenericDao<Employee, EmployeeCriteria> i
             }
         }
 
-        if ((!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) && (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager())){
+        if ((!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) && (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager())) {
             whereCause.add(" g.watcher is true or rs.codeName = ('MANAGER') ");
-        } else if (!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()){
+        } else if (!utils.isEmpty(criteria.getIsWatcher()) && criteria.getIsWatcher()) {
             whereCause.add(" g.watcher is true ");
-        } else if (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager()){
+        } else if (!utils.isEmpty(criteria.getIsManager()) && criteria.getIsManager()) {
             whereCause.add(" rs.codeName = ('MANAGER') ");
         }
         onDefineWhereCause(criteria, whereCause, params, queryBuilder);
