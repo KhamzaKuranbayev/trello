@@ -18,4 +18,7 @@ public interface EmployeeMapper extends BaseMapper<Employee, EmployeeDto, Employ
     @Override
     @Mapping(ignore = true , target = "roles")
     EmployeeDto toDto(Employee employee);
+
+    @Mapping(source = "userId", target = "id")
+    Employee fromUpdateDto(EmployeeUpdateDto dto);
 }
