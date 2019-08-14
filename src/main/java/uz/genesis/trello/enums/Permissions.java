@@ -148,6 +148,7 @@ public interface Permissions {
     String TASK_READ = "TASK_READ";
     String TASK_CREATE_TIME = "TASK_CREATE_TIME";
     String TASK_READ_DETAILS = "TASK_READ_DETAILS";
+    String TASK_MOVE = "TASK_MOVE";
 
     /**
      * TASK_TAG

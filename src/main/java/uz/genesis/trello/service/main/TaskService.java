@@ -83,7 +83,7 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
         if (repository.update(dto, "updateTask")) {
             return get(dto.getId());
         } else {
-            throw new RuntimeException(String.format("could not update task with  id '%s'", dto.getId()));
+            throw new RuntimeException(errorRepository.getErrorMessage(ErrorCodes.OBJECT_COULD_NOT_UPDATED, utils.toErrorParams(Task.class, dto.getId())));
         }
     }
 
@@ -187,6 +187,6 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
 
             return new ResponseEntity<>(new DataDto<>(taskDetailsDto), HttpStatus.OK);
         }
-        throw new AccessDeniedException("You are not authorized to access this task.");
+        throw new AccessDeniedException(errorRepository.getErrorMessage(ErrorCodes.ACCESS_DENIED, utils.toErrorParams("TaskDetails")));
     }
 }

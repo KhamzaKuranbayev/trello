@@ -29,7 +29,8 @@ public enum ErrorCodes {
     END_BEFORE_BEGIN_ON_DATE("END_BEFORE_BEGIN_ON_DATE", "The beginning of the selected Date should not be more than the end of the selected Date"),
     ID_REQUIRED("ID_REQUIRED", "Object id not provided"),
     EXTERNAL_SERVICE_ERROR("EXTERNAL_SERVICE_ERROR", "Service not working."),
-    OTP_NOT_CONFIRMED("OTP_NOT_CONFIRMED", "One time password not confirmed.");
+    OTP_NOT_CONFIRMED("OTP_NOT_CONFIRMED", "One time password not confirmed."),
+    ACCESS_DENIED("ACCESS_DENIED", "You do not have access for '%s'");
 
     public String code;
     public String example;
