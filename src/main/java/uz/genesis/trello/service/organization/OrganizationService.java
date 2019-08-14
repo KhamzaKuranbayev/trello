@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import uz.genesis.trello.criterias.organization.OrganizationCriteria;
 import uz.genesis.trello.domain.organization.Organization;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.organization.OrganizationCreateOtpDto;
 import uz.genesis.trello.dto.organization.OrganizationOtpConfirmDto;
 import uz.genesis.trello.dto.organization.OrganizationUserDto;
 import uz.genesis.trello.dto.response.DataDto;
@@ -28,11 +29,11 @@ import uz.genesis.trello.utils.validators.organization.OrganizationValidator;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 import java.sql.Types;
 import java.util.List;
 
 @Service
+
 public class OrganizationService extends AbstractService<OrganizationUserDto, OrganizationCriteria, IOrganizationRepository> implements IOrganizationService {
     private final OrganizationUserMapper mapper;
     private final IOtpHelperService otpHelperService;
@@ -48,12 +49,12 @@ public class OrganizationService extends AbstractService<OrganizationUserDto, Or
     }
 
     @Override
-    public ResponseEntity<DataDto<GenericDto>> checkByEmail(String email,HttpServletResponse response) {
-        Organization organization = repository.find(OrganizationCriteria.childBuilder().email(email).build());
+    public ResponseEntity<DataDto<GenericDto>> checkByEmail(OrganizationCreateOtpDto dto, HttpServletResponse response) {
+        Organization organization = repository.find(OrganizationCriteria.childBuilder().email(dto.getEmail()).build());
         if (utils.isEmpty(organization)) {
-            String emailMessage = otpHelperService.generateAuthOtp(email);
+            String emailMessage = otpHelperService.generateAuthOtp(dto.getEmail());
             try {
-                otpHelperService.sendEmailAuth(email, emailMessage);
+                otpHelperService.sendEmailAuth(dto.getEmail(), emailMessage);
             } catch (MessagingException | IOException | TemplateException e) {
                 e.printStackTrace();
             }
@@ -66,7 +67,6 @@ public class OrganizationService extends AbstractService<OrganizationUserDto, Or
 
         return new ResponseEntity<>(new DataDto<>(true), HttpStatus.OK);
     }
-
 
     @Override
     public ResponseEntity<DataDto<Boolean>> authOtpConfirm(OrganizationOtpConfirmDto dto) {

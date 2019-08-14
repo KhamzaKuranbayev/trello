@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.genesis.trello.controller.ApiController;
 import uz.genesis.trello.dto.GenericDto;
+import uz.genesis.trello.dto.organization.OrganizationCreateOtpDto;
 import uz.genesis.trello.dto.organization.OrganizationOtpConfirmDto;
 import uz.genesis.trello.dto.organization.OrganizationUserDto;
 import uz.genesis.trello.dto.response.DataDto;
@@ -20,8 +21,8 @@ public class OrganizationController extends ApiController<IOrganizationService> 
     }
 
     @RequestMapping(value = ORGANIZATION_OTP_URL, method = RequestMethod.POST)
-    public ResponseEntity<DataDto<GenericDto>> createOrganizationWithOtp(@RequestParam String mail, HttpServletResponse httpServletResponse) {
-        return service.checkByEmail(mail, httpServletResponse);
+    public ResponseEntity<DataDto<GenericDto>> createOrganizationWithOtp(@RequestBody OrganizationCreateOtpDto dto, HttpServletResponse httpServletResponse) {
+        return service.checkByEmail(dto, httpServletResponse);
     }
 
     @RequestMapping(value = ORGANIZATION_OTP_CONFIRM_URL, method = RequestMethod.POST)
