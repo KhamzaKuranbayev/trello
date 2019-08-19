@@ -17,6 +17,7 @@ import uz.genesis.trello.dto.main.*;
 import uz.genesis.trello.dto.response.AppErrorDto;
 import uz.genesis.trello.dto.response.DataDto;
 import uz.genesis.trello.enums.ErrorCodes;
+import uz.genesis.trello.exception.GenericRuntimeException;
 import uz.genesis.trello.mapper.GenericMapper;
 import uz.genesis.trello.mapper.main.TaskMapper;
 import uz.genesis.trello.mapper.main.TaskTimeEntryMapper;
@@ -122,7 +123,12 @@ public class TaskService extends AbstractCrudService<TaskDto, TaskCreateDto, Tas
     @PreAuthorize("hasPermission(null, T(uz.genesis.trello.enums.Permissions).TASK_READ)")
     public ResponseEntity<DataDto<List<TaskDto>>> getAll(TaskCriteria criteria) {
         Long total = repository.getTotalCount(criteria);
-        return new ResponseEntity<>(new DataDto<>(mapper.toDto(repository.findAll(criteria)), total), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(new DataDto<>(repository.getAllDtoList(criteria), total), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getCause());
+        }
     }
 
     @Override

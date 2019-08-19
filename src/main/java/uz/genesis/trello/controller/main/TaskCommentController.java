@@ -38,7 +38,7 @@ public class TaskCommentController extends ApiController<ITaskCommentService> {
     }
 
     @RequestMapping(value = API_PATH + V_1 + "/taskComments", method = RequestMethod.GET)
-    public ResponseEntity<DataDto<List<TaskCommentDto>>> getAll(@Valid TaskCommentCriteria criteria) {
+    public ResponseEntity<DataDto<List<TaskCommentDto>>> getAll(@Valid TaskCommentCriteria criteria) throws Exception {
         return service.getAll(criteria);
     }
 }

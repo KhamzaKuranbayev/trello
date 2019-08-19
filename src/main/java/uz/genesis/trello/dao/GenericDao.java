@@ -160,6 +160,10 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
         return findAllGeneric(criteria);
     }
 
+    protected Object[] getCustomDto(C criteria){
+        return findGeneric(criteria);
+    }
+
     protected StringBuilder onSortBy(C criteria) {
         StringBuilder sorting = new StringBuilder();
         if (!utils.isEmpty(criteria.getSortBy())) {

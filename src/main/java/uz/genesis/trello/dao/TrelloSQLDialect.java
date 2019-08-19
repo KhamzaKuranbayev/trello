@@ -25,5 +25,8 @@ public class TrelloSQLDialect extends org.hibernate.dialect.PostgreSQLDialect {
 
         registerFunction("getidbytype"
                 , new StandardSQLFunction("getidbytype", new TextType()));
+
+        registerFunction("definetaskstatus"
+                , new StandardSQLFunction("definetaskstatus", new TextType()));
     }
 }

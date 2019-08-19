@@ -1,15 +1,26 @@
 package uz.genesis.trello.repository.main;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uz.genesis.trello.criterias.main.TaskCriteria;
 import uz.genesis.trello.dao.GenericDao;
 import uz.genesis.trello.domain.main.Task;
+import uz.genesis.trello.dto.main.TaskDto;
+import uz.genesis.trello.mapper.BaseObjectMapper;
 
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
 @Repository
 public class TaskRepository extends GenericDao<Task, TaskCriteria> implements ITaskRepository {
+    private final BaseObjectMapper baseObjectMapper;
+
+    @Autowired
+    public TaskRepository(BaseObjectMapper baseObjectMapper) {
+        this.baseObjectMapper = baseObjectMapper;
+    }
+
     @Override
     protected void defineCriteriaOnQuerying(TaskCriteria criteria, List<String> whereCause, Map<String, Object> params, StringBuilder queryBuilder) {
         if (!utils.isEmpty(criteria.getSelfId())) {
@@ -57,6 +68,14 @@ public class TaskRepository extends GenericDao<Task, TaskCriteria> implements IT
     }
 
     @Override
+    protected Query defineQuerySelect(TaskCriteria criteria, StringBuilder queryBuilder, boolean onDefineCount) {
+        String queryStr = " select " + (onDefineCount ? " count(t) " : " t, definetaskstatus(t.id, " + userSession.getUser().getId() + ") ") + " from Task t " +
+                joinStringOnQuerying(criteria) +
+                " where t.deleted = 0 " + queryBuilder.toString() + onSortBy(criteria).toString();
+        return onDefineCount ? entityManager.createQuery(queryStr, Long.class) : entityManager.createQuery(queryStr);
+    }
+
+    @Override
     protected StringBuilder joinStringOnQuerying(TaskCriteria criteria) {
         StringBuilder joinBuilder = new StringBuilder();
 
@@ -71,4 +90,18 @@ public class TaskRepository extends GenericDao<Task, TaskCriteria> implements IT
 
         return joinBuilder;
     }
+
+    @Override
+    public List<TaskDto> getAllDtoList(TaskCriteria criteria) {
+        List<Object[]> resultList = super.getAllCustomDtoList(criteria);
+        try {
+            return baseObjectMapper.toDtoList(resultList, "toDto");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getCause());
+
+        }
+    }
+
+
 }
