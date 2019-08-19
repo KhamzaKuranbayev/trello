@@ -13,16 +13,16 @@ import uz.genesis.trello.dto.settings.TypeDto;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDto extends GenericDto {
-  private Long projectId;
-  private Long columnId;
-  private String name;
-  private String description;
-  private String deadLine;
-  private Integer ordering;
-  @CustomField
-  private String status;
-  private String startAt;
-  private TypeDto taskLevelType;
-  private TypeDto taskPriorityType;
+    private Long projectId;
+    private Long columnId;
+    private String name;
+    private String description;
+    private String deadLine;
+    private Integer ordering;
+    @CustomField
+    private String status;
+    private String startAt;
+    private TypeDto taskLevelType;
+    private TypeDto taskPriorityType;
 
 }
