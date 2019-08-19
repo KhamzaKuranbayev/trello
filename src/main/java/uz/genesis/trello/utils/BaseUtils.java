@@ -1,9 +1,12 @@
 package uz.genesis.trello.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uz.genesis.trello.config.ApplicationContextProvider;
 import uz.genesis.trello.dao.FunctionParam;
 import uz.genesis.trello.domain.Auditable;
 import uz.genesis.trello.dto.CrudDto;
@@ -12,12 +15,14 @@ import uz.genesis.trello.dto.GenericDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -167,6 +172,23 @@ public class BaseUtils {
 
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         return email.matches(regex);
+    }
+
+    public Object nodeToObject(JsonNode node, Field field) throws JsonProcessingException {
+        return objectMapper.treeToValue(node, field.getType());
+    }
+
+    public HashMap<String, JsonNode> fromJsonToHashMap(JsonNode jsonNode) throws IOException {
+        return objectMapper.readValue(jsonNode.traverse(), new TypeReference<HashMap<String, JsonNode>>() {
+        });
+    }
+
+    public static Object getBean(String name) {
+        return ApplicationContextProvider.applicationContext.getBean(name);
+    }
+
+    public HashMap<String, JsonNode> fromStringToHashMap(String data) throws IOException {
+        return fromJsonToHashMap(fromStringToNode(data));
     }
 
 

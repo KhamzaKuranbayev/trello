@@ -91,6 +91,17 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
 //        throw new RuntimeException("No result found");
     }
 
+    public <G> G findGeneric(C criteria) {
+        Query query = findInit(criteria, false);
+
+        try {
+            return (G) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+//        throw new RuntimeException("No result found");
+    }
+
     public List<T> findAll(C criteria) {
         return findAllGeneric(criteria);
     }
@@ -143,6 +154,10 @@ public abstract class GenericDao<T extends Auditable, C extends GenericCriteria>
 
     protected StringBuilder joinStringOnQuerying(C criteria) {
         return new StringBuilder();
+    }
+
+    protected List<Object[]> getAllCustomDtoList(C criteria) {
+        return findAllGeneric(criteria);
     }
 
     protected StringBuilder onSortBy(C criteria) {

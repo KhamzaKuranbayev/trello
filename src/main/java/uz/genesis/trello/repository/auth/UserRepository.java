@@ -89,11 +89,4 @@ public class UserRepository extends GenericDao<User, UserCriteria> implements IU
         }
         super.onDefineWhereCause(criteria, whereCause, params, queryBuilder);
     }
-
-    //    @Override
-//    public Long getId(UserCriteria criteria) {
-//        return super.(criteria);
-//    }
-
-
 }

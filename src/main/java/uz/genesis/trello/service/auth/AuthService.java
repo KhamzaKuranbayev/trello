@@ -133,7 +133,7 @@ public class AuthService implements IAuthService {
             httppost.addHeader(HttpHeaders.AUTHORIZATION, getAuthorization());
             httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
             HttpResponse response = httpclient.execute(httppost);
-            return getAuthDtoDataDto(user, response, true, request);
+            return getAuthSessionDto(user, response, true, request);
 
         } catch (Exception ex) {
             return new ResponseEntity<>(new DataDto<>(new AppErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage())), HttpStatus.OK);
@@ -168,7 +168,7 @@ public class AuthService implements IAuthService {
             httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
             HttpResponse response = httpclient.execute(httppost);
 
-            return getAuthDtoDataDto(user, response, false, request);
+            return getAuthSessionDto(user, response, false, request);
 
         } catch (IOException ex) {
             return new ResponseEntity<>(new DataDto<>(new AppErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -198,7 +198,7 @@ public class AuthService implements IAuthService {
         }
     }
 
-    private ResponseEntity<DataDto<SessionDto>> getAuthDtoDataDto(AuthUserDto user, HttpResponse response,
+    private ResponseEntity<DataDto<SessionDto>> getAuthSessionDto(AuthUserDto user, HttpResponse response,
                                                                   boolean authentication, HttpServletRequest request) throws IOException {
         JsonNode json_auth = new ObjectMapper().readTree(EntityUtils.toString(response.getEntity()));
 
