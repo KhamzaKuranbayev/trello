@@ -87,6 +87,14 @@ dependencies {
 
 	compile 'org.springframework.boot:spring-boot-starter-mail'
 	compile 'org.freemarker:freemarker'
-	
+
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-messaging
+	compile group: 'org.springframework.security', name: 'spring-security-messaging', version: '4.0.1.RELEASE'
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.0.9.RELEASE'
+
+
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
